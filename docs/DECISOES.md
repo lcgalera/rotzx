@@ -485,3 +485,42 @@ As outras perguntas ficam em "Outras perguntas".
 **O que continua igual no repositório:** a interface `web/`, os dados, o registro de previsões (só acréscimos), a rotina mensal e o servidor local.
 
 **Como voltar atrás:** `rotzx publicar --completo` gera o site antigo, com os radares na raiz e o atlas em `/globo/`. Os testes de vazamento do modo completo continuam valendo.
+
+### D54 · 08/11/2026 · Atlas: fluxo sem repetição e página dinâmica
+**Pedido:** o site tinha partes redundantes e um fluxo confuso. Melhorar o fluxo e deixar a página mais dinâmica, mantendo a identidade (D49–D53) e as regras de dados. As quatro direções foram aprovadas: globo que reage, transições suaves, linha do tempo viva e entrada em forma de história.
+
+**O que se repetia e como ficou:**
+- **Voltar:** havia cinco caminhos para a visão do mundo. Ficam a trilha ("Início › …") e o ✕ do painel do país. Saíram os dois "← Visão do mundo" (sobre o mapa e no painel) e o "Ler a análise ↓" do celular.
+- **Ano:** era escolhido no controle deslizante do mapa, no seletor da barra e nos botões 2000/2010/2025 de Produtos e de Comparar. Agora é **um controle só**: linha do tempo com ▶. Fica no painel do mapa, ou na barra da análise quando o mapa está recolhido (sempre no celular). É o mesmo elemento, que só muda de lugar e de valores.
+  - Em produto, ou país visto por produto, o controle encaixa nos anos do recorte (2000, 2010, 2025), com as marcas visíveis e a nota "Ano do recorte" (D50).
+  - Quando o ano não tem composição por produto, a tela diz qual recorte mostra.
+- **Métrica:** saiu o seletor de métrica da barra ampliada. Os botões do controle único valem para todas as telas.
+- **Painel do país:**
+  - a posição aparecia no cabeçalho, nos cartões "Posição em…" e na tabela de anos; a parte nas exportações e importações, na frase de abertura e nos cartões;
+  - agora cada cartão do topo traz valor, parte (com o denominador) e posição ("1º destino de 243"), e a frase de abertura fala só do que os números não dizem (produtos, mudança desde o ano-base);
+  - saiu a seção "Posição em {ano}". A tabela base × ano fica, porque é a única comparação entre dois anos.
+- **País visto por produto:** os dois denominadores eram explicados duas vezes. Fica a legenda dos próprios números e o texto completo em "Sobre este dado".
+- **Entrada:** "Outras perguntas", "Maiores parceiros" e três botões no fim levavam aos mesmos lugares do menu. Viraram o passo final "Escolha seu caminho": a busca de país e quatro portas (Maiores parceiros, Quem ganhou espaço, Produtos, Comparar).
+- **Lista × Parceiros:** Parceiros ganhou o grupo recolhido "Demais N países e territórios: sem registro em {ano}". A lista completa de países passou a morar ali. O modo "Lista" do mapa continua como alternativa ao globo (sem WebGL, acessibilidade).
+- **Celular:** o cabeçalho e os controles passavam da largura da tela (o item do grid crescia com a faixa de métricas sem quebra). Corrigido com `min-width: 0`. Conferido sem rolagem horizontal em 390 px.
+
+**O que ficou dinâmico:**
+- **Entrada em forma de história:** são seis passos (o Brasil no ano, a China desde 2000, China × EUA, soja em 2000 e agora, fertilizantes, "Escolha seu caminho").
+  - Cada passo, ao chegar ao meio da leitura (IntersectionObserver), aplica uma "cena": métrica, ano, produto e foco do globo. O globo voa até o país.
+  - O foco "maior parceiro" da soja e dos fertilizantes é calculado dos dados, não fixado.
+  - A cena muda o mapa e o controle, mas não o texto nem a URL. Um link para a entrada nunca abre o explorador de produtos.
+  - No passo da soja, o globo mostra o primeiro ano do recorte e, pouco depois, o mais recente; os botões de ano deixam trocar à mão.
+  - No celular, o globo fica preso no alto (28vh) enquanto a história rola.
+  - Todos os números dos textos continuam calculados dos dados.
+- **Linha do tempo viva:** o ▶ funciona em todas as telas, inclusive no painel do país. O mapa, os números e a marca do ano nos gráficos andam juntos. Navegar para outro lugar encerra a animação.
+- **Transições:**
+  - os números marcados contam do valor anterior até o novo quando só o ano ou a métrica muda no mesmo lugar; o texto final é sempre o valor formatado da página, e "sem registro" não é animado;
+  - os gráficos que continuam no mesmo lugar são atualizados, não recriados, e a marca do ano desliza;
+  - a troca de tela usa `document.startViewTransition` só na coluna de leitura (cruzamento de 0,16 s), quando o navegador tem.
+- **Globo que reage:**
+  - o cartão do país mostra a variação sobre o ano anterior (em % para valores e em p.p. para participação), só quando os dois anos têm dado, e convida ao clique;
+  - passar o mouse numa linha do ranking ou da lista realça o país no globo, e vice-versa;
+  - ao abrir um país, o globo para de girar e vai até ele; em Comparar, enquadra os dois.
+- **Movimento reduzido:** o globo não voa, os números não contam, a troca de tela é instantânea e o ▶ avança mais devagar.
+
+**O que não mudou:** dados, cálculos, fontes, URLs antigas (`#pais=…&ano=…`, `#China`, `vs=`, `/globo/#…`) e o aviso de ano ajustado (D51).

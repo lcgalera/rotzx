@@ -2,7 +2,7 @@
 
 Estado em 05/11/2026 (v0.13 e o globo com as decisões até D47). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D53). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
+(D1–D54). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 - Repositório: https://github.com/lcgalera/rotzx
 - Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
@@ -173,6 +173,11 @@ automática (D45). As notícias estão pausadas (seção 7.5).
   - avisos para ano ou parâmetro incompatível;
   - falha de carga com "Tentar de novo";
   - carregamento com a silhueta do Brasil e a assinatura "Pátria amada, Brasil." na entrada.
+- **Fluxo enxuto e dinâmico (D54):**
+  - a entrada é uma história em passos (Brasil, China, China × EUA, soja, fertilizantes, "Escolha seu caminho"); cada passo, ao chegar ao meio da leitura, pinta o globo e o leva ao país em foco, sem mudar a URL;
+  - um controle único de métrica e ano (linha do tempo com ▶), no painel do mapa ou, com o mapa recolhido, na barra da análise; em produto, encaixa nos anos do recorte;
+  - um caminho de volta por lugar (trilha e ✕); parte e posição do país aparecem uma vez, nos números do topo; Parceiros reúne o ranking e quem não tem registro;
+  - números contam até o novo valor, gráficos atualizam sem ser recriados, troca de tela com cruzamento curto; o cartão do globo mostra a variação sobre o ano anterior, e globo e listas realçam o mesmo país.
 - **URL:** `#pais=RUS&prod=g-fertilizantes&fluxo=i&ano=2025` (país visto por um produto), `#ver=comparar&a=CHN&b=USA`, `&amplo=1`,
   `&aba=produtos`, `#ver=ranking&m=mud&base=2000`. Voltar, avançar e recarregar mantêm o estado; `#China` e `vs=` continuam funcionando.
 
@@ -306,4 +311,4 @@ sem WebGL, a lista de países assume).
 | D25–D27, D35 | nome rotzx e comunicação sem exagero |
 | D28–D34, D37 | radar de oportunidades (SIGET, avaliação, motor, histórico, contexto, leilões) |
 | D36 | Actions em Node 24 |
-| D38–D53 | o globo: fontes, publicação, relações, conflitos, manchetes (pausadas), retrato histórico, atlas comercial, refinamento da leitura, identidade editorial, acabamento, versão estável, logo e atlas como site público |
+| D38–D54 | o globo: fontes, publicação, relações, conflitos, manchetes (pausadas), retrato histórico, atlas comercial, refinamento da leitura, identidade editorial, acabamento, versão estável, logo, atlas como site público e fluxo enxuto e dinâmico |
