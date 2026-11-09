@@ -1,6 +1,6 @@
 # rotzx — documentação do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D54). Este documento descreve o projeto inteiro: o que ele faz,
+Estado em 09/11/2026 (v0.13; decisões até D55). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
 (D1–D55). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
