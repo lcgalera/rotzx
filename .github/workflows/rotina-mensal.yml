@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   rotina:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fixo: o ubuntu-latest (26.04) não tem mais Python 3.9 (D58)
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
@@ -81,7 +81,7 @@ jobs:
 
   site:
     needs: rotina
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fixo: o ubuntu-latest (26.04) não tem mais Python 3.9 (D58)
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
