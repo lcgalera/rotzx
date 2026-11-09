@@ -540,3 +540,13 @@ As outras perguntas ficam em "Outras perguntas".
   - "camada de conflitos" como próximo passo (já existe).
 - **Publicação:** a nota sobre falhas no Pages ganhou o caso "try again later" (repetir o job resolve) e o aviso de que a versão anterior fica guardada por até cerca de 10 minutos.
 - **O que não mudou:** as decisões D1–D54 não foram reescritas (o registro só recebe acréscimos), nem os documentos de histórico do radar (`docs/01`–`08`).
+
+### D56 · 09/11/2026 · Versão do pacote alinhada: 0.13.0
+**O que mudou:**
+- O pacote Python dizia `0.1.0`, enquanto o projeto e a interface já usavam v0.13 (D35, `?v=0.13.0` em `web/index.html`). Agora `rotzx.__version__` é `0.13.0`.
+- O servidor local (`api.py`) lê a versão do pacote em vez de repeti-la à mão.
+
+**Efeito no registro de previsões:**
+- A versão entra só como anotação (`versao_codigo`) nas linhas novas do registro.
+- A chave que evita duplicatas não inclui a versão: setor ou série + modelo + origem + alvo. Repetir a rotina continua sem duplicar nada.
+- As linhas antigas continuam com `0.1.0`, porque o registro só recebe acréscimos.
