@@ -1545,10 +1545,12 @@ const eixoX = (a0, a1) => ({ type: "category", data: Array.from({ length: a1 - a
   axisLine: { lineStyle: { color: PAL.rule2 } }, axisTick: { show: false }, axisLabel: { color: PAL.muted, fontSize: 11.5, hideOverlap: true } });
 const eixoY = (fmt) => ({ type: "value", splitNumber: 4, splitLine: { lineStyle: { color: PAL.rule, type: [3, 3] } }, axisLabel: { color: PAL.muted, fontSize: 11.5, formatter: fmt } });
 // marcas do ano escolhido e do ano-base, com rótulo curto no alto (não cobrem as séries)
-const marca = (base = false) => ({ symbol: "none", silent: true, lineStyle: { color: PAL.ink2, type: "dashed", width: 1 },
+// marcas do ano e do ano-base; ano fora do eixo (ex.: 2025 nos votos da ONU, que vão até 2024) não ganha marca
+const marca = (base = false, a0 = ini, a1 = fim) => ({ symbol: "none", silent: true, lineStyle: { color: PAL.ink2, type: "dashed", width: 1 },
   label: { show: true, position: "end", color: PAL.ink2, fontSize: 11, distance: 3 },
   data: [{ xAxis: String(st.ano), label: { formatter: String(st.ano) } },
-    ...(base && st.base < st.ano ? [{ xAxis: String(st.base), lineStyle: { color: PAL.muted, type: "dotted" }, label: { formatter: String(st.base), color: PAL.muted } }] : [])] });
+    ...(base && st.base < st.ano ? [{ xAxis: String(st.base), lineStyle: { color: PAL.muted, type: "dotted" }, label: { formatter: String(st.base), color: PAL.muted } }] : [])]
+    .filter((d) => +d.xAxis >= a0 && +d.xAxis <= a1) });
 const usdEixo = (v) => (v >= 1e9 ? nf(v / 1e9, 0) + " bi" : v >= 1e6 ? nf(v / 1e6, 0) + " mi" : nf(v, 0));
 const pctEixo = (v) => nf(v * 100, 0) + "%";
 // anotação curta de um fato calculado (ex.: o maior valor da série), com fundo da página para não brigar com a linha
@@ -1560,6 +1562,8 @@ function linha(name, data, cor, { curto = name, larg = 2, opac = 1, marcaL = nul
   return { name, type: "line", data, connectNulls: false, symbol: "circle", symbolSize: 4, showSymbol: true, itemStyle: { color: cor },
     lineStyle: { width: larg, color: cor, opacity: opac }, emphasis: { disabled: true },
     endLabel: { show: !!data?.length && data[data.length - 1] != null, formatter: curto, color: PAL.escuro ? cor : mistura(cor, PAL.ink, 0.3), fontSize: 12, fontWeight: 600, distance: 6 },   // texto: contraste ≥ 4,5:1
+    // série que começa sem dado: sem animação de entrada (o rótulo do fim acompanharia um ponto inexistente e ficaria sem posição)
+    ...(data?.length && data[0] == null ? { animation: false } : {}),
     ...(marcaL ? { markLine: marcaL } : {}), ...(pontos ? { markPoint: pontos } : {}) };
 }
 const dica = (fmt) => ({ trigger: "axis", backgroundColor: PAL.surface, borderColor: PAL.rule2, textStyle: { color: PAL.ink, fontSize: 12.5 },
@@ -1596,13 +1600,13 @@ function desenharGraficos(forcar = false) {
     const u = H.onu.paises[id];
     if (u) novo("#gOnu", { tooltip: dica((v) => `${Math.round(v * 100)} de 100`), legend: leg([nome(id), "Mediana dos países"]),
       xAxis: eixoX(H.onu.inicio, H.onu.fim), yAxis: { ...eixoY((v) => Math.round(v * 100)), min: 0, max: 1 },
-      series: [linha(nome(id), u, PAL.rampa.onu[1], { curto: nome(id).length > 14 ? nome(id).slice(0, 13) + "…" : nome(id), larg: 1.6, marcaL: marca() }),
+      series: [linha(nome(id), u, PAL.rampa.onu[1], { curto: nome(id).length > 14 ? nome(id).slice(0, 13) + "…" : nome(id), larg: 1.6, marcaL: marca(false, H.onu.inicio, H.onu.fim) }),
         { ...linha("Mediana dos países", H.onu.mediana, PAL.muted, { curto: "Mediana", larg: 1.2 }), symbol: "none", lineStyle: { type: "dotted", color: PAL.muted, width: 1.2 } }] });
     const k = H.conflitos.paises[id];
     if (k) { const anos = Array.from({ length: H.conflitos.fim - H.conflitos.inicio + 1 }, (_, i) => H.conflitos.inicio + i), lin = (f) => anos.map((a) => { const x = k[String(a)]; return x ? f(x) : null; });
       novo("#gConf", { grid: { left: 112, right: 14, top: 22, bottom: 26 }, tooltip: { trigger: "item", backgroundColor: PAL.surface, borderColor: PAL.rule2, textStyle: { color: PAL.ink }, formatter: (p) => `${p.name}: ${p.seriesName}` }, xAxis: eixoX(H.conflitos.inicio, H.conflitos.fim),
         yAxis: { type: "category", data: ["Com tropas", "Como lado", "No território"], axisLabel: { color: PAL.ink2 }, axisLine: { show: false }, axisTick: { show: false } },
-        series: [{ name: "conflito no território", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.t ? 2 : null)), itemStyle: { color: (p) => (k[p.name]?.t >= 2 ? PAL.guerra : PAL.conflito) }, markLine: marca() },
+        series: [{ name: "conflito no território", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.t ? 2 : null)), itemStyle: { color: (p) => (k[p.name]?.t >= 2 ? PAL.guerra : PAL.conflito) }, markLine: marca(false, H.conflitos.inicio, H.conflitos.fim) },
           { name: "lado principal", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.l ? 1 : null)), itemStyle: { color: PAL.rampa.onu[1] } },
           { name: "tropas de apoio (inclui missões de paz)", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.a ? 0 : null)), itemStyle: { color: mistura(PAL.imp, PAL.bg, 0.35) } }] }); }
   }

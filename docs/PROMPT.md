@@ -1,7 +1,7 @@
 # Prompt para continuar o rotzx com um assistente de IA
 
 Copie o bloco abaixo como primeira mensagem de uma conversa nova (Claude Code ou outro assistente com acesso ao repositório).
-Ele resume o projeto, as regras e o estado em 05/11/2026; a documentação completa está em [`PROJETO.md`](PROJETO.md).
+Ele resume o projeto, as regras e o estado em 09/11/2026; a documentação completa está em [`PROJETO.md`](PROJETO.md).
 
 ---
 
@@ -10,9 +10,10 @@ Você vai trabalhar no rotzx (repositório lcgalera/rotzx, site https://lcgalera
 Escreva e responda em português do Brasil. O nome do produto é "rotzx", sempre em minúsculas.
 
 ## O que é
-Projeto pessoal de inteligência econômica com dados abertos e rastreáveis, com três frentes ativas:
+Projeto pessoal de inteligência econômica com dados abertos e rastreáveis, com três frentes (só a terceira é publicada):
 1. Radar econômico e setorial: séries do BCB, IBGE e Focus; previsões do IPCA e da indústria de máquinas e
-   materiais elétricos (IBGE 3.27) registradas antes de os dados saírem, com placar público (registro/*.csv, só acréscimos).
+   materiais elétricos (IBGE 3.27) registradas antes de os dados saírem, com placar (registro/*.csv no git, só acréscimos;
+   interface local com rotzx servir).
 2. Radar de oportunidades em transmissão de energia (B2B): projetos do SIGET/ANEEL com evidência por regra (R1–R5),
    score explicado, histórico semanal (historico/*.csv), leilões e contexto econômico.
 3. Atlas "Como o Brasil se conecta ao mundo" (https://lcgalera.github.io/rotzx/, o site público inteiro desde a D53): de quem o Brasil depende para vender e
@@ -21,7 +22,7 @@ Projeto pessoal de inteligência econômica com dados abertos e rastreáveis, co
 
 ## Leia antes de mudar qualquer coisa
 - docs/PROJETO.md (visão geral, fontes, arquitetura, esquemas dos dados do globo, automação, limitações)
-- docs/DECISOES.md (D1–D53: cada escolha e o motivo; registre uma decisão nova para cada mudança relevante)
+- docs/DECISOES.md (D1–D58: cada escolha e o motivo; registre uma decisão nova para cada mudança relevante)
 - README.md e prototipos/globo/LEIAME.md
 
 ## Regras que não podem ser quebradas
@@ -40,30 +41,32 @@ Projeto pessoal de inteligência econômica com dados abertos e rastreáveis, co
 
 ## Como trabalhar
 - Python 3.9, dependências fixas em requirements.txt; .venv/bin/python -m rotzx <comando>; testes: .venv/bin/python -m pytest -q
-  (147 passam e 1 é pulado em 06/11/2026). Rode os testes antes de cada commit.
+  (148 passam e 1 é pulado em 09/11/2026). Rode os testes antes de cada commit.
 - Interface sem build: HTML/JS com bibliotecas por CDN com versão exata (globe.gl@2.46.2, topojson-client@3.1.0,
   world-atlas@2.0.2, ECharts 5.5.0; fontes Newsreader e IBM Plex Sans). O globo é uma página só: prototipos/globo/index.html,
   com tema claro principal e escuro opcional, cores por tokens CSS (D49).
 - Teste a interface num navegador sem tela (Playwright/Chromium com WebGL por software) em desktop e celular
   (1440×900 e 390×844), sem erros de página e sem rolagem horizontal.
-- Dados do globo: rotzx mundo-atualizar [--so-noticias | --so-relacoes | --sem-noticias]. Coletores em rotzx/mundo/.
+- Dados do atlas: rotzx mundo-atualizar --historico (retrato de todos os países) e rotzx mundo-codigos (tabela de países).
+  Coletores em rotzx/mundo/.
   Cada fonte que falha vai para "falhas" e não derruba as outras nem apaga dados bons.
 - Automação: .github/workflows/globo.yml (só à mão: retrato histórico; agendamentos pausados),
-  rotina-mensal.yml (publica o site; dias 12 e 20), radar-siget.yml (segundas). O site só muda quando a rotina
-  mensal roda; o globo lê os dados frescos do repositório ao abrir.
+  rotina-mensal.yml (publica o site; dias 12 e 20, ou à mão), radar-siget.yml (segundas). O site só muda quando a
+  rotina mensal roda: ela publica o atlas que está na main (rotzx publicar; --completo gera o site antigo).
 - Git: trabalhe numa branch, commits em português com mensagem clara (o quê e por quê). Não reescreva histórico
   de branch compartilhada. PR, merge e publicação só quando o dono pedir.
 - Antes de usar uma fonte nova: confira licença e termos, se ela permite acesso automatizado e se o ambiente alcança o
   domínio; documente na tabela de fontes (docs/PROJETO.md) e numa decisão nova.
 - Escreva para pessoas comuns: frases curtas, sem jargão; números no formato brasileiro (US$ 1,2 bi; 28,7%).
 
-## Estado e próximos passos (06/11/2026)
-- Atlas publicado (D47): início com perguntas que executam ações, métricas no mapa com escalas fixas, painel do país em três
-  partes com resumo por regras fixas, explorar por produto, comparar dois parceiros, bandeiras (flag-icons 7.5.0), estado na URL,
-  lista funcional sem WebGL. Dados: prototipos/globo/dados/historia.json e produtos.json (rotzx mundo-atualizar --historico),
-  catalog/paises_mundo.csv (rotzx mundo-codigos).
-- Limitações: composição por produto só em 2000, 2010 e 2025; explorador com os 12 maiores parceiros por produto; valores em
-  dólares correntes; fronteiras atuais para países extintos.
+## Estado e próximos passos (09/11/2026)
+- O site público é só o atlas, na raiz (D53); /globo/ redireciona levando país, ano e filtros. Logo e ícone em D52.
+- Atlas (D47–D54): entrada em forma de história que conduz o globo; controle único de métrica e ano (linha do tempo com ▶);
+  painel do país em três partes com os números uma vez só; explorar por produto com o recorte dos 12 maiores explicado;
+  comparar dois parceiros; estado na URL; lista funcional sem WebGL; tema claro e escuro. Dados:
+  prototipos/globo/dados/historia.json e produtos.json (rotzx mundo-atualizar --historico), catalog/paises_mundo.csv (rotzx mundo-codigos).
+- Limitações: composição por produto só em 2000, 2010 e 2025; explorador com os 12 maiores parceiros por produto ("Outros" sem valor
+  individual); valores em dólares correntes; fronteiras atuais para países extintos.
 - Próximos passos possíveis: mais anos de composição por produto (a consulta do Comex é uma por ano e fluxo); séries em valores
   reais ou volume (kg) para separar preço de quantidade; mapa 2D leve como alternativa visual ao globo.
 - Radar: setorial_v2; primeiras avaliações do IPCA (nov/2026) e da indústria (dez/2026).

@@ -11,9 +11,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import catalog as cat
-from . import cli, config, payloads, storage
+from . import __version__, cli, config, payloads, storage
 
-app = FastAPI(title="rotzx", version="0.1.0")
+app = FastAPI(title="rotzx", version=__version__)
 
 
 def _catalog():
