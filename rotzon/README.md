@@ -19,10 +19,11 @@ rotzon/
     ├── post_linkedin.md      ≤ 1.300 caracteres
     ├── post_x.md             ≤ 280 caracteres
     └── checklist.md          cada número, de onde veio, se foi confirmado
-└── edicao-02/                "A China compra soja do Brasil. E o que mais?" (mesma estrutura)
+├── edicao-02/                "A China compra soja do Brasil. E o que mais?" (mesma estrutura)
+└── edicao-03/                "Quem toma o café do Brasil?" (mesma estrutura)
 ```
 
-A edição #2 se refaz igual, trocando `edicao-01` por `edicao-02` nos três comandos abaixo.
+As edições #2 e #3 se refazem igual, trocando `edicao-01` por `edicao-02` ou `edicao-03` nos três comandos abaixo.
 
 ## Como refazer a edição #1 do zero
 
