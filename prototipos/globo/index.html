@@ -152,7 +152,7 @@
   .sec h3 { font: 500 22px/1.25 var(--serif); margin: 0 0 8px; letter-spacing: -.008em; text-wrap: balance; }
   .lead { color: var(--ink-2); font-size: 17px; line-height: 1.5; margin: 0; max-width: 60ch; }
   .meta { margin: 14px 0 0; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 0; }
-  .meta span + span::before { content: "·"; margin: 0 8px; }
+  .meta > span:not(:last-child)::after { content: "·"; margin: 0 8px; }   /* o separador fica no fim da linha quando ela quebra */
   .fonte { font-size: 12.5px; color: var(--muted); margin: 2px 0 14px; }
   .fonte a { color: inherit; }
   .nota { font-size: 13px; color: var(--muted); margin: 10px 0 0; max-width: 68ch; }
