@@ -63,6 +63,15 @@ def main() -> None:
     f15, f25 = tot.loc[2015, "fob"], tot.loc[2025, "fob"]
     print(f"2025 vs 2015: volume {100 * (k25 / k15 - 1):+.1f}% | US$ FOB {100 * (f25 / f15 - 1):+.1f}%")
 
+    # líder e vice de cada ano (kg)
+    lid = []
+    for ano, g in me[me.ano <= 2025].groupby("ano"):
+        t = g.groupby("pais").kg.sum().sort_values(ascending=False)
+        lid.append({"ano": ano, "1º": t.index[0], "1º_%": 100 * t.iloc[0] / t.sum(), "2º": t.index[1], "2º_%": 100 * t.iloc[1] / t.sum()})
+    lid = pd.DataFrame(lid)
+    lid.to_csv(TAB / "2c_lider_por_ano_kg.csv", index=False)
+    print("\nLÍDER E VICE POR ANO (kg)\n", lid.round(1).to_string(index=False))
+
     # 2 e 5. top 5 e concentração em 2025
     a25 = me[me.ano == 2025]
     for metr in ("kg", "fob"):
