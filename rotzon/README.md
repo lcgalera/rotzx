@@ -5,8 +5,9 @@ Newsletter semanal sobre como o Brasil se conecta ao mundo, com **um** mapa ou g
 ```
 rotzon/
 ├── README.md                 este arquivo
-├── calendario-12-semanas.md  (Tarefa 2)
-├── rotina-e-metas.md         (Tarefa 3)
+├── calendario-12-semanas.md  12 pautas (04/12/2026 a 19/02/2027) + 2 de emergência
+├── rotina-e-metas.md         rotina semanal de ~4h, metas e o que medir
+├── registro-edicoes.csv      métricas de cada edição (preencher toda sexta)
 └── edicao-01/                "O agro brasileiro depende de um navio"
     ├── baixar.py             1. baixa do Comex Stat → dados_brutos/
     ├── calcular.py           2. tabelas → tabelas/
