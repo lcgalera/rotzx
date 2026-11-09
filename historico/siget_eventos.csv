@@ -1,1 +1,80 @@
 coleta_id,id_aneel,id_ons,tipo,campo,antes,depois
+2,1982,T2017-085,mudou,operacao_ato_legal,30/10/2026,30/11/2026
+2,5472,T2021-064,mudou,situacao,Em andamento,Concluído
+2,5472,T2021-064,mudou,operacao_ato_legal,16/10/2026,15/10/2026
+2,5472,T2021-064,mudou,operacao_efetiva,,18/09/2026
+2,5472,T2021-064,mudou,n_obras_em_andamento,27,0
+2,5472,T2021-064,mudou,equipamentos,Transformador de Aterramento 69 kV 10 MVA [Instalação]; Transformador de Potência 230 kV 200 MVA [Instalação],
+2,5476,T2021-068,mudou,situacao,Concluído,Em Operação
+2,5495,T2021-084-A,mudou,situacao,Em andamento,Concluído
+2,5495,T2021-084-A,mudou,operacao_efetiva,,15/10/2026
+2,5495,T2021-084-A,mudou,n_obras_em_andamento,18,0
+2,5495,T2021-084-A,mudou,equipamentos,Transformador de Potência 345 kV 200 MVA [Instalação]; Transformador de Potência 345 kV 600 MVA [Instalação],
+2,5531,T2021-119,mudou,situacao,Em andamento,Concluído
+2,5531,T2021-119,mudou,operacao_ato_legal,12/11/2026,13/10/2026
+2,5531,T2021-119,mudou,operacao_efetiva,,13/10/2026
+2,5531,T2021-119,mudou,n_obras_em_andamento,1,0
+2,5531,T2021-119,mudou,equipamentos,Transformador de Potência 230 kV 150 MVA [Adequação],
+2,5564,T2021-152,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5565,T2021-153,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5566,T2021-154,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5567,T2021-155,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5568,T2021-156,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5569,T2021-157,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5570,T2021-158,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5571,T2021-159,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5572,T2021-160,mudou,operacao_ato_legal,30/12/2028,30/11/2028
+2,5648,T2022-065,mudou,situacao,Concluído,Em Operação
+2,5718,T2022-120-A,mudou,operacao_ato_legal,19/12/2026,27/12/2026
+2,5719,T2022-120-B,mudou,operacao_ato_legal,06/12/2026,23/01/2027
+2,5753,T2023-001,mudou,operacao_ato_legal,02/02/2027,29/12/2026
+2,5787,T2023-032,mudou,operacao_ato_legal,11/12/2026,15/12/2026
+2,5816,T2023-047,mudou,operacao_ato_legal,01/11/2026,22/11/2026
+2,5818,T2023-049,mudou,operacao_ato_legal,01/11/2026,14/11/2026
+2,5885,T2023-127,mudou,operacao_ato_legal,30/10/2026,11/11/2026
+2,5908,T2023-140,mudou,operacao_ato_legal,03/12/2026,10/03/2027
+2,5912,T2023-144,mudou,n_obras_em_andamento,2,1
+2,5914,T2023-146,mudou,situacao,Em andamento,Concluído
+2,5914,T2023-146,mudou,operacao_efetiva,,30/10/2026
+2,5914,T2023-146,mudou,n_obras_em_andamento,1,0
+2,5914,T2023-146,mudou,equipamentos,Transformador de Potência 230 kV 150 MVA [Adequação],
+2,5947,T2023-166,mudou,situacao,Concluído,Em Operação
+2,5955,T2023-166-A,mudou,situacao,Concluído,Em Operação
+2,5962,T2023-175-A,mudou,operacao_ato_legal,29/03/2029,28/02/2027
+2,5963,T2023-175-F,mudou,operacao_ato_legal,29/03/2029,28/02/2027
+2,5967,T2023-175-E,mudou,operacao_ato_legal,29/03/2029,28/02/2027
+2,5968,T2023-176,mudou,operacao_ato_legal,03/01/2027,21/03/2027
+2,5977,T2023-181,mudou,operacao_ato_legal,30/07/2028,27/08/2028
+2,5998,T2023-195,mudou,operacao_ato_legal,30/05/2027,04/07/2027
+2,5999,T2023-196,mudou,operacao_ato_legal,30/05/2027,04/07/2027
+2,6032,T2024-011,mudou,operacao_ato_legal,30/11/2026,10/12/2026
+2,6085,T2024-064,mudou,operacao_ato_legal,26/04/2029,25/04/2029
+2,6086,T2024-065,mudou,operacao_ato_legal,26/02/2027,26/05/2027
+2,6087,T2024-066,mudou,operacao_ato_legal,26/02/2027,26/05/2027
+2,6114,T2024-092,mudou,operacao_ato_legal,20/03/2027,04/04/2027
+2,6122,T2024-100,mudou,operacao_ato_legal,20/03/2027,04/04/2027
+2,6125,T2024-103,mudou,situacao,Concluído,Em Operação
+2,6150,T2024-126,mudou,situacao,Concluído,Em Operação
+2,6191,T2024-150-N,mudou,operacao_ato_legal,20/10/2026,01/12/2026
+2,6215,T2024-174,mudou,situacao,Em andamento,Concluído
+2,6215,T2024-174,mudou,operacao_ato_legal,13/10/2026,19/10/2026
+2,6215,T2024-174,mudou,operacao_efetiva,,19/10/2026
+2,6215,T2024-174,mudou,n_obras_em_andamento,2,0
+2,6215,T2024-174,mudou,equipamentos,Transformador de Potência 289 kV 300 MVA [Adequação],
+2,6224,T2024-183,mudou,operacao_ato_legal,15/12/2026,18/11/2026
+2,6258,T2024-195-H,mudou,operacao_ato_legal,31/10/2026,16/11/2026
+2,6267,T2024-197-B,mudou,operacao_ato_legal,30/10/2026,26/11/2026
+2,6268,T2024-197-C,mudou,operacao_ato_legal,25/11/2026,30/11/2026
+2,6269,T2024-197-D,mudou,operacao_ato_legal,20/12/2026,24/01/2027
+2,6270,T2024-197-E,mudou,operacao_ato_legal,30/11/2026,13/12/2026
+2,6364,T2025-029,mudou,operacao_ato_legal,24/12/2029,22/12/2029
+2,6365,T2025-030,mudou,operacao_ato_legal,28/02/2030,22/12/2029
+2,6373,T2025-038,mudou,operacao_ato_legal,19/01/2028,17/08/2029
+2,6374,T2025-039,mudou,operacao_ato_legal,19/01/2028,17/08/2029
+2,6439,T2025-097,mudou,operacao_ato_legal,18/01/2029,28/11/2029
+2,6450,T2026-001,mudou,operacao_ato_legal,30/03/2029,29/12/2028
+2,6452,T2026-003,mudou,operacao_ato_legal,15/01/2028,28/06/2028
+2,6569,T2026-111,mudou,operacao_ato_legal,23/08/2029,23/11/2027
+2,6734,T2026-265,mudou,concessionaria,MARITUBA,BELEM
+2,6734,T2026-265,mudou,contrato,026/2018,020/2017
+2,6746,T2026-275,novo,,,Planejado
