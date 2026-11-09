@@ -11,7 +11,7 @@ e setorial (previsões registradas antes de os dados saírem, com placar de acer
 - **Registro de previsões:** [`registro/`](registro/), que só recebe acréscimos (veja "Como auditar o registro")
 - **Documentação completa:** [`docs/PROJETO.md`](docs/PROJETO.md) · **prompt para continuar com uma IA:** [`docs/PROMPT.md`](docs/PROMPT.md)
 
-**Estado (v0.13, 09/11/2026; decisões até D57)**
+**Estado (v0.13, 09/11/2026; decisões até D58)**
 
 | Parte | O que tem |
 |---|---|
@@ -170,7 +170,7 @@ comentados no arquivo para quando elas voltarem.
 - **Defasagens de divulgação** (IBGE, CNI, FGV): são premissas do teste em tempo real; conferir nos calendários oficiais.
 - **ABIMAQ e CNI** (uso pessoal): previsões só locais. A causa do descolamento da série CNI de máquinas em 2022–23 não pode ser verificada com os dados disponíveis.
 - **IPFF** (Índice de Pressão Financeira das Famílias): metodologia proposta em `docs/01-avaliacao-inicial.md`, ainda não construído.
-- **GitHub Actions:** as actions rodam em Node 24 (checkout v5, setup-python v6, upload-artifact v6, upload-pages-artifact v5, deploy-pages v5; D36). O `setup-python` v7 remove versões do Python fora de suporte, como a 3.9: não atualizar sem antes migrar o Python. O workflow usa Python 3.9, igual ao Mac. Se o GitHub deixar de oferecer essa versão, mudar `python-version` para 3.12 (as versões fixadas são compatíveis). O rótulo `ubuntu-latest` passará ao Ubuntu 26 a partir de out/2026.
+- **GitHub Actions:** as actions rodam em Node 24 (checkout v5, setup-python v6, upload-artifact v6, upload-pages-artifact v5, deploy-pages v5; D36). O `setup-python` v7 remove versões do Python fora de suporte, como a 3.9: não atualizar sem antes migrar o Python. O workflow usa Python 3.9, igual ao Mac. Se o GitHub deixar de oferecer essa versão, mudar `python-version` para 3.12 (as versões fixadas são compatíveis). Desde a D58 os workflows rodam em `ubuntu-24.04`, porque o `ubuntu-latest` (Ubuntu 26.04) não tem mais o Python 3.9; migrar para o 3.12 antes de o 24.04 sair de suporte.
 - **Primeiras avaliações:** IPCA de out/2026 (por volta de 10/nov) e produção da indústria de materiais elétricos de out/2026 (dezembro).
 
 Decisões e motivos: [`docs/DECISOES.md`](docs/DECISOES.md). Análises econômicas são associações preditivas, não causalidade, e não constituem recomendação financeira ou de investimento.

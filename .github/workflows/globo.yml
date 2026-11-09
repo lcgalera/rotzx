@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   dados:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fixo: o ubuntu-latest (26.04) não tem mais Python 3.9 (D58)
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5

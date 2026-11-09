@@ -1,8 +1,8 @@
 # rotzx — documentação do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D57). Este documento descreve o projeto inteiro: o que ele faz,
+Estado em 09/11/2026 (v0.13; decisões até D58). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D57). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
+(D1–D58). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 - Repositório: https://github.com/lcgalera/rotzx
 - Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
@@ -225,7 +225,7 @@ título, veículo, data e link; país citado com acento e palavra inteira.
 | `radar-siget.yml` | toda segunda, ou à mão | histórico do SIGET, eventos, contexto, relatório (artefato 90 dias), commit de `historico/` |
 | `globo.yml` | só à mão (agendamentos pausados, D45) | testes; retrato histórico (`--historico`) e commit dos dados |
 
-Actions em Node 24 (D36). Python 3.9 no Actions e no Mac; não atualizar `setup-python` para v7 sem migrar o Python.
+Actions em Node 24 (D36), em `ubuntu-24.04` (D58: o `ubuntu-latest` 26.04 não tem Python 3.9). Python 3.9 no Actions e no Mac; não atualizar `setup-python` para v7 sem migrar o Python.
 O site só muda quando a rotina mensal roda: ela publica o que estiver na `main` (inclusive os dados do atlas em `prototipos/globo/dados/`).
 Para publicar uma mudança antes do dia 12, rode a rotina à mão (*Actions › Rotina mensal › Run workflow*).
 

@@ -559,3 +559,10 @@ As outras perguntas ficam em "Outras perguntas".
 - **Série que começa sem dado:** a linha da China na ONU, por exemplo, começa vazia, e o rótulo do fim da linha ficava sem posição durante a animação de entrada. Essas séries agora são desenhadas sem animação de entrada.
 
 **O que não mudou:** dados, cálculos e o desenho final dos gráficos.
+
+### D58 · 09/11/2026 · Actions fixados no Ubuntu 24.04
+**O que aconteceu:** a rotina mensal falhou ao instalar o Python. O `ubuntu-latest` do GitHub passou a ser o Ubuntu 26.04, que não oferece mais o Python 3.9 ("The version '3.9' with architecture 'x64' was not found for Ubuntu 26.04"). O README já previa esse risco (D36).
+
+**Decisão:**
+- Os três workflows (rotina mensal, radar SIGET e globo) passam a rodar em `ubuntu-24.04`. Esse Ubuntu ainda tem o Python 3.9 e mantém os cálculos idênticos aos do Mac.
+- Migrar para o Python 3.12 fica para quando o 24.04 sair de suporte. Exige refazer o ambiente local e testar as dependências fixadas, sem pressa.
