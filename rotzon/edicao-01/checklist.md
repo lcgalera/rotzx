@@ -31,6 +31,7 @@ Comex Stat = API oficial do MDIC, importação, capítulo NCM 31, carga de 06/11
 | 23 | Tonelada média US$ 365 (2021) → US$ 649 (2022) | FOB ÷ kg do total | idem | ✅ |
 | 24 | Meta do PNF: 50% de dependência até 2050 | "Reduzir de 85% para 50%..." | MAPA, slide 2; página do PNF no gov.br | ✅ |
 | 25 | "quase 1 em cada 4 t" da China e da Rússia (dado pra guardar) | 26,3% e 24,4% | itens 6 e 7 | ✅ ("quase" vale pra Rússia; a China passou um pouco de 1/4) |
+| 26 | 99,3% das toneladas importadas em 2025 chegaram por via marítima | 99,27% (rodoviária 0,62%; ferroviária 0,11%) | `tabelas/5_via_transporte_2025.csv` (consulta por via: `dados_brutos/via_2025.json`) | ✅ |
 
 ## Afirmações que não são número, e como foram tratadas
 - **"Por anos, a Rússia foi a maior vendedora":** ✅ a Rússia foi a nº 1 em kg em todos os anos de 2015 a 2024. O vice foi o Canadá até 2020 e a China de 2021 a 2024 (`tabelas/2c_lider_por_ano_kg.csv`).

@@ -1,0 +1,63 @@
+{
+ "consulta": {
+  "yearStart": "2025",
+  "yearEnd": "2025",
+  "typeForm": 2,
+  "typeOrder": 2,
+  "filterList": [
+   {
+    "id": "noSh2pt"
+   }
+  ],
+  "filterArray": [
+   {
+    "item": [
+     "31"
+    ],
+    "idInput": "noSh2pt"
+   }
+  ],
+  "rangeFilter": [],
+  "detailDatabase": [
+   {
+    "id": "noVia",
+    "text": ""
+   }
+  ],
+  "monthDetail": false,
+  "metricFOB": true,
+  "metricKG": true,
+  "metricStatistic": false,
+  "monthStart": "01",
+  "monthEnd": "12",
+  "formQueue": "general",
+  "langDefault": "pt"
+ },
+ "baixado_em": "2026-11-09 15:22:02",
+ "linhas": [
+  {
+   "coAno": "2025",
+   "noVia": "AEREA",
+   "vlFob": "1401839",
+   "kgLiquido": "88609"
+  },
+  {
+   "coAno": "2025",
+   "noVia": "FERROVIARIA",
+   "vlFob": "19187359",
+   "kgLiquido": "50016000"
+  },
+  {
+   "coAno": "2025",
+   "noVia": "MARITIMA",
+   "vlFob": "15360380765",
+   "kgLiquido": "45170318554"
+  },
+  {
+   "coAno": "2025",
+   "noVia": "RODOVIARIA",
+   "vlFob": "112938105",
+   "kgLiquido": "284218562"
+  }
+ ]
+}

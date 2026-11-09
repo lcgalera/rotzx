@@ -131,6 +131,13 @@ def main() -> None:
     p = me[me.ano == 2025].groupby("sh4")[["kg", "fob"]].sum()
     print("\n   peso de cada SH4 no cap. 31 em 2025 (%):\n", (100 * p / p.sum()).round(1))
 
+    # via de transporte, 2025
+    v = pd.DataFrame(json.loads((BRUTO / "via_2025.json").read_text(encoding="utf-8"))["linhas"])
+    v["kg"] = v.kgLiquido.astype(float)
+    v["part_kg_%"] = 100 * v.kg / v.kg.sum()
+    v[["noVia", "kg", "part_kg_%"]].to_csv(TAB / "5_via_transporte_2025.csv", index=False)
+    print("\n   via de transporte, 2025 (% do kg):", {r.noVia: round(r["part_kg_%"], 2) for _, r in v.iterrows()})
+
     # 2026 jan–último mês: top 5
     t26 = participacao(me[me.ano == 2026], "kg", 5)
     t26.to_csv(TAB / "2b_top5_2026_jan_out_kg.csv")

@@ -9,6 +9,7 @@ Grava em rotzon/edicao-01/dados_brutos/:
   - atualizacao.json          data da última carga do MDIC (ano e mês mais recentes)
   - anual_pais_sh4.json       2015–2025, ano × país × SH4, kg líquido e US$ FOB
   - mensal_pais_sh4.json      2015–último mês, ano × mês × país × SH4, kg líquido e US$ FOB
+  - via_2025.json             2025, por via de transporte (marítima, rodoviária…), kg líquido e US$ FOB
 
 Filtros usados (iguais aos do site, aba "Geral"):
   fluxo = importação (typeForm 2); filtro SH2 = 31; detalhamento = país + SH4; métricas = FOB e kg líquido.
@@ -72,6 +73,10 @@ def main() -> None:
     consulta(filtro("2015", "2025", mensal=False), "anual_pais_sh4.json")
     time.sleep(15)
     consulta(filtro("2015", atual["year"], mensal=True), "mensal_pais_sh4.json")
+    time.sleep(15)
+    via = filtro("2025", "2025", mensal=False)
+    via["detailDatabase"] = [{"id": "noVia", "text": ""}]  # quebra por via de transporte
+    consulta(via, "via_2025.json")
 
 
 if __name__ == "__main__":

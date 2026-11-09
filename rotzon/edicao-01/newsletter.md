@@ -10,7 +10,7 @@
 
 ## O que está acontecendo
 
-Toda safra de soja, milho ou café começa com adubo, e a maior parte dele chega de navio. Segundo o Ministério da Agricultura, **85% do fertilizante consumido no Brasil é importado**. Em 2025, o país comprou lá fora **45,5 milhões de toneladas** de adubos, **mais que o dobro** (+130%) das 19,8 milhões de toneladas de 2015. A conta foi de **US$ 15,5 bilhões FOB**. FOB é o valor da mercadoria no porto de embarque, sem frete nem seguro.
+Toda safra de soja, milho ou café começa com adubo, e quase todo ele chega de navio: em 2025, 99,3% das toneladas importadas entraram por via marítima. Segundo o Ministério da Agricultura, **85% do fertilizante consumido no Brasil é importado**. Em 2025, o país comprou lá fora **45,5 milhões de toneladas** de adubos, **mais que o dobro** (+130%) das 19,8 milhões de toneladas de 2015. A conta foi de **US$ 15,5 bilhões FOB**. FOB é o valor da mercadoria no porto de embarque, sem frete nem seguro.
 
 Por anos, a Rússia foi a maior vendedora. Em 2025 a China passou na frente em peso: foram **12,0 milhões de toneladas** chinesas contra **11,1 milhões** russas. Isso dá 26,3% e 24,4% de tudo o que o Brasil importou, respectivamente. Em dez anos, o volume vindo da China ficou 6,5 vezes maior. O da Rússia, 3 vezes. Somados, os dois países responderam por metade das toneladas, e com o Canadá em terceiro (11,4%) os três maiores chegam a **62,1%**.
 
