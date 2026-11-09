@@ -11,7 +11,7 @@ e setorial (previsões registradas antes de os dados saírem, com placar de acer
 - **Registro de previsões:** [`registro/`](registro/), que só recebe acréscimos (veja "Como auditar o registro")
 - **Documentação completa:** [`docs/PROJETO.md`](docs/PROJETO.md) · **prompt para continuar com uma IA:** [`docs/PROMPT.md`](docs/PROMPT.md)
 
-**Estado (v0.13, 09/11/2026; decisões até D54)**
+**Estado (v0.13, 09/11/2026; decisões até D55)**
 
 | Parte | O que tem |
 |---|---|
