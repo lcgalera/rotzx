@@ -524,3 +524,19 @@ As outras perguntas ficam em "Outras perguntas".
 - **Movimento reduzido:** o globo não voa, os números não contam, a troca de tela é instantânea e o ▶ avança mais devagar.
 
 **O que não mudou:** dados, cálculos, fontes, URLs antigas (`#pais=…&ano=…`, `#China`, `vs=`, `/globo/#…`) e o aviso de ano ajustado (D51).
+
+### D55 · 09/11/2026 · Documentação alinhada ao estado atual
+**Pedido:** a documentação não conversava entre si depois das D53 e D54.
+
+**O que estava em conflito e como ficou:**
+- **Foco do projeto:** o README dizia que o foco era o Radar Setorial, e o PROJETO chamava a frente 3 de "o mundo visto do Brasil", com manchetes e site em `/globo/`. Agora todos dizem a mesma coisa: o atlas é a frente em foco e o único conteúdo do site público, na raiz. Os radares continuam no repositório e rodam localmente.
+- **Estado e datas:** o PROJETO dizia "estado em 05/11/2026, decisões até D47", o PROMPT descrevia o estado da D47 e o README dizia "v0.12". Agora: v0.13, 09/11/2026, decisões até D55.
+- **Número de testes:** os documentos diziam 146, 147 ou 148. Agora todos dizem 148 passam e 1 é pulado.
+- **"O que a pessoa vê" (PROJETO 7.1):** era uma crônica por decisão que ainda descrevia a entrada da D47. Foi reescrita como a página de hoje, com a referência à decisão de cada parte.
+- **Afirmações que deixaram de valer, removidas ou corrigidas:**
+  - "as manchetes ficam frescas porque a página lê os dados do repositório";
+  - "sinais da relação só para 20 países";
+  - "média de 5 anos da ONU" e "disputas abertas nos últimos 5 anos";
+  - "camada de conflitos" como próximo passo (já existe).
+- **Publicação:** a nota sobre falhas no Pages ganhou o caso "try again later" (repetir o job resolve) e o aviso de que a versão anterior fica guardada por até cerca de 10 minutos.
+- **O que não mudou:** as decisões D1–D54 não foram reescritas (o registro só recebe acréscimos), nem os documentos de histórico do radar (`docs/01`–`08`).

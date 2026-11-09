@@ -1,22 +1,25 @@
 # rotzx
 
-Inteligência econômica com dados abertos e rastreáveis. O foco é o **Radar Setorial**: o que os juros indicam
-para a produção da indústria de máquinas e materiais elétricos nos próximos 3 a 6 meses, com previsões registradas antes de os dados saírem
-e um placar público de acertos e erros. O Radar Brasil (inflação, juros, câmbio, atividade, renda, crédito) dá o contexto.
+Inteligência econômica com dados abertos e rastreáveis. A frente em foco é o atlas **"Como o Brasil se conecta ao mundo"**:
+de quem o Brasil depende para vender e para comprar, e como isso mudou desde 1997. O repositório guarda também o radar econômico
+e setorial (previsões registradas antes de os dados saírem, com placar de acertos e erros) e o radar de oportunidades em transmissão de energia.
 
-- **Site público:** https://lcgalera.github.io/rotzx/ é o atlas "Como o Brasil se conecta ao mundo" (parceiros e produtos do comércio brasileiro desde 1997, com seletor de ano, comparação e explorador por produto; `prototipos/globo/`). Desde a D53, os radares e o placar de previsões não são mais publicados; continuam no repositório (`rotzx publicar --completo` gera o site antigo). Links antigos em `/globo/` redirecionam para a raiz.
+- **Site público:** https://lcgalera.github.io/rotzx/ é só o atlas (D53): parceiros, produtos (SH4), concentração e comparação, com o
+  contexto diplomático em segundo plano (`prototipos/globo/`). Links antigos em `/globo/` redirecionam para a raiz, mantendo país, ano e filtros.
+  Os radares e o placar de previsões não são mais publicados; continuam no repositório e rodam localmente (`rotzx servir`), e
+  `rotzx publicar --completo` gera o site antigo.
 - **Registro de previsões:** [`registro/`](registro/), que só recebe acréscimos (veja "Como auditar o registro")
 - **Documentação completa:** [`docs/PROJETO.md`](docs/PROJETO.md) · **prompt para continuar com uma IA:** [`docs/PROMPT.md`](docs/PROMPT.md)
 
-**Estado (v0.12, nov/2026)**
+**Estado (v0.13, 09/11/2026; decisões até D54)**
 
 | Parte | O que tem |
 |---|---|
-| Radar Setorial | Página "Indústria de materiais elétricos: o que os juros indicam" em linguagem simples. Análise de indicadores antecedentes fora da amostra (Clark-West com correção de Holm). Previsões da indústria de máquinas e materiais elétricos (IBGE, PIM-PF, seção 3.27; não mede investimento em transmissão nem compras de concessionárias) a 3 e 6 meses, com especificação fixa `setorial_v1` e placar automático |
-| MacroForecast | Previsões mensais do IPCA (ingênuo, sazonal ingênuo, SARIMA e Focus), backtest desde 2016 e faixa de 80% empírica, com cobertura medida antes e depois |
-| Radar Brasil | 18 séries públicas do BCB, do IBGE e do Focus, com nomes e unidades conferidos nas fontes oficiais |
-| Atlas comercial (globo) | De quem o Brasil depende para vender e comprar: parceiros, produtos (SH4), concentração e mudanças desde 1997 (Comex Stat), com contexto diplomático (ONU, OMC, conflitos) e econômico; explorar por produto, comparar parceiros, bandeiras, estado na URL. Notícias pausadas (D38–D47) |
-| Brasil x Mundo | Adiado (baixa diferenciação) |
+| Radar Setorial (local) | Página "Indústria de materiais elétricos: o que os juros indicam" em linguagem simples. Análise de indicadores antecedentes fora da amostra (Clark-West com correção de Holm). Previsões da indústria de máquinas e materiais elétricos (IBGE, PIM-PF, seção 3.27; não mede investimento em transmissão nem compras de concessionárias) a 3 e 6 meses, com especificação fixa `setorial_v1` e placar automático |
+| MacroForecast (local) | Previsões mensais do IPCA (ingênuo, sazonal ingênuo, SARIMA e Focus), backtest desde 2016 e faixa de 80% empírica, com cobertura medida antes e depois |
+| Radar Brasil (local) | 18 séries públicas do BCB, do IBGE e do Focus, com nomes e unidades conferidos nas fontes oficiais |
+| Atlas "Como o Brasil se conecta ao mundo" (site público) | De quem o Brasil depende para vender e comprar: parceiros, produtos (SH4), concentração e mudanças desde 1997 (Comex Stat), com contexto diplomático (ONU, OMC, conflitos) e econômico. Entrada em forma de história, explorador por produto, comparação de parceiros, estado na URL, lista sem WebGL. Notícias pausadas (D38–D54) |
+| Radar de oportunidades (local) | Projetos de transmissão do SIGET/ANEEL com evidência por regra, score explicado, histórico semanal e leilões (`docs/03`–`08`) |
 
 ## Dados abertos × uso pessoal
 
@@ -69,7 +72,10 @@ Testes: `.venv/bin/python -m pytest -q`.
 python3 -m http.server 8010 --directory site   # abrir http://localhost:8010
 ```
 
-`site/` é HTML + JSON (mais um SQLite público) e não depende do servidor FastAPI. A publicação oficial é feita pelo GitHub Actions no GitHub Pages; não é preciso publicar à mão.
+`site/` é o atlas (HTML, JS e os dados em `dados/`), sem servidor; `/globo/` é só um redirecionamento para a raiz. Com `--completo`, sai o site
+antigo (radares em HTML + JSON + SQLite público, atlas em `/globo/`). A publicação oficial é feita pelo GitHub Actions no GitHub Pages; não é preciso publicar à mão.
+
+Só o atlas, sem gerar o site: `python3 -m http.server 8000 --directory prototipos/globo` e abrir http://localhost:8000.
 
 ## Rotina mensal (GitHub Actions)
 
@@ -130,8 +136,8 @@ rotzx/
   registro.py              registro público em CSV (só acréscimos) e verificação
   public_build.py          site público estático + verificação anti-vazamento
   api.py, cli.py           servidor local e linha de comando
-web/                       interface (HTML/JS + ECharts, sem build); texto.js: frases de comparação de erro, testadas
-prototipos/globo/          o mundo visto do Brasil: index.html (página única) e dados/ (gerados pelo workflow Globo)
+web/                       interface local dos radares (HTML/JS + ECharts, sem build; publicada só com --completo); texto.js: frases de comparação de erro, testadas
+prototipos/globo/          o atlas (o site público): index.html (página única), icone.svg/icone-180.png e dados/ (gerados por mundo-atualizar --historico)
 registro/                  registro público de previsões (versionado)
 avaliacoes/                avaliações humanas de relevância (conjunto de teste das regras do radar)
 historico/                 histórico do SIGET: coletas, eventos de mudança e estado (CSV, só acréscimos; ODbL)
