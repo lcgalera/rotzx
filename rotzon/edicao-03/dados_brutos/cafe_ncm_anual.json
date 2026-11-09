@@ -1,0 +1,1264 @@
+{
+ "consulta": {
+  "yearStart": "1997",
+  "yearEnd": "2026",
+  "typeForm": 1,
+  "typeOrder": 2,
+  "filterList": [
+   {
+    "id": "noSh4pt"
+   }
+  ],
+  "filterArray": [
+   {
+    "item": [
+     "0901"
+    ],
+    "idInput": "noSh4pt"
+   }
+  ],
+  "rangeFilter": [],
+  "detailDatabase": [
+   {
+    "id": "noNcmpt",
+    "text": ""
+   }
+  ],
+  "monthDetail": false,
+  "metricFOB": true,
+  "metricKG": true,
+  "metricStatistic": false,
+  "monthStart": "01",
+  "monthEnd": "12",
+  "formQueue": "general",
+  "langDefault": "pt"
+ },
+ "baixado_em": "2026-11-09 15:03:44",
+ "linhas": [
+  {
+   "coAno": "2026",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "10750127290",
+   "kgLiquido": "1810508015"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "1174867",
+   "kgLiquido": "169010"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "12988621",
+   "kgLiquido": "1818725"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "48089047",
+   "kgLiquido": "4794078"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "613262",
+   "kgLiquido": "24973"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "57193",
+   "kgLiquido": "1830"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "14865438263",
+   "kgLiquido": "2268999815"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "354495",
+   "kgLiquido": "48583"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "23220",
+   "kgLiquido": "832"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "54748364",
+   "kgLiquido": "5110080"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "416603",
+   "kgLiquido": "28279"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "37970",
+   "kgLiquido": "1318"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "11331933183",
+   "kgLiquido": "2767297450"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "6136407",
+   "kgLiquido": "1407816"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "6298",
+   "kgLiquido": "698"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "35223008",
+   "kgLiquido": "4063675"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "201344",
+   "kgLiquido": "18892"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "128672",
+   "kgLiquido": "22720"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "7314562513",
+   "kgLiquido": "2116442802"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "791423",
+   "kgLiquido": "123256"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "12012",
+   "kgLiquido": "1260"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "35097551",
+   "kgLiquido": "4430496"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "240724",
+   "kgLiquido": "25860"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "108984",
+   "kgLiquido": "14145"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "8511689058",
+   "kgLiquido": "2131516761"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "2404711",
+   "kgLiquido": "539897"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "1912",
+   "kgLiquido": "273"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "28018982",
+   "kgLiquido": "3304512"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "306083",
+   "kgLiquido": "41886"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "68635",
+   "kgLiquido": "5126"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "5803567866",
+   "kgLiquido": "2282435643"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "1104948",
+   "kgLiquido": "335352"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "12442",
+   "kgLiquido": "2045"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "28252809",
+   "kgLiquido": "5499598"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "210393",
+   "kgLiquido": "25439"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "108148",
+   "kgLiquido": "38257"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4970519289",
+   "kgLiquido": "2371172589"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "3170199",
+   "kgLiquido": "1426379"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "38709",
+   "kgLiquido": "4431"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "22405944",
+   "kgLiquido": "6426500"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "110714",
+   "kgLiquido": "15874"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "60281",
+   "kgLiquido": "23266"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4571125096",
+   "kgLiquido": "2229342264"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "3876510",
+   "kgLiquido": "1524242"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "22800",
+   "kgLiquido": "3600"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "9666038",
+   "kgLiquido": "1920645"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "99816",
+   "kgLiquido": "14660"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "58492",
+   "kgLiquido": "8198"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4357486849",
+   "kgLiquido": "1826247697"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "2510955",
+   "kgLiquido": "760299"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "14114",
+   "kgLiquido": "2115"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "11569703",
+   "kgLiquido": "1837117"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "99022",
+   "kgLiquido": "13701"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "52912",
+   "kgLiquido": "16805"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4600226472",
+   "kgLiquido": "1647808118"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "11839",
+   "kgLiquido": "3010"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "13095769",
+   "kgLiquido": "1766779"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "79893",
+   "kgLiquido": "10633"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "74536",
+   "kgLiquido": "4382"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4842719930",
+   "kgLiquido": "1823785798"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "142",
+   "kgLiquido": "6"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "24500",
+   "kgLiquido": "4200"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "12702185",
+   "kgLiquido": "2122834"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "82452",
+   "kgLiquido": "10065"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "98434",
+   "kgLiquido": "35356"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "5554781737",
+   "kgLiquido": "2004804986"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "41000",
+   "kgLiquido": "6000"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "10005263",
+   "kgLiquido": "1669944"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "74027",
+   "kgLiquido": "9390"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "88016",
+   "kgLiquido": "31645"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "6040264065",
+   "kgLiquido": "1986265967"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "16307",
+   "kgLiquido": "2560"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "34000",
+   "kgLiquido": "6000"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "11531607",
+   "kgLiquido": "1577247"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "70898",
+   "kgLiquido": "9027"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "15624",
+   "kgLiquido": "3138"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4580007626",
+   "kgLiquido": "1698157133"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "11120",
+   "kgLiquido": "2400"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "15749680",
+   "kgLiquido": "1997725"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "111751",
+   "kgLiquido": "16667"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "525",
+   "kgLiquido": "150"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "5720080261",
+   "kgLiquido": "1503336727"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "1138",
+   "kgLiquido": "10"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "35539",
+   "kgLiquido": "6605"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "18267191",
+   "kgLiquido": "2216353"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "95465",
+   "kgLiquido": "11343"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "187679",
+   "kgLiquido": "21975"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "7998510560",
+   "kgLiquido": "1790799052"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "149930",
+   "kgLiquido": "15628"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "309907",
+   "kgLiquido": "58708"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "25806558",
+   "kgLiquido": "3572965"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "173725",
+   "kgLiquido": "22995"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "3080",
+   "kgLiquido": "163"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "5178802886",
+   "kgLiquido": "1789938720"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "11532",
+   "kgLiquido": "1767"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "383688",
+   "kgLiquido": "101880"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "21825706",
+   "kgLiquido": "4221897"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "243801",
+   "kgLiquido": "41974"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "18338",
+   "kgLiquido": "3089"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "3760533275",
+   "kgLiquido": "1638916657"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "16458",
+   "kgLiquido": "3803"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "321944",
+   "kgLiquido": "118740"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "29047359",
+   "kgLiquido": "5319704"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "525367",
+   "kgLiquido": "99484"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "46207",
+   "kgLiquido": "2910"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "4130665696",
+   "kgLiquido": "1566565798"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "93654",
+   "kgLiquido": "29666"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "114877",
+   "kgLiquido": "31562"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "35213482",
+   "kgLiquido": "6589877"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "413839",
+   "kgLiquido": "68505"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "583789",
+   "kgLiquido": "3221830"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "3375957458",
+   "kgLiquido": "1487252550"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "8708",
+   "kgLiquido": "2275"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "253098",
+   "kgLiquido": "87120"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "26427581",
+   "kgLiquido": "5445503"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "274732",
+   "kgLiquido": "59489"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "254569",
+   "kgLiquido": "50960"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "2927538544",
+   "kgLiquido": "1475196506"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "25242",
+   "kgLiquido": "22088"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "389406",
+   "kgLiquido": "166440"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "24404916",
+   "kgLiquido": "5361745"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "152691",
+   "kgLiquido": "29913"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "218544",
+   "kgLiquido": "74953"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "2515383336",
+   "kgLiquido": "1351432179"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "37384",
+   "kgLiquido": "13055"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "494531",
+   "kgLiquido": "262092"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "16828978",
+   "kgLiquido": "4238531"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "102439",
+   "kgLiquido": "34380"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "123528",
+   "kgLiquido": "25478"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "1748376163",
+   "kgLiquido": "1409349051"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "68770",
+   "kgLiquido": "26288"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "212230",
+   "kgLiquido": "151560"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "8191902",
+   "kgLiquido": "2594681"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "149292",
+   "kgLiquido": "55480"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "109790",
+   "kgLiquido": "46008"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "1301512177",
+   "kgLiquido": "1367939748"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "51251",
+   "kgLiquido": "24102"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "402351",
+   "kgLiquido": "338061"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "11815173",
+   "kgLiquido": "5136041"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "995058",
+   "kgLiquido": "313762"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "17646",
+   "kgLiquido": "6857"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "1194650906",
+   "kgLiquido": "1550542316"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "110813",
+   "kgLiquido": "22588"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "420003",
+   "kgLiquido": "354351"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "5428647",
+   "kgLiquido": "4975272"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "290546",
+   "kgLiquido": "131718"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "141298",
+   "kgLiquido": "33700"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "1207357028",
+   "kgLiquido": "1252089858"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "263",
+   "kgLiquido": "10"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "159725",
+   "kgLiquido": "116598"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "4478453",
+   "kgLiquido": "3384652"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "290350",
+   "kgLiquido": "142969"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "34148",
+   "kgLiquido": "6702"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "1558230144",
+   "kgLiquido": "966151101"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "139766",
+   "kgLiquido": "90226"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "77935",
+   "kgLiquido": "41520"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "2938828",
+   "kgLiquido": "1089730"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "137208",
+   "kgLiquido": "37641"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "107219",
+   "kgLiquido": "24624"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "2225535720",
+   "kgLiquido": "1268712981"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "273243",
+   "kgLiquido": "153446"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "286386",
+   "kgLiquido": "109800"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "1955186",
+   "kgLiquido": "579215"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "101674",
+   "kgLiquido": "24183"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "97135",
+   "kgLiquido": "23825"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "2331081061",
+   "kgLiquido": "995321510"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "09011190",
+   "noNcmpt": "Café não torrado, não descafeinado, exceto em grão",
+   "vlFob": "4618",
+   "kgLiquido": "945"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "09011200",
+   "noNcmpt": "Café não torrado, descafeinado",
+   "vlFob": "461187",
+   "kgLiquido": "107940"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "2488433",
+   "kgLiquido": "484465"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "75736",
+   "kgLiquido": "12888"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "155449",
+   "kgLiquido": "36884"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "09011110",
+   "noNcmpt": "Café não torrado, não descafeinado, em grão",
+   "vlFob": "2743048631",
+   "kgLiquido": "867841019"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "09012100",
+   "noNcmpt": "Café torrado, não descafeinado",
+   "vlFob": "2625292",
+   "kgLiquido": "572586"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "09012200",
+   "noNcmpt": "Café torrado, descafeinado",
+   "vlFob": "108373",
+   "kgLiquido": "17631"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "09019000",
+   "noNcmpt": "Cascas, películas de café e sucedâneos do café",
+   "vlFob": "123116",
+   "kgLiquido": "27356"
+  }
+ ]
+}
