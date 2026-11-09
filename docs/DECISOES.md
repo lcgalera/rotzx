@@ -550,3 +550,12 @@ As outras perguntas ficam em "Outras perguntas".
 - A versão entra só como anotação (`versao_codigo`) nas linhas novas do registro.
 - A chave que evita duplicatas não inclui a versão: setor ou série + modelo + origem + alvo. Repetir a rotina continua sem duplicar nada.
 - As linhas antigas continuam com `0.1.0`, porque o registro só recebe acréscimos.
+
+### D57 · 09/11/2026 · Gráficos: marca do ano fora do eixo e séries que começam sem dado
+**Contexto:** a D54 foi conferida no navegador antes de ser publicada, em 16 telas no computador e no celular. Dois erros de gráfico apareciam no console, nenhum deles visível no resultado final.
+
+**Correções:**
+- **Marca do ano fora do eixo:** com o ano 2025, o gráfico dos votos na ONU (base até 2024) tentava marcar um ano que não existe no eixo. A marca do ano e do ano-base agora só aparece quando o ano está no período do gráfico. ONU e conflitos informam a própria cobertura.
+- **Série que começa sem dado:** a linha da China na ONU, por exemplo, começa vazia, e o rótulo do fim da linha ficava sem posição durante a animação de entrada. Essas séries agora são desenhadas sem animação de entrada.
+
+**O que não mudou:** dados, cálculos e o desenho final dos gráficos.
