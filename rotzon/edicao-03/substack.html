@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rotzOn #3 · Substack</title>
+<style>
+  :root { --bg:#f6f5f2; --card:#ffffff; --ink:#1b1b1a; --ink2:#5b5a56; --line:#e2e0da; --accent:#2a78d6; --ok:#1a7f4e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px 64px; }
+  h1.pg { font-size:22px; margin:0 0 4px; }
+  p.pg { color:var(--ink2); margin:0 0 20px; font-size:14px; }
+  ol.passos { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 18px 14px 36px; font-size:14px; color:var(--ink2); }
+  ol.passos li { margin:4px 0; }
+  .campo { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:14px 0; }
+  .rot { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+  .rot span { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink2); }
+  button { font:600 13px/1 inherit; border:1px solid var(--accent); color:var(--accent); background:#fff; border-radius:8px;
+           padding:8px 12px; cursor:pointer; min-height:36px; }
+  button.ok { border-color:var(--ok); color:var(--ok); }
+  .txt { font-size:15px; }
+  .img { border:2px dashed var(--line); border-radius:10px; padding:12px; text-align:center; color:var(--ink2); font-size:14px; }
+  .img img { max-width:100%; height:auto; display:block; margin:8px auto 0; border-radius:6px; }
+  #corpo { font-family: Georgia, "Times New Roman", serif; font-size:17px; }
+  #corpo h2 { font-family:inherit; font-size:22px; margin:1.4em 0 .4em; }
+  #corpo blockquote { border-left:3px solid var(--ink); margin:1em 0; padding:.2em 1em; }
+  #corpo a { color:var(--accent); }
+  #corpo hr { border:0; border-top:1px solid var(--line); margin:1.6em 0; }
+  footer { color:var(--ink2); font-size:12px; margin-top:24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1 class="pg">rotzOn #3: versão para o Substack</h1>
+  <p class="pg">Gerado a partir de <code>edicao-03/newsletter.md</code>. Se mudar o texto, rode de novo <code>rotzon/substack.py</code>.</p>
+
+  <ol class="passos">
+    <li>No Substack: <b>New post</b>. Cole o <b>título</b> e o <b>subtítulo</b> nos campos próprios.</li>
+    <li>No início do corpo, insira a imagem (botão de imagem → suba <code>visuais/cafe_compradores_1997_2025.png</code>). Cole a <b>legenda</b> no campo de legenda e o <b>texto alternativo</b> em "Alt text".</li>
+    <li>Logo abaixo da imagem, cole o <b>corpo</b>. Intertítulos, negritos, citação e links vêm junto.</li>
+    <li>Mande um e-mail de teste para você (<b>Send test email</b>) e confira no celular antes de agendar.</li>
+  </ol>
+
+  <div class="campo"><div class="rot"><span>Título</span><button data-alvo="titulo">Copiar</button></div>
+    <div class="txt" id="titulo">Quem toma o café do Brasil?</div></div>
+
+  <div class="campo"><div class="rot"><span>Subtítulo</span><button data-alvo="subtitulo">Copiar</button></div>
+    <div class="txt" id="subtitulo">Os mesmos países de sempre. Os 5 maiores compradores do café brasileiro em 2025 são exatamente os de 1997, e os 4 primeiros estão até na mesma ordem.</div></div>
+
+  <div class="campo"><div class="rot"><span>Imagem (inserir no Substack)</span></div>
+    <div class="img">Arquivo: <code>visuais/cafe_compradores_1997_2025.png</code><img src="visuais/cafe_compradores_1997_2025.png" alt=""></div></div>
+
+  <div class="campo"><div class="rot"><span>Legenda da imagem</span><button data-alvo="legenda">Copiar</button></div>
+    <div class="txt" id="legenda">Gráfico: posição no ranking e participação no volume de café exportado pelo Brasil, 1997 e 2025. Países que estiveram no top 10 em um dos dois anos. Fonte: Comex Stat/MDIC.</div></div>
+
+  <div class="campo"><div class="rot"><span>Texto alternativo (alt text)</span><button data-alvo="alt">Copiar</button></div>
+    <div class="txt" id="alt">Gráfico de inclinação com a posição dos maiores compradores do café brasileiro em 1997 e em 2025. Alemanha, EUA, Itália, Japão e Bélgica ocupam do 1º ao 5º lugar nos dois anos. Argentina, Suécia, França e Grécia saem do top 10; Turquia, Holanda, Rússia e China entram, a China saindo do 55º para o 10º lugar.</div></div>
+
+  <div class="campo"><div class="rot"><span>Corpo do post</span><button data-alvo="corpo" data-rico="1">Copiar com formatação</button></div>
+    <div id="corpo"><h2>O que está acontecendo</h2>
+<p>Em 1997, os maiores compradores do café brasileiro eram, nesta ordem, <strong>Alemanha, Estados Unidos, Itália, Japão e Bélgica</strong>. Em 2025, a lista é idêntica. Os cinco somaram <strong>49,6%</strong> do volume exportado no ano passado, ou seja, quase metade do café que o país exportou foi para um deles. E o primeiro lugar nunca saiu da mão de dois: de 1997 a 2025, a Alemanha liderou em 16 anos e os EUA em 13. Em 2026, de janeiro a outubro, os americanos estão na frente.</p>
+<p>A mudança aconteceu do 6º lugar para baixo. <strong>Argentina, Suécia, França e Grécia saíram do top 10.</strong> A Argentina, que era a 6ª em 1997, caiu para 20ª. No lugar delas entraram <strong>Turquia, Holanda, Rússia e China</strong>. A China foi do 55º lugar para o 10º; a Rússia, do 62º para o 9º. E apareceu a <strong>Colômbia</strong>: não estava nos registros de 1997 e em 2025 já era a 16ª compradora. No total, o café brasileiro foi vendido para <strong>139 países</strong> em 2025, contra 73 em 1997, e o top 10 encolheu de 75,8% para 66,8% do volume. A clientela ficou mais espalhada, mesmo com o topo parado.</p>
+<h2>O preço mudou tudo</h2>
+<p>Se a fila de compradores mudou pouco, a conta mudou muito. Em 2025, o Brasil exportou <strong>37,9 milhões de sacas</strong> (a saca, unidade usual do café, tem 60 kg), 18% a menos que o recorde de 2024 (46,2 milhões). Mesmo vendendo menos, faturou <strong>US$ 14,9 bilhões FOB</strong> (valor no porto de embarque, sem frete nem seguro), 31% a mais que em 2024 e o maior valor desde 1997, quando começa a série do Comex Stat. A saca saiu em média a <strong>US$ 394</strong>, contra US$ 246 em 2024 e US$ 190 em 1997. O fundo do poço foi 2002, quando valia US$ 46. São dólares da época, sem descontar a inflação americana. Em 2026, de janeiro a outubro, o volume ficou praticamente igual ao do mesmo período de 2025 (−1,8%), e o valor caiu 8,9%, com a saca a US$ 357 em média.</p>
+<h2>O que isso quer dizer pro Brasil</h2>
+<p>O café é o contrário do que vimos com a soja na edição passada. Lá, um comprador só (a China) leva 79% de tudo. Aqui, nenhum país passa de 15% do volume, e o café chega a 139 destinos. Mas a base continua sendo a mesma de sempre: Europa Ocidental, Estados Unidos e Japão. E a China, maior compradora do Brasil no geral, aqui é só a 10ª, com 3,0% do volume em 2025, bem longe dos 79% que leva da soja. O lugar dela no café também oscila: de janeiro a outubro de 2026, caiu para a 18ª posição.</p>
+<h2>📌 Dado pra guardar</h2>
+<blockquote>
+<p><strong>Desde 1997, o maior comprador do café brasileiro foi sempre a Alemanha ou os Estados Unidos.</strong></p>
+</blockquote>
+<hr />
+<h2>Fontes</h2>
+<ul>
+<li><strong>Exportações de café:</strong> Comex Stat, Ministério do Desenvolvimento, Indústria, Comércio e Serviços (MDIC), dados abertos. Exportação do SH4 0901 (café, mesmo torrado ou descafeinado; 99,6% do valor em 2025 é café cru em grão), por país, em kg líquido e US$ FOB, de 1997 a out/2026 (carga de 06/11/2026). Café solúvel fica em outro código (NCM 21011110) e não entra nas contas do texto. <a href="https://comexstat.mdic.gov.br/pt/geral">comexstat.mdic.gov.br</a> · API: <a href="https://api-comexstat.mdic.gov.br">api-comexstat.mdic.gov.br</a></li>
+</ul>
+<p><em>Como foi feito: os dados foram baixados da API oficial do Comex Stat. O código está aberto e qualquer pessoa pode refazer tudo.</em></p></div></div>
+
+  <footer>Dados: Comex Stat/MDIC. Conferência dos números: <code>edicao-03/checklist.md</code>.</footer>
+</main>
+<script>
+  document.querySelectorAll("button[data-alvo]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var el = document.getElementById(b.dataset.alvo), ok = false;
+      try {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        ok = document.execCommand("copy"); s.removeAllRanges();
+      } catch (e) { ok = false; }
+      if (!ok && navigator.clipboard) { navigator.clipboard.writeText(el.innerText); ok = true; }
+      var t = b.textContent; b.textContent = ok ? "Copiado ✓" : "Selecione e copie à mão"; b.classList.toggle("ok", ok);
+      setTimeout(function () { b.textContent = t; b.classList.remove("ok"); }, 1800);
+    });
+  });
+</script>
+</body>
+</html>

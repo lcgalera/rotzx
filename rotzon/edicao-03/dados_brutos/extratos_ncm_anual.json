@@ -1,0 +1,1194 @@
+{
+ "consulta": {
+  "yearStart": "1997",
+  "yearEnd": "2026",
+  "typeForm": 1,
+  "typeOrder": 2,
+  "filterList": [
+   {
+    "id": "noSh4pt"
+   }
+  ],
+  "filterArray": [
+   {
+    "item": [
+     "2101"
+    ],
+    "idInput": "noSh4pt"
+   }
+  ],
+  "rangeFilter": [],
+  "detailDatabase": [
+   {
+    "id": "noNcmpt",
+    "text": ""
+   }
+  ],
+  "monthDetail": false,
+  "metricFOB": true,
+  "metricKG": true,
+  "metricStatistic": false,
+  "monthStart": "01",
+  "monthEnd": "12",
+  "formQueue": "general",
+  "langDefault": "pt"
+ },
+ "baixado_em": "2026-11-09 15:04:19",
+ "linhas": [
+  {
+   "coAno": "2026",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "899712302",
+   "kgLiquido": "77303718"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "33608768",
+   "kgLiquido": "3942685"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "44392850",
+   "kgLiquido": "5057575"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "746893",
+   "kgLiquido": "46307"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "11606590",
+   "kgLiquido": "324724"
+  },
+  {
+   "coAno": "2026",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "23748",
+   "kgLiquido": "4825"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "1087686351",
+   "kgLiquido": "84400407"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "27840054",
+   "kgLiquido": "2849055"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "48002526",
+   "kgLiquido": "4528469"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "1286013",
+   "kgLiquido": "83132"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "17000259",
+   "kgLiquido": "460001"
+  },
+  {
+   "coAno": "2025",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "16186",
+   "kgLiquido": "2404"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "899082125",
+   "kgLiquido": "90911438"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "21091014",
+   "kgLiquido": "2814844"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "46778737",
+   "kgLiquido": "5575937"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "1063407",
+   "kgLiquido": "77446"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "11865870",
+   "kgLiquido": "325248"
+  },
+  {
+   "coAno": "2024",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "9504",
+   "kgLiquido": "274"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "675817888",
+   "kgLiquido": "79784271"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "17421473",
+   "kgLiquido": "2483988"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "42592391",
+   "kgLiquido": "6902268"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "1157035",
+   "kgLiquido": "85512"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "6563794",
+   "kgLiquido": "170873"
+  },
+  {
+   "coAno": "2023",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "15329",
+   "kgLiquido": "826"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "637054193",
+   "kgLiquido": "85101076"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "17986011",
+   "kgLiquido": "2269021"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "45864769",
+   "kgLiquido": "8299062"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "887097",
+   "kgLiquido": "86596"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "10729847",
+   "kgLiquido": "307513"
+  },
+  {
+   "coAno": "2022",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "4874",
+   "kgLiquido": "2771"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "492796323",
+   "kgLiquido": "88198163"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "15336912",
+   "kgLiquido": "2934939"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "32086552",
+   "kgLiquido": "7697204"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "1212771",
+   "kgLiquido": "142037"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "3987558",
+   "kgLiquido": "118906"
+  },
+  {
+   "coAno": "2021",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "2763",
+   "kgLiquido": "806"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "496626129",
+   "kgLiquido": "88719277"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "16521311",
+   "kgLiquido": "3555766"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "20067155",
+   "kgLiquido": "5272367"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "604258",
+   "kgLiquido": "85896"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "939444",
+   "kgLiquido": "43271"
+  },
+  {
+   "coAno": "2020",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "1106",
+   "kgLiquido": "226"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "535070156",
+   "kgLiquido": "88254091"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "28501717",
+   "kgLiquido": "6841624"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "18967562",
+   "kgLiquido": "3977191"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "318190",
+   "kgLiquido": "31960"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "743913",
+   "kgLiquido": "49969"
+  },
+  {
+   "coAno": "2019",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "76",
+   "kgLiquido": "22"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "526627144",
+   "kgLiquido": "76199554"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "37777889",
+   "kgLiquido": "8472691"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "25934899",
+   "kgLiquido": "4304446"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "425619",
+   "kgLiquido": "92091"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "90223",
+   "kgLiquido": "17194"
+  },
+  {
+   "coAno": "2018",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "86",
+   "kgLiquido": "1"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "583979306",
+   "kgLiquido": "74382253"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "47877551",
+   "kgLiquido": "9422339"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "27958780",
+   "kgLiquido": "3972743"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "220734",
+   "kgLiquido": "56083"
+  },
+  {
+   "coAno": "2017",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "69708",
+   "kgLiquido": "7842"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "574303553",
+   "kgLiquido": "84287323"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "22477899",
+   "kgLiquido": "3941295"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "19214545",
+   "kgLiquido": "3991977"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "159001",
+   "kgLiquido": "44311"
+  },
+  {
+   "coAno": "2016",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "112059",
+   "kgLiquido": "23882"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "555910993",
+   "kgLiquido": "78047584"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "19535502",
+   "kgLiquido": "3215201"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "17217915",
+   "kgLiquido": "3313785"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "200131",
+   "kgLiquido": "58434"
+  },
+  {
+   "coAno": "2015",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "210636",
+   "kgLiquido": "19668"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "563077494",
+   "kgLiquido": "74848641"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "27468573",
+   "kgLiquido": "4901938"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "18361980",
+   "kgLiquido": "3171596"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "1888330",
+   "kgLiquido": "114870"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "203492",
+   "kgLiquido": "8400"
+  },
+  {
+   "coAno": "2014",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "68",
+   "kgLiquido": "14"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "649428835",
+   "kgLiquido": "79751699"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "26317885",
+   "kgLiquido": "4328910"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "1534659",
+   "kgLiquido": "147671"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "5949519",
+   "kgLiquido": "256463"
+  },
+  {
+   "coAno": "2013",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "487270",
+   "kgLiquido": "22424"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "698374598",
+   "kgLiquido": "79952894"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "21802790",
+   "kgLiquido": "3549508"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "2050566",
+   "kgLiquido": "221017"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "3732198",
+   "kgLiquido": "175211"
+  },
+  {
+   "coAno": "2012",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "265259",
+   "kgLiquido": "14103"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "674392646",
+   "kgLiquido": "80064506"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "30512498",
+   "kgLiquido": "4799532"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "1395185",
+   "kgLiquido": "153607"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "2555900",
+   "kgLiquido": "121771"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "425316",
+   "kgLiquido": "30242"
+  },
+  {
+   "coAno": "2011",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "331118",
+   "kgLiquido": "26000"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "534967659",
+   "kgLiquido": "77137165"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "23196770",
+   "kgLiquido": "4583703"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "2273685",
+   "kgLiquido": "365628"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "2782523",
+   "kgLiquido": "92635"
+  },
+  {
+   "coAno": "2010",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "66466",
+   "kgLiquido": "5917"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "460497450",
+   "kgLiquido": "64791573"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "25613841",
+   "kgLiquido": "5379536"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "1503243",
+   "kgLiquido": "215823"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "2552740",
+   "kgLiquido": "125984"
+  },
+  {
+   "coAno": "2009",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "47444",
+   "kgLiquido": "5975"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "565634377",
+   "kgLiquido": "74729045"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "28263069",
+   "kgLiquido": "5405319"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "1253557",
+   "kgLiquido": "177943"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "2307922",
+   "kgLiquido": "143765"
+  },
+  {
+   "coAno": "2008",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "368473",
+   "kgLiquido": "13541"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "451000713",
+   "kgLiquido": "71465980"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "30920354",
+   "kgLiquido": "7982327"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "4240247",
+   "kgLiquido": "956298"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "2068074",
+   "kgLiquido": "127853"
+  },
+  {
+   "coAno": "2007",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "151505",
+   "kgLiquido": "7339"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "383004963",
+   "kgLiquido": "67809946"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "24634351",
+   "kgLiquido": "7049582"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "2945467",
+   "kgLiquido": "703659"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "151445",
+   "kgLiquido": "31517"
+  },
+  {
+   "coAno": "2006",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "99530",
+   "kgLiquido": "9059"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "362501203",
+   "kgLiquido": "77027864"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "23499760",
+   "kgLiquido": "7966720"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "9186984",
+   "kgLiquido": "2984720"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "100690",
+   "kgLiquido": "23152"
+  },
+  {
+   "coAno": "2005",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "63323",
+   "kgLiquido": "4143"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "275093504",
+   "kgLiquido": "71232234"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "18152728",
+   "kgLiquido": "7016726"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "6012574",
+   "kgLiquido": "2075822"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "46556",
+   "kgLiquido": "56038"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "111901",
+   "kgLiquido": "9089"
+  },
+  {
+   "coAno": "2004",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "13992",
+   "kgLiquido": "17490"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "213649030",
+   "kgLiquido": "63210850"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "15114678",
+   "kgLiquido": "6280161"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "1707990",
+   "kgLiquido": "627655"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "101147",
+   "kgLiquido": "17263"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "328741",
+   "kgLiquido": "91181"
+  },
+  {
+   "coAno": "2003",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "6733",
+   "kgLiquido": "3305"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "166753653",
+   "kgLiquido": "56358379"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "16083078",
+   "kgLiquido": "7258892"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "298151",
+   "kgLiquido": "191657"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "124633",
+   "kgLiquido": "42676"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "43764",
+   "kgLiquido": "38938"
+  },
+  {
+   "coAno": "2002",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "28",
+   "kgLiquido": "7"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "184889720",
+   "kgLiquido": "55314248"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "17404286",
+   "kgLiquido": "8011978"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "1439407",
+   "kgLiquido": "717150"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "78803",
+   "kgLiquido": "67659"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "576385",
+   "kgLiquido": "60669"
+  },
+  {
+   "coAno": "2001",
+   "coNcm": "21013000",
+   "noNcmpt": "Chicória torrada e outros sucedâneos torrados do café e respectivos extratos, essências e concentrados",
+   "vlFob": "138",
+   "kgLiquido": "150"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "201214467",
+   "kgLiquido": "45430322"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "17870728",
+   "kgLiquido": "6948808"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "2238963",
+   "kgLiquido": "1077827"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "102073",
+   "kgLiquido": "30569"
+  },
+  {
+   "coAno": "2000",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "84584",
+   "kgLiquido": "16797"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "210482852",
+   "kgLiquido": "43797356"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "16767638",
+   "kgLiquido": "5680945"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "3000060",
+   "kgLiquido": "2040000"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "157445",
+   "kgLiquido": "77268"
+  },
+  {
+   "coAno": "1999",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "13900",
+   "kgLiquido": "2754"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "245655948",
+   "kgLiquido": "37545533"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "21715385",
+   "kgLiquido": "4877745"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "3626933",
+   "kgLiquido": "2004500"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "83502",
+   "kgLiquido": "7114"
+  },
+  {
+   "coAno": "1998",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "5234",
+   "kgLiquido": "799"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "21011110",
+   "noNcmpt": "Café solúvel, mesmo descafeinado",
+   "vlFob": "346589821",
+   "kgLiquido": "51646434"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "21011190",
+   "noNcmpt": "Outros extratos, essências e concentrados, de café",
+   "vlFob": "29974993",
+   "kgLiquido": "8254905"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "21011200",
+   "noNcmpt": "Preparações à base de extratos, essências ou concentrados ou à base de café",
+   "vlFob": "6275668",
+   "kgLiquido": "3354876"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "21012010",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de chá",
+   "vlFob": "282895",
+   "kgLiquido": "133977"
+  },
+  {
+   "coAno": "1997",
+   "coNcm": "21012020",
+   "noNcmpt": "Extratos, essências e concentrados e preparações à base destes extratos, essências ou concentrados, à base de mate",
+   "vlFob": "17627",
+   "kgLiquido": "12634"
+  }
+ ]
+}

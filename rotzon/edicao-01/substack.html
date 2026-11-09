@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rotzOn #1 · Substack</title>
+<style>
+  :root { --bg:#f6f5f2; --card:#ffffff; --ink:#1b1b1a; --ink2:#5b5a56; --line:#e2e0da; --accent:#2a78d6; --ok:#1a7f4e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px 64px; }
+  h1.pg { font-size:22px; margin:0 0 4px; }
+  p.pg { color:var(--ink2); margin:0 0 20px; font-size:14px; }
+  ol.passos { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 18px 14px 36px; font-size:14px; color:var(--ink2); }
+  ol.passos li { margin:4px 0; }
+  .campo { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:14px 0; }
+  .rot { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+  .rot span { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink2); }
+  button { font:600 13px/1 inherit; border:1px solid var(--accent); color:var(--accent); background:#fff; border-radius:8px;
+           padding:8px 12px; cursor:pointer; min-height:36px; }
+  button.ok { border-color:var(--ok); color:var(--ok); }
+  .txt { font-size:15px; }
+  .img { border:2px dashed var(--line); border-radius:10px; padding:12px; text-align:center; color:var(--ink2); font-size:14px; }
+  .img img { max-width:100%; height:auto; display:block; margin:8px auto 0; border-radius:6px; }
+  #corpo { font-family: Georgia, "Times New Roman", serif; font-size:17px; }
+  #corpo h2 { font-family:inherit; font-size:22px; margin:1.4em 0 .4em; }
+  #corpo blockquote { border-left:3px solid var(--ink); margin:1em 0; padding:.2em 1em; }
+  #corpo a { color:var(--accent); }
+  #corpo hr { border:0; border-top:1px solid var(--line); margin:1.6em 0; }
+  footer { color:var(--ink2); font-size:12px; margin-top:24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1 class="pg">rotzOn #1: versão para o Substack</h1>
+  <p class="pg">Gerado a partir de <code>edicao-01/newsletter.md</code>. Se mudar o texto, rode de novo <code>rotzon/substack.py</code>.</p>
+
+  <ol class="passos">
+    <li>No Substack: <b>New post</b>. Cole o <b>título</b> e o <b>subtítulo</b> nos campos próprios.</li>
+    <li>No início do corpo, insira a imagem (botão de imagem → suba <code>visuais/china_vs_russia.png</code>). Cole a <b>legenda</b> no campo de legenda e o <b>texto alternativo</b> em "Alt text".</li>
+    <li>Logo abaixo da imagem, cole o <b>corpo</b>. Intertítulos, negritos, citação e links vêm junto.</li>
+    <li>Mande um e-mail de teste para você (<b>Send test email</b>) e confira no celular antes de agendar.</li>
+  </ol>
+
+  <div class="campo"><div class="rot"><span>Título</span><button data-alvo="titulo">Copiar</button></div>
+    <div class="txt" id="titulo">O agro brasileiro depende de um navio</div></div>
+
+  <div class="campo"><div class="rot"><span>Subtítulo</span><button data-alvo="subtitulo">Copiar</button></div>
+    <div class="txt" id="subtitulo">Em 2025, a China passou a Rússia como maior fornecedora de adubo do Brasil, mas só se você contar em toneladas.</div></div>
+
+  <div class="campo"><div class="rot"><span>Imagem (inserir no Substack)</span></div>
+    <div class="img">Arquivo: <code>visuais/china_vs_russia.png</code><img src="visuais/china_vs_russia.png" alt=""></div></div>
+
+  <div class="campo"><div class="rot"><span>Legenda da imagem</span><button data-alvo="legenda">Copiar</button></div>
+    <div class="txt" id="legenda">Gráfico: importações brasileiras de adubos (capítulo 31 da NCM) da China e da Rússia, em milhões de toneladas, 2015–2025. Fonte: Comex Stat/MDIC.</div></div>
+
+  <div class="campo"><div class="rot"><span>Texto alternativo (alt text)</span><button data-alvo="alt">Copiar</button></div>
+    <div class="txt" id="alt">Gráfico de linhas com as importações brasileiras de adubos da China e da Rússia, em milhões de toneladas, de 2015 a 2025. A Rússia fica acima da China em todos os anos até 2024. Em 2025 as linhas se cruzam: China com 12,0 milhões de toneladas e Rússia com 11,1 milhões.</div></div>
+
+  <div class="campo"><div class="rot"><span>Corpo do post</span><button data-alvo="corpo" data-rico="1">Copiar com formatação</button></div>
+    <div id="corpo"><h2>O que está acontecendo</h2>
+<p>Toda safra de soja, milho ou café começa com adubo, e quase todo ele chega de navio: em 2025, 99,3% das toneladas importadas entraram por via marítima. Segundo o Ministério da Agricultura, <strong>85% do fertilizante consumido no Brasil é importado</strong>. Em 2025, o país comprou lá fora <strong>45,5 milhões de toneladas</strong> de adubos, <strong>mais que o dobro</strong> (+130%) das 19,8 milhões de toneladas de 2015. A conta foi de <strong>US$ 15,5 bilhões FOB</strong>. FOB é o valor da mercadoria no porto de embarque, sem frete nem seguro.</p>
+<p>Por anos, a Rússia foi a maior vendedora. Em 2025 a China passou na frente em peso: foram <strong>12,0 milhões de toneladas</strong> chinesas contra <strong>11,1 milhões</strong> russas. Isso dá 26,3% e 24,4% de tudo o que o Brasil importou, respectivamente. Em dez anos, o volume vindo da China ficou 6,5 vezes maior. O da Rússia, 3 vezes. Somados, os dois países responderam por metade das toneladas, e com o Canadá em terceiro (11,4%) os três maiores chegam a <strong>62,1%</strong>.</p>
+<p>Só que a virada tem asterisco. <strong>Em dólares, a Rússia continuou na frente</strong>: US$ 4,0 bilhões contra US$ 2,9 bilhões da China. O motivo está no tipo de adubo. Dois terços do que vem da China são <strong>nitrogenados</strong>, que dão nitrogênio (o "N" do NPK, a sigla dos três nutrientes principais: nitrogênio, fósforo e potássio). A Rússia manda principalmente <strong>potássicos</strong> (o "K") e misturas. Na média, a tonelada chinesa saiu a US$ 243 e a russa a US$ 361. E a liderança chinesa não se firmou: de janeiro a outubro de 2026, a Rússia voltou à frente também em toneladas (7,1 milhões contra 6,6 milhões).</p>
+<p>E 2026 está mexendo no tabuleiro de novo. De janeiro a outubro, o Brasil importou 32,7 milhões de toneladas de adubo, 14,7% menos que no mesmo período de 2025. Dentro desse total, os líderes por nutriente mudaram. No potássio, o Canadá (38,2%) passou a Rússia (30,0%). No fósforo, o Marrocos (29,6%) passou o Egito (28,0%). E um nome pouco lembrado entrou no top 5 de fornecedores: o Turcomenistão, país da Ásia Central, com 6,2% das toneladas. Ou seja, o mapa de quem abastece o Brasil não é fixo e muda de um ano pro outro.</p>
+<h2>O que isso quer dizer pro Brasil</h2>
+<p>Cada nutriente tem seu "dono". No nitrogênio, a China sozinha vendeu 45,9% das toneladas em 2025. No potássio, Rússia (44,6%) e Canadá (37,2%) somaram mais de 80%. No fósforo, os líderes foram Egito e Marrocos. Ou seja, a lavoura brasileira fica exposta ao que acontece em poucos países: uma guerra, uma restrição de exportação, um porto parado. O ano de 2022 mostra o tamanho da oscilação. O Brasil importou 8% menos toneladas que em 2021 e gastou 63% a mais, US$ 24,7 bilhões, porque a tonelada média passou de US$ 365 para US$ 649. O governo tem um plano pra reduzir a dependência externa para 50% até 2050. Até lá, a safra brasileira continua começando num porto do outro lado do mundo.</p>
+<h2>📌 Dado pra guardar</h2>
+<blockquote>
+<p><strong>Em 2025, quase 1 em cada 4 toneladas de adubo que o Brasil importou veio da China, e quase outra veio da Rússia.</strong></p>
+</blockquote>
+<hr />
+<h2>Fontes</h2>
+<ul>
+<li><strong>Importações de adubos:</strong> Comex Stat, Ministério do Desenvolvimento, Indústria, Comércio e Serviços (MDIC), dados abertos. Importação, capítulo NCM 31 (adubos ou fertilizantes), por país de origem e SH4, em kg líquido e US$ FOB, de 2015 a out/2026 (carga de 06/11/2026). <a href="https://comexstat.mdic.gov.br/pt/geral">comexstat.mdic.gov.br</a> · API: <a href="https://api-comexstat.mdic.gov.br">api-comexstat.mdic.gov.br</a></li>
+<li><strong>85% importado e produção nacional de 7,21 Mt (17%) em 2024:</strong> Ministério da Agricultura e Pecuária, apresentação "Cenário da produção nacional de fertilizantes no Brasil 2025–2030" (José Carlos Polidoro), Comissão de Minas e Energia da Câmara, 30/09/2025, slides 3 e 4. <a href="https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cme/apresentacoes-em-eventos/apresentacao-de-convidados-2025/30-09-2025-16h-projeto-santa-quiteria/MAPA.pdf">PDF</a></li>
+<li><strong>Meta de 50% até 2050:</strong> Plano Nacional de Fertilizantes (Decreto 10.991/2022, alterado pelo Decreto 11.518/2023). <a href="https://www.gov.br/agricultura/pt-br/assuntos/insumos-agropecuarios/insumos-agricolas/fertilizantes/plano-nacional-de-fertilizantes">gov.br/agricultura</a></li>
+</ul>
+<p><em>Como foi feito: os dados foram baixados da API oficial do Comex Stat. O código está aberto e qualquer pessoa pode refazer tudo.</em></p></div></div>
+
+  <footer>Dados: Comex Stat/MDIC. Conferência dos números: <code>edicao-01/checklist.md</code>.</footer>
+</main>
+<script>
+  document.querySelectorAll("button[data-alvo]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var el = document.getElementById(b.dataset.alvo), ok = false;
+      try {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        ok = document.execCommand("copy"); s.removeAllRanges();
+      } catch (e) { ok = false; }
+      if (!ok && navigator.clipboard) { navigator.clipboard.writeText(el.innerText); ok = true; }
+      var t = b.textContent; b.textContent = ok ? "Copiado ✓" : "Selecione e copie à mão"; b.classList.toggle("ok", ok);
+      setTimeout(function () { b.textContent = t; b.classList.remove("ok"); }, 1800);
+    });
+  });
+</script>
+</body>
+</html>

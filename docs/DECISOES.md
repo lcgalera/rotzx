@@ -566,3 +566,11 @@ As outras perguntas ficam em "Outras perguntas".
 **Decisão:**
 - Os três workflows (rotina mensal, radar SIGET e globo) passam a rodar em `ubuntu-24.04`. Esse Ubuntu ainda tem o Python 3.9 e mantém os cálculos idênticos aos do Mac.
 - Migrar para o Python 3.12 fica para quando o 24.04 sair de suporte. Exige refazer o ambiente local e testar as dependências fixadas, sem pressa.
+
+### D59 · 09/11/2026 · rotzOn: newsletter semanal em `rotzon/`, edição #1 (fertilizantes)
+**Pedido:** lançar a rotzOn ("O mundo, explicado daqui"), newsletter semanal com um mapa ou gráfico por edição, no ângulo da frente 3 (como o Brasil se conecta ao mundo).
+- Pasta própria `rotzon/`, fora do pacote `rotzx/` e do site: cada edição tem scripts autocontidos (`baixar.py`, `calcular.py`, `graficos.py`), só com biblioteca padrão + pandas/matplotlib/pycountry, pra o autor refazer sem o resto do projeto.
+- Edição #1: importações do capítulo NCM 31 pela API do Comex Stat (mesmo formato GET de `rotzx/mundo/comex.py`), 2015–out/2026, país × SH4, kg líquido e US$ FOB. A resposta bruta fica em `dados_brutos/` com a consulta exata.
+- Gancho escolhido pelo autor: a China passou a Rússia **em toneladas em 2025**, mas não em dólares, e em jan–out/2026 a Rússia voltou à frente. O texto não arredonda isso para "a China passou a Rússia".
+- "85% importado": MAPA, apresentação na Câmara de 30/09/2025, slide 4 (PDF aberto pelo autor; o domínio da Câmara não é alcançável daqui).
+- Mapa de prévia: Natural Earth 110m via pacote npm `world-atlas@2.0.2` (o jsdelivr não é alcançável daqui). O Brasil (reimportação, 87 t) fica no total e fora do mapa.
