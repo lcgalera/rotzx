@@ -597,3 +597,29 @@ As outras perguntas ficam em "Outras perguntas".
 - Os percursos da D54 (história, ▶, produto → país → volta, Comparar).
 
 **Junto:** o teste `test_noticias_combinam_rss_e_mantem_historico` dependia da data real. A manchete de exemplo, de 04/11/2026, saiu da janela de 7 dias em 12/11 e o teste quebrou, também na `main`. O teste passa a usar um relógio fixo; o código das notícias não muda.
+
+### D61 · 13/11/2026 · Detalhamento sob demanda: série anual por parceiro, UF, via, porto e NCM
+**Pedido:** a página deve suportar a distribuição por parceiro em todos os anos (não só 2000, 2010 e 2025), recortes por UF e via ou porto, e itens NCM de 8 dígitos. A coleta fica num projeto de dados à parte; este repositório define o formato e a página.
+
+**Formato:**
+- `rotzx.detalhe.v1`, descrito em `docs/SCHEMA.md`: `dados/detalhe/indice.json`, um arquivo por produto (`prod/{codigo}.json`) e um por país (`pais/{iso3}.json`).
+- Cada bloco `{t, n, top}` traz o denominador (`t`), quantos itens a fonte registra (`n`) e os maiores (`top`); o resto vira "Outros", sem valor individual.
+- Ano ausente é "sem registro", nunca zero.
+- Os exemplos do esquema usam marcadores (`<total>`, `<valor>`), não números, porque nem exemplo pode ter número inventado.
+
+**Página:**
+- **Carga:** o índice é lido ao abrir. Cada arquivo é buscado só quando a pessoa abre o produto ou o país, com cache em memória. Sem índice, ou com falha, tudo funciona como antes.
+- **Leitura centralizada:** `distProd` e `compPais` preferem o arquivo detalhado e recuam para `produtos.js` e `historia.js`; `anosDe` e `anosPais` juntam os anos dos dois.
+- **Linha do tempo:** encaixa em todos os anos com distribuição (ex.: "2000, 2010 e 2015–2025"). Um link direto para um ano que só o detalhamento tem volta ao ano pedido quando o índice chega.
+- **Produto → país:** tabela com todos os anos e gráfico da parte do parceiro ano a ano. O eixo é contínuo, e ano fora do recorte ou sem distribuição fica em branco.
+- **Camadas:** UF, via e porto no explorador e na aba Produtos do país, cada uma com o próprio total. Itens NCM no explorador e, sob demanda, em "Detalhes" de cada SH4 (o arquivo só é buscado ao abrir).
+- **Fontes e método:** diz se o detalhamento está publicado, de quando é e quantos produtos e países cobre.
+
+**Validação:**
+- `rotzx detalhe-validar [pasta]` (`rotzx/mundo/detalhe.py`) confere schema, campos obrigatórios, ordem, soma ≤ total, valores > 0, anos, códigos de país (tabela `catalog/paises_mundo.csv`), UF e NCM, e índice × arquivos.
+- Os testes rodam o validador sobre a pasta publicada, se existir.
+
+**Verificado:**
+- Com arquivos montados a partir do download real da rotzOn (fertilizantes, importações 2015–2025, via em 2025), o SH4 3105 em 2025 confere com o site: US$ 4,71 bi, 45 fornecedores, Rússia em 1º.
+- As camadas sem dado real (UF, porto, NCM, país) foram testadas com valores inventados e marcados como tal, só no teste.
+- Sem arquivos, nada muda na página.

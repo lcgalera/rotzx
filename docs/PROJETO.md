@@ -1,8 +1,8 @@
 # rotzx — documentação do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D60). Este documento descreve o projeto inteiro: o que ele faz,
+Estado em 09/11/2026 (v0.13; decisões até D61). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D60). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
+(D1–D61). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 - Repositório: https://github.com/lcgalera/rotzx
 - Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
@@ -202,6 +202,9 @@ país definido.
   - séries `e` e `i` de 1997 a 2025;
   - `p[ano][e|i] = {t, n, top: [[iso_num, valor] ×12]}`.
 - Ano sem registro = `null`.
+- **Detalhamento sob demanda (D61):** `dados/detalhe/` (índice, `prod/{codigo}.json`, `pais/{iso3}.json`) no formato `rotzx.detalhe.v1` de
+  [`SCHEMA.md`](SCHEMA.md): distribuição por parceiro em mais anos, UF, via, porto (URF) e NCM. Gerado no projeto de dados à parte;
+  conferido com `rotzx detalhe-validar`. Sem a pasta, a página usa só os recortes 2000, 2010 e 2025.
 
 ### 7.4 Coleta
 
@@ -252,6 +255,7 @@ Se o deploy no Pages falhar:
 | `leiloes-importar arquivo.xlsx`, `contexto-atualizar`, `oportunidades [--perfil] [--top]` | leilões, contexto, relatório |
 | `mundo-atualizar [--ano A] [--historico] [--sem-noticias] [--so-noticias] [--so-relacoes]` | dados do globo (`--historico`: retrato de todos os países) |
 | `mundo-codigos [--atlas arquivo]` | gera `catalog/paises_mundo.csv` |
+| `detalhe-validar [pasta]` | confere os arquivos de detalhamento do atlas antes de publicar (D61, `docs/SCHEMA.md`) |
 | `servir` | interface local dos radares em http://127.0.0.1:8000 (o atlas fica em `/globo`) |
 
 ## 10. Como rodar

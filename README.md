@@ -11,7 +11,7 @@ e setorial (previsões registradas antes de os dados saírem, com placar de acer
 - **Registro de previsões:** [`registro/`](registro/), que só recebe acréscimos (veja "Como auditar o registro")
 - **Documentação completa:** [`docs/PROJETO.md`](docs/PROJETO.md) · **prompt para continuar com uma IA:** [`docs/PROMPT.md`](docs/PROMPT.md)
 
-**Estado (v0.13, 09/11/2026; decisões até D60)**
+**Estado (v0.13, 09/11/2026; decisões até D61)**
 
 | Parte | O que tem |
 |---|---|
@@ -61,6 +61,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # só na pr
 | `oportunidades [--perfil arq.json] [--top 30]` | Fase 3: oportunidades do SIGET para um perfil, com evidência por regra e score explicado; gera `relatorio.html` e CSVs em `data/relatorios/` (`docs/06-motor-de-oportunidades.md`) |
 | `mundo-atualizar [--ano A] [--historico] [--sem-noticias] [--so-noticias] [--so-relacoes]` | Dados do globo em `prototipos/globo/dados/`; `--historico` gera o retrato de todos os países (`docs/PROJETO.md`, seção 7) |
 | `mundo-codigos [--atlas arquivo]` | Gera `catalog/paises_mundo.csv`, a tabela que liga Comex Stat, ONU, UCDP e o mapa (D46) |
+| `detalhe-validar [pasta]` | Confere os arquivos de detalhamento do atlas (série anual por parceiro, UF, via, porto, NCM) no formato de `docs/SCHEMA.md` (D61) |
 | `siget-amostra [--n 20] [--aleatoria]` | Visão por empreendimento do SIGET (ANEEL, licença ODbL) e amostra para avaliação manual, a partir dos arquivos baixados por `fonte-explorar` |
 
 Testes: `.venv/bin/python -m pytest -q`.
@@ -144,7 +145,7 @@ historico/                 histórico do SIGET: coletas, eventos de mudança e e
 tests/                     pytest (inclui as guardas do repositório público)
 docs/01-avaliacao-inicial.md, 02-diagnostico-intelligence.md, 03-fonte-siget.md, 04-mercado-e-posicionamento.md,
 05-validacao-com-compradores.md, 06-motor-de-oportunidades.md, 07-contexto-economico.md, 08-leiloes.md, DECISOES.md,
-PROJETO.md (documentação completa), PROMPT.md (prompt para continuar com uma IA)
+PROJETO.md (documentação completa), PROMPT.md (prompt para continuar com uma IA), SCHEMA.md (formato dos arquivos de detalhamento do atlas)
 privado/, data/, site/, docs/DIARIO.md   só locais (fora do git)
 ```
 
