@@ -2,6 +2,8 @@
 
 **Estado em 09/11/2026:** esta pasta é o site público inteiro, publicado na raiz de https://lcgalera.github.io/rotzx/ (D53; `/globo/` redireciona). A descrição atual está em `docs/PROJETO.md`, seção 7.
 
+**D64 (13/11/2026):** painel produto × país com os três denominadores; controles do mapa só onde servem; no desktop só a coluna da análise rola; botões da barra estáveis.
+
 **D63 (13/11/2026):** `og.png` e meta tags de compartilhamento; título e descrição mudam conforme a tela.
 
 **D62 (13/11/2026):** botões "Exportar imagem" (PNG com título, fonte e assinatura) e "Baixar CSV" em cada seção com dados; "Copiar link" e "Incorporar" na barra da análise; `#…&embed=1` abre o modo incorporado.

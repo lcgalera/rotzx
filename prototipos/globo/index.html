@@ -124,6 +124,10 @@
   .quadro > *, .lado-mapa, .controles, .ctl { min-width: 0; }
   .controles { padding: 12px 20px 14px; border-top: 1px solid var(--rule); background: var(--surface); }
   .controles[hidden], .barra-analise[hidden] { display: none; }
+  /* D64: Produtos e Comparar só usam o ano; Fontes não usa nenhum controle do mapa */
+  body.ctl-ano .ctl .metricas { display: none; }
+  body.ctl-ano .slot-ctl .ctl { grid-template-columns: minmax(240px, 420px); justify-content: start; }
+  body.ctl-nenhum .controles, body.ctl-nenhum .slot-ctl { display: none; }
   .ctl { display: grid; gap: 10px; }
   .tempo { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 14px; align-items: center; }
   .tempo button { width: 36px; height: 34px; border: 1px solid var(--rule-2); border-radius: 50%; background: transparent; cursor: pointer; font-size: 11px; color: var(--ink-2); }
@@ -162,7 +166,14 @@
   .leg .ref-br { color: var(--muted); }
 
   /* coluna de leitura */
-  .lado-texto { background: var(--bg); overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+  .lado-texto { position: relative; background: var(--bg); overflow-y: auto; overscroll-behavior: contain; min-height: 0; }   /* relative: elementos .sr ficam presos à coluna, não esticam a página (D64) */
+  /* desktop (D64): só a coluna da análise rola; a página fica do tamanho da janela e o cabeçalho nunca sai do topo */
+  @media (min-width: 981px) and (min-height: 600px) {
+    html, body { height: 100%; overflow: hidden; }
+    body { display: flex; flex-direction: column; height: 100dvh; }
+    body > .barra { flex: none; }
+    body > .quadro { flex: 1 1 auto; height: auto; min-height: 0; }
+  }
   .sec { padding: 26px 40px; border-bottom: 1px solid var(--rule); }
   .sec:last-child { border-bottom: 0; }
   .sec h1, .sec h2 { font: 500 38px/1.08 var(--serif); margin: 10px 0 10px; letter-spacing: -.018em; text-wrap: balance; }
@@ -317,7 +328,8 @@
   .trilha { font-size: 13.5px; color: var(--ink-2); min-width: 0; flex: 1 1 260px; }
   .trilha button.link { color: var(--ink-2); }
   .trilha [aria-current] { color: var(--ink); font-weight: 500; }
-  .barra-analise .acoes { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .barra-analise .acoes { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; margin-left: auto; white-space: nowrap; }
+  #alternarMapa { min-width: 9.6em; justify-content: center; text-align: center; }   /* "Ampliar análise" e "Mostrar mapa" ocupam o mesmo espaço (D64) */
   .ano-sel { display: inline-flex; gap: 8px; align-items: center; font-size: 13.5px; color: var(--ink-2); }
   details.sobre { margin-top: 12px; font-size: 13px; color: var(--ink-2); }
   details.sobre summary, details.det summary { color: var(--muted); }
@@ -855,6 +867,7 @@ function lerURL() {
   s.prod = q.get("prod") || null; s.fluxo = q.get("fluxo") === "i" ? "i" : "e";
   s.aba = ["comercial", "produtos", "contexto"].includes(q.get("aba")) ? q.get("aba") : "comercial";
   s.vista = ["ranking", "produto", "comparar", "fontes", "lista"].includes(q.get("ver")) ? q.get("ver") : (q.get("vs") || q.get("a") ? "comparar" : s.prod ? "produto" : "inicio");
+  if (!q.get("m") && s.vista === "produto" && s.prod && !s.pais) s.m = "prod";
   ajustarAno(s);                                         // fora da cobertura ou sem recorte por parceiro: ajusta e avisa
   s.base = Math.min(Math.max(ini, s.base), fim);
   return s;
@@ -935,6 +948,8 @@ function render() {
   document.body.classList.toggle("com-vista", !st.pais && st.vista !== "inicio");
   document.body.classList.toggle("analise", analise());
   document.body.classList.toggle("amplo", amplo());
+  const modoCtl = !st.pais && st.vista === "fontes" ? "nenhum" : !st.pais && (st.vista === "comparar" || st.vista === "produto") ? "ano" : "todos";
+  document.body.classList.toggle("ctl-ano", modoCtl === "ano"); document.body.classList.toggle("ctl-nenhum", modoCtl === "nenhum");
   atualizarMeta();
   $$("[data-nav]").forEach((b) => (!st.pais && st.vista === b.dataset.nav ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
   if (!st.pais && st.vista === "fontes") $("#abrirFontes").setAttribute("aria-current", "page"); else $("#abrirFontes").removeAttribute("aria-current");
@@ -1463,8 +1478,11 @@ function painelProdutoPais(id) {
   if (agora.v == null) corpo = `<p class="resumo-txt">${agora.x ? `O total ${k === "e" ? "exportado" : "importado"} pelo Brasil deste produto em ${a} foi ${usd(agora.x.t)}.` : ""} Veja os outros anos com distribuição por parceiro abaixo, ou a relação comercial completa.</p>`;
   else {
     const peso = bil ? agora.v / bil : null;
-    corpo = `<div class="kpis"><div class="kpi"><span>${k === "e" ? "Exportações do Brasil" : "Importações do Brasil"} de ${npl}</span><b class="num"${nk("pv-" + id, agora.v)}>${usd(agora.v)}</b><small>de um total brasileiro de ${usd(agora.x.t)} no produto</small></div>
-      ${peso != null ? `<div class="kpi"><span>Parte do comércio com esse parceiro</span><b class="num">${pct(peso)}</b><small>de tudo o que o Brasil ${fluxoVerbo(k)} ${k === "e" ? "para esse parceiro" : "desse parceiro"} no ano</small></div>` : ""}</div>`;
+    const pnome = esc(nome(id)), prep = k === "e" ? "para" : "de";
+    corpo = `<div class="kpis">
+      <div class="kpi"><span>Total do Brasil no produto · ${a}</span><b class="num">${usd(agora.x.t)}</b><small>${k === "e" ? "exportado" : "importado"} ${prep} todos os ${agora.x.n} ${papelPl}</small></div>
+      <div class="kpi"><span>${k === "e" ? "Vendas" : "Compras"} ${prep} ${pnome}</span><b class="num"${nk("pv-" + id, agora.v)}>${usd(agora.v)}</b><small><b>${pct(agora.v / agora.x.t)}</b> do total do produto (${usd(agora.v)} ÷ ${usd(agora.x.t)}) · ${ord(agora.pos)} ${papel}</small></div>
+      ${peso != null ? `<div class="kpi"><span>Peso do produto no comércio com ${pnome}</span><b class="num">${pct(peso)}</b><small>de tudo o que o Brasil ${fluxoVerbo(k)} ${prep} ${pnome} no ano, todos os produtos (${usd(agora.v)} ÷ ${usd(bil)})</small></div>` : ""}</div>`;
   }
   const serieParte = lp.map((ano) => { const q = ponto(ano); return q.v != null ? q.v / q.x.t : null; });   // fora do recorte = lacuna, nunca zero
   const linhas = lp.map((ano) => { const q = ponto(ano);
