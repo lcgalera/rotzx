@@ -671,3 +671,39 @@ As outras perguntas ficam em "Outras perguntas".
 **Verificado:**
 - Chromium sem tela, em 1440×900 e 390×844: oito telas com título e descrição certos.
 - A ida e volta do estado dá igual em todas, e não há erros de console.
+
+### D64 · 13/11/2026 · Correções pós-publicação: painel produto × país, controles, rolagem e botões
+**Pedido:** quatro problemas vistos no site publicado.
+
+**1. Soja e China, 34,5% × 79,3%:**
+- O cálculo estava certo; o painel é que confundia.
+- A página do produto (`#ver=produto&prod=1201`) já mostrava US$ 43,5 bi no total e a China com 79,3%.
+- O problema estava no painel "produto em foco" dentro do país (`#pais=CHN&prod=1201`):
+  - o primeiro cartão, "Exportações do Brasil de soja · US$ 34,5 bi", parecia o total do produto;
+  - o único percentual em destaque era o peso da soja nas vendas para a China (34,5% = 34,5 ÷ 99,9).
+- Agora são três cartões, cada um com o denominador escrito:
+  - o total do Brasil no produto (todos os destinos);
+  - as vendas para o país, com a fatia no produto (79,3% = 34,5 ÷ 43,5) e a posição;
+  - o peso do produto no comércio com o país (34,5% = 34,5 ÷ 99,9).
+- O texto da história guiada e as duas telas passam a mostrar os mesmos 79,3%.
+
+**2. Controles do mapa:**
+- Em Produtos e Comparar ficam só o ano e o ▶, porque as métricas do mapa não mudam essas análises.
+- Em Fontes e método, os controles somem.
+- Em Parceiros, no país e no início, nada muda.
+- Link direto para um produto sem `m` passa a pintar o mapa pelo próprio produto.
+
+**3. Rolagem dupla:**
+- No desktop (≥ 981 px de largura e ≥ 600 px de altura), a página fica do tamanho da janela (`100dvh`, `overflow: hidden`) e só a coluna da análise rola.
+- A coluna da análise ganhou `position: relative`. Antes, os elementos só para leitor de tela (`.sr`) eram posicionados em relação à página e a esticavam, o que criava a faixa vazia abaixo.
+- No celular continua a rolagem da página inteira, com a barra da análise presa no topo.
+
+**4. Botões da barra:**
+- O grupo Copiar link / Incorporar / Ampliar análise fica preso à direita (`margin-left: auto`, sem quebra de linha).
+- "Ampliar análise" e "Mostrar mapa" ocupam a mesma largura.
+
+**Verificado:**
+- Chromium sem tela, em 1440×900 e 390×844, nas rotas `#ver=produto&prod=1201` (normal e ampliada), `#ver=comparar&a=CHN&b=USA&amplo=1`, `#ver=ranking&pais=CHN`, `#ver=ranking`, `#ver=fontes` e `#pais=CHN&prod=1201`.
+- **Rolagem e cabeçalho:** no desktop, a página não rola e o cabeçalho fica no topo, mesmo com a coluna rolada até o fim. Não há rolagem horizontal.
+- **Botões:** na troca normal → ampliado → normal, eles não se mexem.
+- **Console:** sem erros.
