@@ -404,10 +404,8 @@
     table.comp.cmp th { color: var(--ink); font-weight: 600; padding-bottom: 5px; }
     table.comp.cmp .pais-m { display: inline-flex; gap: 8px; align-items: center; color: var(--ink-2); text-align: left; }
   }
-  /* troca de tela: só a coluna de leitura cruza suavemente (o globo não é fotografado) */
-  :root { view-transition-name: none; }
-  #corpo { view-transition-name: leitura; }
-  ::view-transition-old(leitura), ::view-transition-new(leitura) { animation-duration: .16s; }
+  /* troca de tela (D60): o conteúdo antigo sai na hora e o novo aparece com um esmaecer curto, só na coluna de leitura.
+     Sem View Transitions: a foto da coluna (que rola) era desenhada por cima do cabeçalho e da barra durante a troca. */
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
     .carregando-br { opacity: 1; } .carregando-br .br-silhueta path { stroke-dashoffset: 0; fill-opacity: .12; } }
 </style>
@@ -757,9 +755,7 @@ function ir(mud, { push = true } = {}) {
   ajustarAno(st);
   const u = urlDe(st);
   if (u !== location.hash) history[push ? "pushState" : "replaceState"](null, "", u);
-  // troca de tela com um cruzamento curto da coluna de leitura (D54); mudança de ano ou métrica no mesmo lugar redesenha direto
-  if (push && document.startViewTransition && !reduzir && baseLugar() !== baseAnterior) document.startViewTransition(() => render());
-  else render();
+  render();
 }
 addEventListener("popstate", () => { guardarRolagem(); Object.assign(st, lerURL()); if (anoAjuste) history.replaceState(null, "", urlDe(st)); render(); });
 
@@ -820,6 +816,8 @@ function render() {
     : st.vista === "comparar" ? vistaComparar() : st.vista === "fontes" ? vistaFontes() : vistaInicio();
   const base = baseLugar();
   trocarConteudo($c, html, base === baseAnterior);
+  // outro lugar: o novo conteúdo esmaece por 0,18 s (o antigo já saiu do DOM); mudar ano ou métrica no mesmo lugar não pisca
+  if (!reduzir && baseAnterior !== null && base !== baseAnterior) { $c.classList.remove("entra"); void $c.offsetWidth; $c.classList.add("entra"); clearTimeout(render.tEntra); render.tEntra = setTimeout(() => $c.classList.remove("entra"), 260); }
   baseAnterior = base;
   // barra da análise: fica fora do conteúdo redesenhado, para o controle de ano não ser recriado enquanto alguém o arrasta
   $("#barra").hidden = !analise();

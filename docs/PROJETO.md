@@ -1,8 +1,8 @@
 # rotzx — documentação do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D58). Este documento descreve o projeto inteiro: o que ele faz,
+Estado em 09/11/2026 (v0.13; decisões até D60). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D58). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
+(D1–D60). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 - Repositório: https://github.com/lcgalera/rotzx
 - Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
@@ -168,7 +168,7 @@ território, Fontes e método e o botão de tema (claro, escuro ou do sistema, D
     "Detalhes" e "Sobre este dado" (D48);
   - avisos curtos para ano fora da cobertura, ano sem recorte e parâmetro inválido na URL; falha de carga com "Tentar de novo";
     carregamento com a silhueta do Brasil (D51);
-  - movimento: números que contam até o novo valor, gráficos atualizados sem ser recriados, troca de tela curta; tudo some com
+  - movimento: números que contam até o novo valor, gráficos atualizados sem ser recriados, troca de tela com esmaecer curto do conteúdo novo (D60); tudo some com
     "reduzir movimento" (D54).
 - **URL:** `#pais=RUS&prod=g-fertilizantes&fluxo=i&ano=2025` (país visto por um produto), `#ver=comparar&a=CHN&b=USA`, `&amplo=1`,
   `&aba=produtos`, `#ver=ranking&m=mud&base=2000`. Voltar, avançar e recarregar mantêm o estado; `#China`, `vs=` e os links antigos
