@@ -650,3 +650,24 @@ As outras perguntas ficam em "Outras perguntas".
 - Os valores do CSV conferem com a tela.
 - O link copiado reabre a mesma visão, e o iframe abre no modo incorporado.
 - Sem rolagem horizontal no celular e sem erros de console.
+
+### D63 · 13/11/2026 · Cartão de compartilhamento e título por tela
+**Pedido:** etapa 4 do plano de produto: meta tags OpenGraph e Twitter, e o estado completo da análise na URL.
+
+**Cartão:**
+- `og.png` (1200×630) na raiz do site: marca rotzx, o título "Como o Brasil se conecta ao mundo", a silhueta do Brasil, uma frase de escopo e as fontes de dados. Não tem números além de "desde 1997".
+- Meta tags `og:*` e `twitter:*` (`summary_large_image`), `canonical` e texto alternativo da imagem, em endereço absoluto (`https://lcgalera.github.io/rotzx/`).
+- **Limite:** o estado fica depois do `#`, e os robôs das redes não rodam JavaScript nem leem o `#`. Por isso o cartão é o mesmo para qualquer link. Um cartão por país ou produto exigiria páginas estáticas por estado ou um servidor; fica fora por ora.
+
+**Título e descrição por tela:**
+- `atualizarMeta()` troca, a cada desenho, o título da aba, a `description` e os `og`/`twitter` de título, descrição e URL.
+- Valores conforme a tela: país ("China e o Brasil"), comparação ("China × Estados Unidos"), produto e fluxo, ranking (métrica e ano) e fontes.
+- Serve a favoritos, histórico e leitores que desenham a página. O cartão das redes continua o fixo.
+
+**Estado na URL:**
+- Já refletia país, vista, ano, métrica, ano-base, produto, fluxo, comparação, aba, ampliado e `embed` (D62).
+- Conferido que abrir o link reconstrói o mesmo estado: o estado lido depois de reabrir é igual ao de antes, inclusive depois de trocar a métrica pelos controles.
+
+**Verificado:**
+- Chromium sem tela, em 1440×900 e 390×844: oito telas com título e descrição certos.
+- A ida e volta do estado dá igual em todas, e não há erros de console.

@@ -6,6 +6,24 @@
 <title>rotzx — Como o Brasil se conecta ao mundo</title>
 <meta name="description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
 <meta name="color-scheme" content="dark">
+<!-- compartilhamento (D63): os robôs das redes não rodam JS nem leem o #, então o cartão é o mesmo para todo link -->
+<link rel="canonical" href="https://lcgalera.github.io/rotzx/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rotzx">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Como o Brasil se conecta ao mundo — rotzx">
+<meta property="og:description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
+<meta property="og:url" content="https://lcgalera.github.io/rotzx/">
+<meta property="og:image" content="https://lcgalera.github.io/rotzx/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rotzx: Como o Brasil se conecta ao mundo. Mapa do Brasil e a frase: parceiros, produtos e mudanças do comércio exterior brasileiro com todos os países e territórios, desde 1997.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Como o Brasil se conecta ao mundo — rotzx">
+<meta name="twitter:description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
+<meta name="twitter:image" content="https://lcgalera.github.io/rotzx/og.png">
+<meta name="twitter:image:alt" content="rotzx: Como o Brasil se conecta ao mundo. Mapa do Brasil e a frase: parceiros, produtos e mudanças do comércio exterior brasileiro com todos os países e territórios, desde 1997.">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icone-180.png">
 <meta name="theme-color" content="#385344">
@@ -917,7 +935,7 @@ function render() {
   document.body.classList.toggle("com-vista", !st.pais && st.vista !== "inicio");
   document.body.classList.toggle("analise", analise());
   document.body.classList.toggle("amplo", amplo());
-  document.title = st.pais ? `${nome(st.pais)} e o Brasil — rotzx` : "rotzx — Como o Brasil se conecta ao mundo";
+  atualizarMeta();
   $$("[data-nav]").forEach((b) => (!st.pais && st.vista === b.dataset.nav ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
   if (!st.pais && st.vista === "fontes") $("#abrirFontes").setAttribute("aria-current", "page"); else $("#abrirFontes").removeAttribute("aria-current");
   renderControles();
@@ -1567,6 +1585,26 @@ function tabelaSerie(series, f = usd, a0 = ini, vazio = "sem registro", { unidad
   const kc = regCsv(["ano", ...series.map(([n]) => n)], anos.map((a, k) => [a, ...series.map(([, sr]) => sr[k])]), { unidade, fonte });
   return `<details class="dados" data-csv="${kc}"><summary>Ver os dados em tabela</summary><table><thead><tr><th scope="col">Ano</th>${series.map(([n]) => `<th scope="col">${esc(n)}</th>`).join("")}</tr></thead>
     <tbody>${anos.map((a, k) => `<tr><td>${a}</td>${series.map(([, s]) => `<td>${s[k] == null ? vazio : f(s[k])}</td>`).join("")}</tr>`).join("")}</tbody></table></details>`;
+}
+
+// ---------- título e descrição da tela (D63): aba do navegador, favoritos e quem lê a página já desenhada ----------
+const DESC_PADRAO = document.querySelector('meta[name="description"]').content;
+function tituloTela() {
+  const fl = st.fluxo === "e" ? "exportações" : "importações";
+  if (st.pais) return { t: `${nome(st.pais)} e o Brasil`, d: `Comércio do Brasil com ${nome(st.pais)} desde ${ini}: exportações, importações, produtos e contexto, ano ${st.ano}. Comex Stat (MDIC).` };
+  if (st.vista === "comparar" && st.a && st.b) return { t: `${nome(st.a)} × ${nome(st.b)}`, d: `${nome(st.a)} e ${nome(st.b)} lado a lado no comércio com o Brasil, ano ${st.ano}. Comex Stat (MDIC).` };
+  if (st.prod && P?.itens?.[st.prod]) return { t: `${P.itens[st.prod].nome}: ${fl} do Brasil`, d: `${st.fluxo === "e" ? "Para onde vão" : "De onde vêm"} as ${fl} brasileiras de ${P.itens[st.prod].nome.toLowerCase()}, ano ${st.ano}. Comex Stat (MDIC).` };
+  if (st.vista === "ranking") return { t: `${MET[st.m].cab} · ${st.ano}`, d: `${MET[st.m].desc[0].toUpperCase() + MET[st.m].desc.slice(1)}, ${st.ano}.` };
+  if (st.vista === "fontes") return { t: "Fontes e método", d: "De onde vêm os dados do atlas, licenças, cobertura e limites." };
+  return null;
+}
+function atualizarMeta() {
+  const x = tituloTela(), t = x ? `${x.t} — rotzx` : "rotzx — Como o Brasil se conecta ao mundo", d = x?.d || DESC_PADRAO;
+  document.title = t;
+  const pm = (sel, v) => { const m = document.querySelector(sel); if (m) m.content = v; };
+  pm('meta[name="description"]', d); pm('meta[property="og:title"]', t); pm('meta[name="twitter:title"]', t);
+  pm('meta[property="og:description"]', d); pm('meta[name="twitter:description"]', d);
+  pm('meta[property="og:url"]', urlCompleta());
 }
 
 // ---------- exportar e compartilhar (D62) ----------

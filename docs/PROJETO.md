@@ -1,8 +1,8 @@
 # rotzx — documentação do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D62). Este documento descreve o projeto inteiro: o que ele faz,
+Estado em 09/11/2026 (v0.13; decisões até D63). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D62). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
+(D1–D63). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 - Repositório: https://github.com/lcgalera/rotzx
 - Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
@@ -205,6 +205,7 @@ país definido.
 - **Detalhamento sob demanda (D61):** `dados/detalhe/` (índice, `prod/{codigo}.json`, `pais/{iso3}.json`) no formato `rotzx.detalhe.v1` de
   [`SCHEMA.md`](SCHEMA.md): distribuição por parceiro em mais anos, UF, via, porto (URF) e NCM. Gerado no projeto de dados à parte;
   conferido com `rotzx detalhe-validar`. Sem a pasta, a página usa só os recortes 2000, 2010 e 2025.
+- **Compartilhamento (D63):** `og.png` 1200×630 e meta tags OpenGraph/Twitter fixas (as redes não leem o `#`); título e descrição da aba mudam por tela.
 - **Exportar e compartilhar (D62):** PNG por gráfico (título, contexto, fonte e assinatura, no tema ativo), CSV dos números brutos
   (`;`, vírgula decimal, BOM; ausente = célula vazia), "Copiar link" com o estado da URL e "Incorporar" (`<iframe>` com `embed=1`).
 
