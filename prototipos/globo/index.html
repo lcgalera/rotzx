@@ -152,7 +152,7 @@
   .sec h3 { font: 500 22px/1.25 var(--serif); margin: 0 0 8px; letter-spacing: -.008em; text-wrap: balance; }
   .lead { color: var(--ink-2); font-size: 17px; line-height: 1.5; margin: 0; max-width: 60ch; }
   .meta { margin: 14px 0 0; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 0; }
-  .meta span + span::before { content: "·"; margin: 0 8px; }
+  .meta > span:not(:last-child)::after { content: "·"; margin: 0 8px; }   /* o separador fica no fim da linha quando ela quebra */
   .fonte { font-size: 12.5px; color: var(--muted); margin: 2px 0 14px; }
   .fonte a { color: inherit; }
   .nota { font-size: 13px; color: var(--muted); margin: 10px 0 0; max-width: 68ch; }
@@ -334,6 +334,10 @@
   .barras li.outros .lin span:first-child { color: var(--ink-2); }
   .barras li.outros small, .resto small { color: var(--muted); }
   details.resto { margin-top: 14px; } details.resto summary { cursor: pointer; font-size: 13.5px; color: var(--ink-2); }
+  .sub-camada { font: 600 12px/1.3 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); margin: 6px 0 4px; }
+  .sub-camada small { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); }
+  details.ncm > summary { cursor: pointer; list-style-position: outside; }
+  .ncm-det .barras li { padding: 6px 0 7px; } .ncm-det .barras .lin { font-size: 13px; }
   .aviso-geral { margin: 0; padding: 10px 40px; border-bottom: 1px solid var(--rule); background: var(--surface); font-size: 14px; color: var(--ink-2); }
   .aviso-geral::before, .aviso-ano::before { content: "Aviso"; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ochre); margin-right: 8px; }
   .pular { position: absolute; left: 12px; top: -60px; z-index: 50; padding: 8px 12px; background: var(--ink); color: var(--bg); border-radius: 3px; text-decoration: none; }
@@ -404,10 +408,8 @@
     table.comp.cmp th { color: var(--ink); font-weight: 600; padding-bottom: 5px; }
     table.comp.cmp .pais-m { display: inline-flex; gap: 8px; align-items: center; color: var(--ink-2); text-align: left; }
   }
-  /* troca de tela: só a coluna de leitura cruza suavemente (o globo não é fotografado) */
-  :root { view-transition-name: none; }
-  #corpo { view-transition-name: leitura; }
-  ::view-transition-old(leitura), ::view-transition-new(leitura) { animation-duration: .16s; }
+  /* troca de tela (D60): o conteúdo antigo sai na hora e o novo aparece com um esmaecer curto, só na coluna de leitura.
+     Sem View Transitions: a foto da coluna (que rola) era desenhada por cima do cabeçalho e da barra durante a troca. */
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
     .carregando-br { opacity: 1; } .carregando-br .br-silhueta path { stroke-dashoffset: 0; fill-opacity: .12; } }
 </style>
@@ -633,9 +635,86 @@ function posicao(id, m = st.m, a = st.ano) { const r = ranking(m, a); const i = 
 const anosProd = C.anos_produtos;                         // recortes com composição completa por produto (ex.: 2000, 2010, 2025)
 const nomeProd = (sh4) => C.curtos?.[sh4] || P?.itens?.[sh4]?.nome || C.sh4[sh4] || sh4;
 const oficialProd = (sh4) => C.sh4[sh4] || P?.itens?.[sh4]?.oficial || "";
-function anoProdPara(a) { const ok = anosProd.filter((x) => x <= a); return ok.length ? ok[ok.length - 1] : anosProd[0]; }
+
+// ---------- detalhe sob demanda (D61): arquivos modulares em dados/detalhe/ (formato em docs/SCHEMA.md) ----------
+// O índice diz o que existe; cada arquivo é buscado só quando a pessoa abre o produto ou o país, e fica em memória.
+// Sem índice (ou com falha de rede), a página usa só os dados de sempre: distribuição por parceiro em 2000, 2010 e 2025.
+const DET = { indice: null, arqs: new Map(), pend: new Map() };
+const SCHEMA_DET = "rotzx.detalhe.v1";
+const iso3De = (id) => H.paises[id]?.iso3;
+const detListado = (tipo, chave) => !!(chave && DET.indice?.[tipo]?.[chave]);
+function detAsync(tipo, chave) {                 // promessa do arquivo (ou null); uma busca só por arquivo
+  if (!detListado(tipo, chave)) return Promise.resolve(null);
+  const k = `${tipo}/${chave}`;
+  if (DET.arqs.has(k)) return Promise.resolve(DET.arqs.get(k));
+  if (!DET.pend.has(k)) DET.pend.set(k, fetch(`dados/detalhe/${tipo}/${encodeURIComponent(chave)}.json`)
+    .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+    .then((o) => { const ok = o && o.schema === SCHEMA_DET ? o : null; DET.arqs.set(k, ok); DET.pend.delete(k); return ok; }));
+  return DET.pend.get(k);
+}
+function det(tipo, chave) {                      // o arquivo, se já chegou; se não, pede e redesenha quando chegar
+  if (!detListado(tipo, chave)) return null;
+  const k = `${tipo}/${chave}`;
+  if (DET.arqs.has(k)) return DET.arqs.get(k);
+  if (!DET.pend.has(k)) detAsync(tipo, chave).then(() => render());
+  return null;
+}
+const esperaDet = (tipo, chave) => detListado(tipo, chave) && !DET.arqs.has(`${tipo}/${chave}`);
+const uniao = (...ls) => [...new Set(ls.flat().filter((x) => Number.isFinite(x)))].sort((a, b) => a - b);
+const anosDe = (code) => uniao(anosProd, DET.indice?.prod?.[code]?.anos_parceiros || []);        // anos com distribuição por parceiro
+const anosPais = (id) => uniao(anosProd, DET.indice?.pais?.[iso3De(id)]?.anos_produtos || []);   // anos com composição por produto
+const anoPara = (lista, a) => { const ok = lista.filter((x) => x <= a); return ok.length ? ok[ok.length - 1] : lista[0]; };
+const anosSeguidos = (l) => l.length > 1 && l[l.length - 1] - l[0] === l.length - 1;
+function descAnos(l) {                           // "2000, 2010 e 2015–2025"
+  const g = [];
+  for (const a of l) { const u = g[g.length - 1]; if (u && a === u[1] + 1) u[1] = a; else g.push([a, a]); }
+  return juntarE(g.map(([x, y]) => (x === y ? String(x) : y === x + 1 ? `${x}, ${y}` : `${x}–${y}`)));
+}
+// distribuição de um produto por parceiro num ano: o arquivo detalhado, se houver; senão os recortes de produtos.js
+function distProd(code, ano, k) { return det("prod", code)?.parceiros?.[k]?.[String(ano)] || P?.itens?.[code]?.p?.[String(ano)]?.[k] || null; }
+// composição do comércio com um país por produto num ano: o arquivo detalhado, se houver; senão historia.js
+function compPais(id, ano, k) { return det("pais", iso3De(id))?.produtos?.[k]?.[String(ano)] || C.paises[id]?.p?.[String(ano)]?.[k] || null; }
+// UF, via, porto (URF) e NCM: o ano pedido ou o mais recente antes dele que exista na camada
+function camadaAno(obj, camada, k, a) {
+  const anos = Object.keys(obj?.[camada]?.[k] || {}).map(Number).filter((x) => x <= a).sort((x, y) => x - y);
+  const ano = anos[anos.length - 1];
+  return ano ? { ano, x: obj[camada][k][String(ano)] } : null;
+}
+const UFS = { AC: "Acre", AL: "Alagoas", AP: "Amapá", AM: "Amazonas", BA: "Bahia", CE: "Ceará", DF: "Distrito Federal", ES: "Espírito Santo", GO: "Goiás",
+  MA: "Maranhão", MT: "Mato Grosso", MS: "Mato Grosso do Sul", MG: "Minas Gerais", PA: "Pará", PB: "Paraíba", PR: "Paraná", PE: "Pernambuco", PI: "Piauí",
+  RJ: "Rio de Janeiro", RN: "Rio Grande do Norte", RS: "Rio Grande do Sul", RO: "Rondônia", RR: "Roraima", SC: "Santa Catarina", SP: "São Paulo",
+  SE: "Sergipe", TO: "Tocantins" };
+// item de camada: [código, valor] ou [código, descrição, valor]
+const valItem = (it) => it[it.length - 1];
+function rotItem(camada, it) {
+  if (camada === "uf") return `${esc(UFS[it[0]] || it[0])} <small>${esc(it[0])}</small>`;
+  if (camada === "ncm") return `${esc(it.length > 2 ? it[1] : it[0])} <small>NCM ${esc(it[0])}</small>`;
+  if (camada === "urf") return `${esc(it.length > 2 ? it[1] : it[0])}`;
+  return esc(it.length > 2 ? it[1] : it[0]);
+}
+const ROT_CAMADA = { uf: ["UF de origem", "UF de destino"], via: ["Via de transporte", "Via de transporte"], urf: ["Porto ou unidade de saída", "Porto ou unidade de entrada"], ncm: ["Itens NCM (8 dígitos)", "Itens NCM (8 dígitos)"] };
+// barras de uma camada, com o total como denominador e "Outros" quando a fonte tem mais itens do que o arquivo detalha
+function blocoCamada(camada, r, k, { limite = 10, rotParte = "do total" } = {}) {
+  if (!r?.x?.top?.length) return "";
+  const x = r.x, mostra = x.top.slice(0, limite), soma = mostra.reduce((q, it) => q + valItem(it), 0), outros = x.t - soma;
+  const resto = Math.max(0, (x.n ?? x.top.length) - mostra.length);
+  return `<ol class="barras${k === "i" ? " imp" : ""}">${mostra.map((it) => { const v = valItem(it);
+      return `<li><div class="lin"><span class="pnome">${rotItem(camada, it)}</span><span class="v num">${usd(v)}</span></div>
+        <div class="trilho" aria-hidden="true"><i style="width:${(v / x.t * 100).toFixed(2)}%"></i></div><div class="parte"><b>${pct(v / x.t)}</b> ${rotParte}</div></li>`; }).join("")}
+    ${resto > 0 && outros > 0 ? `<li class="outros"><div class="lin"><span>Outros ${resto} <small>(sem valor individual)</small></span><span class="v num">${usd(outros)}</span></div><div class="parte"><b>${pct(outros / x.t)}</b> ${rotParte}</div></li>` : ""}</ol>`;
+}
+// seção "UF e via" (produto ou país): só aparece se o arquivo detalhado trouxer alguma dessas camadas
+function secaoCamadas(obj, k, a, { titulo, rotParte, chave }) {
+  const uf = camadaAno(obj, "uf", k, a), via = camadaAno(obj, "via", k, a), urf = camadaAno(obj, "urf", k, a);
+  if (!uf && !via && !urf) return "";
+  const cab = (c, r) => `<h4 class="sub-camada">${ROT_CAMADA[c][k === "e" ? 0 : 1]} · ${r.ano}${r.ano !== a ? ` <small>(dado mais recente até ${a})</small>` : ""}</h4>`;
+  return `<div class="sec" id="camadas-${esc(chave)}"><h3>${titulo}</h3>${fonteC(`${esc(obj.fonte || "Comex Stat (MDIC)")} · ${esc(obj.unidade || "US$ FOB correntes")}${obj.gerado_em ? ` · arquivo de ${esc(String(obj.gerado_em).slice(0, 10))}` : ""}`)}
+    <div class="duas">${uf ? `<div>${cab("uf", uf)}${blocoCamada("uf", uf, k, { rotParte })}</div>` : ""}
+      ${via || urf ? `<div>${via ? cab("via", via) + blocoCamada("via", via, k, { rotParte }) : ""}${urf ? cab("urf", urf) + blocoCamada("urf", urf, k, { rotParte }) : ""}</div>` : ""}</div>
+    ${sobreDado("UF = estado de origem das exportações ou de destino das importações, como o Comex Stat registra (não é necessariamente onde o produto foi feito). Via e porto = por onde a mercadoria saiu ou entrou. Cada camada usa o próprio total como denominador; o que o arquivo não detalha fica em “Outros”, sem valor individual, e não significa zero.")}</div>`;
+}
 function prodParte(id) {                                  // parte do país no total do produto escolhido (só os 12 maiores são conhecidos)
-  const x = P?.itens?.[st.prod]?.p?.[String(st.ano)]?.[st.fluxo];
+  const x = distProd(st.prod, st.ano, st.fluxo);
   if (!x) return null;
   const hit = x.top.find(([i]) => i === id);
   return hit ? hit[1] / x.t : null;
@@ -675,7 +754,7 @@ function textoRecorte(x, k) {
 }
 // estado de um país no recorte do produto: detalhado, fora do recorte (há "Outros"), ou sem registro (produto sem fluxo ou cobertura completa)
 function prodEstado(id) {
-  const x = P?.itens?.[st.prod]?.p?.[String(st.ano)]?.[st.fluxo];
+  const x = distProd(st.prod, st.ano, st.fluxo);
   if (!x) return { estado: "sem", x: null };
   const j = x.top.findIndex(([i]) => i === id);
   if (j >= 0) return { estado: "det", x, v: x.top[j][1], pos: j + 1 };
@@ -744,8 +823,9 @@ function ajustarAno(s) {
   const pedido = s.ano, [c0, c1] = cobertura(s.m);
   s.ano = Math.min(c1, Math.max(c0, s.ano));
   if (s.ano !== pedido) anoAjuste = { pedido, usado: s.ano, motivo: `${MET[s.m].rot}: dados de ${c0} a ${c1}` };
-  if ((s.m === "prod" || (s.pais && s.prod)) && !anosProd.includes(s.ano)) {
-    anoAjuste = { pedido, usado: anoProdPara(s.ano), motivo: `distribuição por parceiro só em ${juntarE(anosProd.map(String))}` }; s.ano = anoAjuste.usado;
+  const lp = s.prod ? anosDe(s.prod) : anosProd;
+  if ((s.m === "prod" || (s.pais && s.prod)) && !lp.includes(s.ano)) {
+    anoAjuste = { pedido, usado: anoPara(lp, s.ano), motivo: `distribuição por parceiro só em ${descAnos(lp)}` }; s.ano = anoAjuste.usado;
   }
 }
 const avisoAno = () => (anoAjuste ? `<p class="aviso-ano" role="status">Sem dados para ${anoAjuste.pedido} nesta análise (${anoAjuste.motivo}). Mostrando ${anoAjuste.usado}.</p>` : "");
@@ -757,9 +837,7 @@ function ir(mud, { push = true } = {}) {
   ajustarAno(st);
   const u = urlDe(st);
   if (u !== location.hash) history[push ? "pushState" : "replaceState"](null, "", u);
-  // troca de tela com um cruzamento curto da coluna de leitura (D54); mudança de ano ou métrica no mesmo lugar redesenha direto
-  if (push && document.startViewTransition && !reduzir && baseLugar() !== baseAnterior) document.startViewTransition(() => render());
-  else render();
+  render();
 }
 addEventListener("popstate", () => { guardarRolagem(); Object.assign(st, lerURL()); if (anoAjuste) history.replaceState(null, "", urlDe(st)); render(); });
 
@@ -788,7 +866,11 @@ function trocarConteudo($c, html, mesmoLugar) {
   const sig = assinGraf();
   $$(".grafico[id]", $c).forEach((el) => {
     const v = graf.get(el.id);
-    if (v && v.dataset.sig === sig) { v.setAttribute("aria-label", el.getAttribute("aria-label") || ""); el.replaceWith(v); } else el.dataset.sig = sig;
+    if (v && v.dataset.sig === sig) {                 // reaproveita o gráfico, mas com os dados novos (ex.: série que chegou do detalhamento)
+      v.setAttribute("aria-label", el.getAttribute("aria-label") || "");
+      for (const [k, x] of Object.entries(el.dataset)) v.dataset[k] = x;
+      v.dataset.sig = sig; el.replaceWith(v);
+    } else el.dataset.sig = sig;
   });
   if (!reduzir) $$("[data-k]", $c).forEach((el) => { const de = nums.get(el.dataset.k), para = +el.dataset.v; if (de != null && Number.isFinite(de) && de !== para) contar(el, de, para, FMT[el.dataset.f] || usd); });
 }
@@ -820,6 +902,8 @@ function render() {
     : st.vista === "comparar" ? vistaComparar() : st.vista === "fontes" ? vistaFontes() : vistaInicio();
   const base = baseLugar();
   trocarConteudo($c, html, base === baseAnterior);
+  // outro lugar: o novo conteúdo esmaece por 0,18 s (o antigo já saiu do DOM); mudar ano ou métrica no mesmo lugar não pisca
+  if (!reduzir && baseAnterior !== null && base !== baseAnterior) { $c.classList.remove("entra"); void $c.offsetWidth; $c.classList.add("entra"); clearTimeout(render.tEntra); render.tEntra = setTimeout(() => $c.classList.remove("entra"), 260); }
   baseAnterior = base;
   // barra da análise: fica fora do conteúdo redesenhado, para o controle de ano não ser recriado enquanto alguém o arrasta
   $("#barra").hidden = !analise();
@@ -853,7 +937,7 @@ function render() {
 let tocando = null, assinCtl = "";
 const ctl = document.createElement("div"); ctl.className = "ctl"; ctl.setAttribute("role", "group"); ctl.setAttribute("aria-label", "Métrica e ano");
 const porRecorte = () => st.m === "prod" || !!(st.pais && st.prod);      // distribuição por parceiro: só nos anos do recorte
-function anosCtx() { if (porRecorte()) return anosProd; const [c0, c1] = cobertura(st.m); return Array.from({ length: c1 - c0 + 1 }, (_, k) => c0 + k); }
+function anosCtx() { if (porRecorte()) return anosDe(st.prod); const [c0, c1] = cobertura(st.m); return Array.from({ length: c1 - c0 + 1 }, (_, k) => c0 + k); }
 function htmlMetricas() {
   return ["exp", "imp", "corrente", "part", "mud"].map((k) => `<button type="button" data-m="${k}" aria-pressed="${st.m === k}">${MET[k].rot}</button>`).join("")
     + (st.prod ? `<button type="button" data-m="prod" aria-pressed="${st.m === "prod"}">${esc(nomeCurtoMax(st.prod))}</button>` : "")
@@ -862,10 +946,10 @@ function htmlMetricas() {
 function htmlTempo() {
   const anos = anosCtx(), rec = porRecorte(), i = Math.max(0, anos.indexOf(st.ano));
   return `<div class="tempo${rec ? " recorte-t" : ""}"><button type="button" id="play" aria-label="${tocando ? "Pausar" : rec ? "Passar pelos anos do recorte" : "Avançar ano a ano"}">${tocando ? "❚❚" : "▶"}</button>
-      <div><input type="range" id="ano" min="0" max="${anos.length - 1}" step="1" value="${i}" aria-label="${rec ? `Ano do recorte por parceiro (${juntarE(anos.map(String))})` : "Ano de referência"}" aria-valuetext="${st.ano}">
-        <div class="marcas" aria-hidden="true">${(rec ? anos : [anos[0], anos[anos.length - 1]]).map((a) => `<span>${a}</span>`).join("")}</div></div>
+      <div><input type="range" id="ano" min="0" max="${anos.length - 1}" step="1" value="${i}" aria-label="${rec ? `Ano do recorte por parceiro (${descAnos(anos)})` : "Ano de referência"}" aria-valuetext="${st.ano}">
+        <div class="marcas" aria-hidden="true">${(rec && anos.length <= 6 ? anos : [anos[0], anos[anos.length - 1]]).map((a) => `<span>${a}</span>`).join("")}</div></div>
       <output id="anoOut" aria-live="off">${st.ano}</output></div>
-    ${rec ? `<p class="tempo-nota">Ano do recorte: a distribuição por parceiro existe só em ${juntarE(anosProd.map(String))}.</p>` : ""}`;
+    ${rec ? `<p class="tempo-nota">Ano do recorte: a distribuição por parceiro existe em ${descAnos(anos)}.</p>` : ""}`;
 }
 function renderControles() {
   const noSlot = amplo(), destino = noSlot ? $("#slotCtl") : $("#controles");
@@ -944,7 +1028,7 @@ function itemProduto(c, v, parte, rotuloParte, { extra = "", fluxo = "e", abrir 
   return `<li><div class="lin"><span class="pnome">${podeAbrir ? `<button type="button" class="link" data-prod-abrir="${c}" data-fluxo="${fluxo}">${nomeP}</button>` : nomeP}</span><span class="v num">${usd(v)}</span></div>
     <div class="trilho" aria-hidden="true"><i style="width:${Math.min(100, parte * 100).toFixed(2)}%"></i></div>
     <div class="parte"><b>${pct(parte)}</b> ${rotuloParte}</div>${extra ? `<div class="parte">${extra}</div>` : ""}
-    <details class="det"><summary>Detalhes<span class="sr"> de ${nomeP}</span></summary><div>${itemDetalhe(c)}</div></details></li>`;
+    <details class="det"${detListado("prod", c) ? ` data-ncm="${esc(c)}" data-fluxo="${fluxo}"` : ""}><summary>Detalhes<span class="sr"> de ${nomeP}</span></summary><div>${itemDetalhe(c)}<div class="ncm-det"></div></div></details></li>`;
 }
 // barra da análise: onde estou, ano e espaço de leitura (fica no fluxo da página, não sobre o conteúdo)
 function trilha() {
@@ -1055,7 +1139,7 @@ let observador = null, passoAtivo = "passo-brasil", cenaAtual = null, cenaTempo 
 function cenaDe(el) { try { return JSON.parse(el.dataset.cena); } catch { return null; } }
 function focoCena(c) {                 // "top" = o maior parceiro do produto no ano da cena, calculado dos dados
   if (c.foco !== "top") return c.foco || null;
-  return P?.itens?.[c.prod]?.p?.[String(c.ano)]?.[c.fluxo]?.top?.[0]?.[0] || null;
+  return distProd(c.prod, c.ano, c.fluxo)?.top?.[0]?.[0] || null;
 }
 function aplicarCena(el, ano = null) {
   const c = cenaDe(el); if (!c || st.pais || st.vista !== "inicio") return;
@@ -1143,15 +1227,15 @@ function vistaProduto() {
     <div class="chips soltos atalhos" role="group" aria-label="Produtos em destaque">${destaques.map((c) => `<button type="button" data-prod="${c}" aria-pressed="${st.prod === c}" title="${esc(P.itens[c].nome)}">${esc(rotAtalho(c))}</button>`).join("")}</div>
     ${!it ? sobreDado(`Classificação SH4 (Sistema Harmonizado, 4 dígitos), como no Comex Stat. ${Object.keys(P.itens).length} produtos e grupos: posições que passaram de US$ 50 milhões num ano em algum fluxo. Grupos somam posições inteiras, com a regra indicada em cada um.`) : ""}</div>`;
   if (!it) return cab;
-  const k = st.fluxo, serie = it[k], anoP = anosProd.includes(st.ano) ? st.ano : anoProdPara(st.ano);
-  const x = it.p?.[String(anoP)]?.[k];
+  const lp = anosDe(st.prod), k = st.fluxo, serie = it[k], anoP = lp.includes(st.ano) ? st.ano : anoPara(lp, st.ano);
+  const x = distProd(st.prod, anoP, k), dp = det("prod", st.prod), carregandoX = !x && esperaDet("prod", st.prod);
   const totBr = k === "e" ? brE(anoP) : brI(anoP);
   const rc = x ? recorteProd(x) : null;
   const rotParte = k === "e" ? "das vendas brasileiras desse produto" : "das compras brasileiras desse produto";
   return cab + `<div class="sec">
       <div class="chips" role="group" aria-label="Fluxo"><button type="button" data-fluxo="e" aria-pressed="${k === "e"}">Exportações (destinos)</button><button type="button" data-fluxo="i" aria-pressed="${k === "i"}">Importações (origens)</button></div>
       <h3 style="margin-top:18px">${k === "e" ? "Para onde o Brasil vende" : "De onde o Brasil compra"} · ${anoP}</h3>
-      <p class="nota" style="margin-top:4px">Distribuição por parceiro só em ${juntarE(anosProd.map(String))} (troque na linha do tempo); não é uma série anual.</p>
+      <p class="nota" style="margin-top:4px">Distribuição por parceiro em ${descAnos(lp)} (troque na linha do tempo)${anosSeguidos(lp) ? "" : "; não é uma série anual"}.</p>
       ${x ? `<p class="resumo-txt" style="margin-top:12px">Em ${anoP}, o Brasil ${k === "e" ? "exportou" : "importou"} ${usd(x.t)} deste produto (${pct(x.t / totBr)} de tudo o que ${k === "e" ? "exportou" : "importou"}),
           ${k === "e" ? "para" : "de"} ${x.n} países e territórios. ${bandeira(x.top[0][0])} <b>${esc(nome(x.top[0][0]))}</b> ${k === "e" ? "recebeu" : "forneceu"} ${pct(x.top[0][1] / x.t)};
           os 3 maiores somaram ${pct(x.top.slice(0, 3).reduce((q, [, v]) => q + v, 0) / x.t)}.</p>
@@ -1161,7 +1245,12 @@ function vistaProduto() {
           <div class="trilho" aria-hidden="true"><i style="width:${(v / x.t * 100).toFixed(2)}%"></i></div><div class="parte"><b>${pct(v / x.t)}</b> ${rotParte} · ${j + 1}º</div></li>`).join("")}
           ${!rc.completo ? `<li class="outros"><div class="lin"><span>Outros ${rc.outrosN} ${origensPl(k)} <small>(sem valor individual)</small></span><span class="v num">${usd(rc.outrosV)}</span></div><div class="trilho" aria-hidden="true"><i style="width:${(rc.outrosV / x.t * 100).toFixed(2)}%;opacity:.45"></i></div><div class="parte"><b>${pct(rc.outrosV / x.t)}</b> ${rotParte}</div></li>` : ""}</ol>
         ${sobreDado(`Participação = valor do parceiro ÷ total ${k === "e" ? "exportado" : "importado"} pelo Brasil deste produto em ${anoP}. Barras de 0 a 100% do total do produto. Comex Stat, US$ FOB correntes.`)}`
-        : `<div class="vazio" style="margin-top:12px">Sem ${k === "e" ? "exportação" : "importação"} registrada deste produto em ${anoP}.</div>`}</div>
+        : carregandoX ? carregando("Carregando a distribuição por parceiro") : `<div class="vazio" style="margin-top:12px">Sem ${k === "e" ? "exportação" : "importação"} registrada deste produto em ${anoP}.</div>`}</div>
+    ${dp ? secaoCamadas(dp, k, anoP, { titulo: `${k === "e" ? "De onde sai e por onde passa" : "Para onde vai e por onde entra"} · ${esc(it.nome)}`, rotParte: `${k === "e" ? "das vendas" : "das compras"} brasileiras desse produto`, chave: st.prod }) : ""}
+    ${(() => { const r = camadaAno(dp, "ncm", k, anoP); return r ? `<div class="sec"><details class="ncm" open><summary><h3 style="display:inline">${ROT_CAMADA.ncm[0]} · ${r.ano}</h3></summary>
+        ${fonteC(`Total do Brasil — todos os parceiros · ${esc(dp.fonte || "Comex Stat (MDIC)")} · ${esc(dp.unidade || "US$ FOB correntes")}`)}
+        ${blocoCamada("ncm", r, k, { limite: 15, rotParte: `${k === "e" ? "das vendas" : "das compras"} brasileiras desse produto` })}
+        ${sobreDado("NCM = Nomenclatura Comum do Mercosul, 8 dígitos; os 4 primeiros são o SH4. Os códigos NCM mudam com as revisões do Sistema Harmonizado e da TEC: compare anos distantes com cuidado.")}</details></div>` : ""; })()}
     <div class="sec"><h3>${fluxoRot(k)} brasileiras de ${esc(it.nome.toLowerCase())}, ${ini}–${fim}</h3>${fonteC(`Total do Brasil — todos os parceiros · série anual · Comex Stat · US$ correntes, sem correção pela inflação`)}
       <div class="grafico" id="gProd" role="img" aria-label="${esc(`${it.nome}: ${k === "e" ? "exportações" : "importações"} do Brasil de ${ini} a ${fim}; ${ini}: ${usd(em(serie, ini))}; ${fim}: ${usd(em(serie, fim))}`)}"></div>
       ${tabelaSerie([[`${fluxoRot(k)} brasileiras (total)`, serie]])}${sobreDado(`Valores em dólares correntes: uma alta em valor não mostra, sozinha, alta em volume físico. ${NOTA_SH}`)}</div>`;
@@ -1185,9 +1274,9 @@ function vistaComparar() {
   const ta = trocas(a, ano), tb = trocas(b, ano);
   const pm = (id) => `<span class="pais-m"><span class="ponto"></span>${esc(nome(id))}</span>`;   // no celular, o nome vai junto do valor
   const lin = (rot, f) => `<tr><th scope="row">${rot}</th><td class="ser-a">${pm(a)}<span>${f(ta, a)}</span></td><td class="ser-b">${pm(b)}<span>${f(tb, b)}</span></td></tr>`;
-  const anoP = anoProdPara(ano);
+  const lc = anosPais(a).filter((x) => anosPais(b).includes(x)), anoP = anoPara(lc, ano);
   const prods = (id, k) => {
-    const x = C.paises[id]?.p?.[String(anoP)]?.[k];
+    const x = compPais(id, anoP, k);
     if (!x) return `<div class="vazio">Sem ${k === "e" ? "exportações" : "importações"} registradas em ${anoP}.</div>`;
     return `<ol class="barras${k === "i" ? " imp" : ""}">${x.top.slice(0, 5).map(([c, v]) => itemProduto(c, v, v / x.t, k === "e" ? "das vendas do Brasil a esse parceiro" : "das compras do Brasil desse parceiro", { fluxo: k })).join("")}</ol>`;
   };
@@ -1204,7 +1293,7 @@ function vistaComparar() {
       <div class="grafico" id="gCmpExp" role="img" aria-label="${esc(`Exportações do Brasil para ${nome(a)} e ${nome(b)} de ${ini} a ${fim}: em ${fim}, ${usd(em(C.paises[a]?.e, fim))} e ${usd(em(C.paises[b]?.e, fim))}`)}"></div>
       ${tabelaSerie([[nome(a), C.paises[a]?.e || Array(fim - ini + 1).fill(null)], [nome(b), C.paises[b]?.e || Array(fim - ini + 1).fill(null)]])}</div>
     <div class="sec"><h3>O que o Brasil vende a cada um · ${anoP}</h3>
-      <p class="nota">Composição por produto só em ${juntarE(anosProd.map(String))}; ${anoP !== ano ? `para ${ano}, mostra-se ${anoP} (o recorte mais próximo).` : "não é uma série anual."}</p>
+      <p class="nota">Composição por produto em ${descAnos(lc)}; ${anoP !== ano ? `para ${ano}, mostra-se ${anoP} (o recorte anterior mais próximo).` : anosSeguidos(lc) ? "mesmo ano para os dois." : "não é uma série anual."}</p>
       <div class="duas"><div>${cabCol(a)}${prods(a, "e")}</div><div>${cabCol(b)}${prods(b, "e")}</div></div>
       ${sobreDado("Participação de cada produto = valor do produto ÷ total que o Brasil vendeu ao país no ano (composição bilateral). Mostram-se os 5 maiores.")}</div>
     <div class="sec"><h3>O que o Brasil compra de cada um · ${anoP}</h3>
@@ -1221,6 +1310,9 @@ function vistaFontes() {
     <div class="sec"><dl class="fontes">
       <dt>Comércio exterior — Comex Stat (MDIC)</dt><dd>Exportações e importações do Brasil por país, ${ini}–${fim}, em US$ FOB correntes (sem correção pela inflação: alta em valor não prova alta em volume). Ano sem registro aparece como "sem registro", nunca como zero. Os totais do Brasil incluem operações sem país definido (provisão de navios e aeronaves, por exemplo).</dd>
       <dt>Produtos — Comex Stat, SH4</dt><dd>Composição completa por país e produto em ${anosProd.join(", ")} (o total bilateral, denominador das participações, é exato). No painel de cada país aparecem os 10 maiores produtos; no explorador, os 12 maiores parceiros de cada produto, mais "outros". Séries anuais do Brasil por produto de ${ini} a ${fim}. Nomes curtos revisados; o nome oficial e o código ficam disponíveis. ${NOTA_SH} No explorador, os parceiros fora dos 12 maiores de cada produto aparecem somados em "Outros": sem valor individual, o que não significa ausência de comércio. As participações por parceiro usam o total com país identificado; a série anual do Brasil pode ser maior, porque inclui operações sem país definido (como provisões para navios e aeronaves).</dd>
+      <dt>Detalhamento sob demanda (UF, via, porto, NCM e mais anos)</dt><dd>${DET.indice
+        ? `Arquivo de ${esc(String(DET.indice.gerado_em || "").slice(0, 10))} (${esc(DET.indice.fonte || "Comex Stat (MDIC)")}): ${Object.keys(DET.indice.prod || {}).length} produtos e ${Object.keys(DET.indice.pais || {}).length} países com detalhamento. Cada arquivo é carregado só quando a página precisa dele.`
+        : "Ainda não publicado neste retrato: a página mostra a distribuição por parceiro em " + juntarE(anosProd.map(String)) + " e não tem recortes por UF, via, porto ou NCM."}</dd>
       <dt>Participação e concentração</dt><dd><b>Destinos:</b> exportações para o país ÷ exportações totais do Brasil. <b>Origens:</b> importações do país ÷ importações totais. <b>Composição bilateral:</b> produto ÷ total trocado com aquele país. <b>Fornecedores de um produto:</b> importações do produto vindas do país ÷ importações totais do produto. Mudanças de participação em pontos percentuais (p.p.). Participação alta indica concentração, não vulnerabilidade: para isso seriam precisos substituibilidade, criticidade e oferta alternativa, que esta base não mede. Por isso não há nota de risco.</dd>
       <dt>Votos na ONU — Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0)</dt><dd>Concordância com o Brasil nas votações nominais da Assembleia Geral, ${H.onu.inicio}–${H.onu.fim} (voto igual = 1; abstenção de um dos dois = 0,5). Muda com a pauta do ano e não equivale a aliança.</dd>
       <dt>Conflitos armados — UCDP/PRIO (CC BY 4.0)</dt><dd>${H.conflitos.inicio}–${H.conflitos.fim}: conflitos com um governo de um dos lados e 25+ mortes em combate no ano. Separados: no território do país, como lado principal e com tropas de apoio (inclui missões multinacionais, como as de paz da ONU). Não é pontuação de risco comercial. Países que não existem mais aparecem nas fronteiras de hoje.</dd>
@@ -1244,10 +1336,10 @@ function resumoPais(id, a) {
     return frases;
   }
   // parte e posição nas exportações e importações ficam só nos números logo abaixo (D54); a frase fala do que eles não dizem
-  const ap = anoProdPara(a), x = C.paises[id]?.p?.[String(ap)]?.e;
+  const lpa = anosPais(id), ap = anoPara(lpa, a), x = compPais(id, ap, "e");
   if (x && x.top.length) {
     const tres = x.top.slice(0, Math.min(3, x.top.length)), s = tres.reduce((q, [, v]) => q + v, 0) / x.t;
-    const quando = `${ap}${ap !== a ? ` (composição por produto disponível em ${anosProd.join(", ")})` : ""}`;
+    const quando = `${ap}${ap !== a ? ` (composição por produto disponível em ${descAnos(lpa)})` : ""}`;
     // nome curto revisado na frase; sem ele, não se encurta o nome oficial por conta própria: a lista completa está na aba Produtos
     if (tres.every(([c]) => C.curtos?.[c])) frases.push(`As vendas brasileiras para lá em ${quando} se concentraram em ${juntarE(tres.map(([c]) => `<span title="${esc(oficialProd(c))} (SH4 ${c})">${esc(nomeProd(c).toLowerCase())}</span>`))}: <b>${pct(s)}</b> do total exportado para esse parceiro.`);
     else frases.push(`Em ${quando}, os ${tres.length} produtos mais vendidos pelo Brasil para esse parceiro somaram <b>${pct(s)}</b> do total exportado para lá (lista na aba Produtos e concentração).`);
@@ -1290,8 +1382,8 @@ function painelProdutoPais(id) {
   if (!P) return topo(esperaProdutos("Carregando os dados do produto"));
   const it = P.itens[st.prod];
   if (!it) return topo(`<div class="vazio">Produto "${esc(st.prod)}" não encontrado na base.</div><div class="botoes"><button class="btn" type="button" data-ver-completo>Ver a relação comercial completa</button></div>`);
-  const k = st.fluxo, a = anosProd.includes(st.ano) ? st.ano : anoProdPara(st.ano), np = esc(it.nome), npl = np.toLowerCase();
-  const dist = (ano) => it.p?.[String(ano)]?.[k];
+  const lp = anosDe(st.prod), k = st.fluxo, a = lp.includes(st.ano) ? st.ano : anoPara(lp, st.ano), np = esc(it.nome), npl = np.toLowerCase();
+  const dist = (ano) => distProd(st.prod, ano, k);
   const ponto = (ano) => { const x = dist(ano); if (!x) return { x: null }; const j = x.top.findIndex(([i]) => i === id); return { x, v: j >= 0 ? x.top[j][1] : null, pos: j >= 0 ? j + 1 : null }; };
   const agora = ponto(a), bil = em(C.paises[id]?.[k], a);
   const papel = k === "e" ? "destino" : "fornecedor", papelPl = k === "e" ? "destinos" : "fornecedores";
@@ -1299,7 +1391,8 @@ function painelProdutoPais(id) {
   const fluxoTxt = k === "e" ? "exportações brasileiras" : "importações brasileiras";
   // posição e parte calculadas dos dados do ano; "principal" só quando é de fato o 1º
   let destaque;
-  if (!agora.x) destaque = `<p class="pos-prod">Sem ${k === "e" ? "exportação" : "importação"} brasileira registrada de ${npl} em ${a}.</p>`;
+  if (!agora.x && esperaDet("prod", st.prod)) destaque = carregando("Carregando a distribuição por parceiro");
+  else if (!agora.x) destaque = `<p class="pos-prod">Sem ${k === "e" ? "exportação" : "importação"} brasileira registrada de ${npl} em ${a}.</p>`;
   else if (agora.v == null) destaque = recorteProd(agora.x).completo
     ? `<p class="pos-prod">Sem registro de ${k === "e" ? "venda" : "compra"} brasileira de ${npl} ${k === "e" ? "para esse parceiro" : "desse parceiro"} em ${a} <span>(todos os ${agora.x.n} ${origensPl(k)} do ano estão detalhados)</span></p>`
     : `<p class="pos-prod">Fora do recorte detalhado em ${a} <span>(o recorte mostra os ${agora.x.top.length} maiores ${papelPl} de ${npl}, entre ${agora.x.n}; o valor desse parceiro está somado em “Outros” e não significa zero)</span></p>`;
@@ -1314,13 +1407,15 @@ function painelProdutoPais(id) {
     corpo = `<div class="kpis"><div class="kpi"><span>${k === "e" ? "Exportações do Brasil" : "Importações do Brasil"} de ${npl}</span><b class="num"${nk("pv-" + id, agora.v)}>${usd(agora.v)}</b><small>de um total brasileiro de ${usd(agora.x.t)} no produto</small></div>
       ${peso != null ? `<div class="kpi"><span>Parte do comércio com esse parceiro</span><b class="num">${pct(peso)}</b><small>de tudo o que o Brasil ${fluxoVerbo(k)} ${k === "e" ? "para esse parceiro" : "desse parceiro"} no ano</small></div>` : ""}</div>`;
   }
-  const linhas = anosProd.map((ano) => { const q = ponto(ano);
+  const serieParte = lp.map((ano) => { const q = ponto(ano); return q.v != null ? q.v / q.x.t : null; });   // fora do recorte = lacuna, nunca zero
+  const linhas = lp.map((ano) => { const q = ponto(ano);
     return `<tr${ano === a ? ' aria-current="true" class="atual"' : ""}><td>${ano}</td><td>${!q.x ? "sem registro do produto" : q.v == null ? (recorteProd(q.x).completo ? "sem registro" : "fora do recorte detalhado") : usd(q.v)}</td><td>${q.v != null ? pct(q.v / q.x.t) : "—"}</td><td>${q.v != null ? `${ord(q.pos)} de ${q.x.n}` : "—"}</td></tr>`; }).join("");
   return cab + `<div class="sec">${corpo}
       ${sobreDado(`${itemDetalhe(st.prod)}<br>Parte no total brasileiro = valor com o parceiro ÷ total ${k === "e" ? "exportado" : "importado"} pelo Brasil deste produto no ano. Parte do comércio com o parceiro = valor do produto ÷ tudo o que o Brasil ${fluxoVerbo(k)} ${k === "e" ? "para esse parceiro" : "desse parceiro"} no ano. Comex Stat, US$ FOB correntes.`)}</div>
     <div class="sec"><h3>Nos anos com distribuição por parceiro</h3>
+      ${lp.length >= 4 ? `<div class="grafico baixo" id="gParteProd" role="img" data-anos="${lp.join(",")}" data-serie="${serieParte.map((v) => (v == null ? "" : v.toFixed(6))).join(",")}" aria-label="${esc(`Parte de ${nome(id)} no total brasileiro de ${it.nome} (${k === "e" ? "exportações" : "importações"}), ${descAnos(lp)}; anos fora do recorte detalhado ficam em branco`)}"></div>` : ""}
       <table class="comp" style="margin-top:10px"><thead><tr><th scope="col">Ano</th><th scope="col">Valor</th><th scope="col">Parte no total do produto</th><th scope="col">Posição</th></tr></thead><tbody>${linhas}</tbody></table>
-      <p class="nota">Só ${juntarE(anosProd.map(String))} têm a distribuição por parceiro (troque na linha do tempo): não há série anual por país para este produto. "Fora do recorte detalhado" não é zero.</p></div>
+      <p class="nota">Distribuição por parceiro em ${descAnos(lp)} (troque na linha do tempo)${anosSeguidos(lp) ? "" : ": não há série anual por país para este produto"}. "Fora do recorte detalhado" não é zero e aparece em branco no gráfico.</p></div>
     <div class="sec"><h3>${fluxoRot(k)} brasileiras de ${npl}, ${ini}–${fim}</h3>${fonteC("Total do Brasil — todos os parceiros, não só esse país · série anual · Comex Stat · US$ correntes")}
       <div class="grafico" id="gProd" role="img" aria-label="${esc(`${it.nome}: ${k === "e" ? "exportações" : "importações"} totais do Brasil, todos os parceiros, de ${ini} a ${fim}`)}"></div>${tabelaSerie([[`${fluxoRot(k)} brasileiras (total)`, it[k]]])}</div>`;
 }
@@ -1346,26 +1441,29 @@ function abaComercial(id, a) {
       ${tabelaSerie([["% das exportações do Brasil", sh("e")], ["% das importações do Brasil", sh("i")]], pct)}</div>`;
 }
 function abaProdutos(id, a) {
-  const d = C.paises[id];
-  if (!d?.p) return `<div class="sec"><div class="vazio">Sem composição por produto para este parceiro nos anos disponíveis (${anosProd.join(", ")}).</div></div>`;
-  const ap = anosProd.includes(st.ano) ? st.ano : anoProdPara(a), nm = esc(nome(id));
+  const d = C.paises[id], i3 = iso3De(id), lpa = anosPais(id), dpa = det("pais", i3);
+  if (!d?.p && !detListado("pais", i3)) return `<div class="sec"><div class="vazio">Sem composição por produto para este parceiro nos anos disponíveis (${descAnos(lpa)}).</div></div>`;
+  const ap = lpa.includes(st.ano) ? st.ano : anoPara(lpa, a), nm = esc(nome(id));
   const bloco = (k) => {
-    const x = d.p[String(ap)]?.[k];
+    const x = compPais(id, ap, k);
+    if (!x && esperaDet("pais", i3)) return carregando("Carregando a composição do ano");
     if (!x) return `<div class="vazio">Sem ${k === "e" ? "exportações" : "importações"} registradas em ${ap}.</div>`;
     const t5 = x.top.slice(0, 5).reduce((q, [, v]) => q + v, 0) / x.t;
     return `<p class="resumo-txt" style="font-size:14.5px">${usd(x.t)} em ${x.n} produtos. Os 5 maiores somam <b>${pct(t5)}</b> desse total.</p>
       <ol class="barras${k === "i" ? " imp" : ""}">${x.top.map(([c, v]) => {
-        const q = P?.itens?.[c]?.p?.[String(ap)]?.[k], h = q?.top.find(([i]) => i === id);
+        const q = distProd(c, ap, k), h = q?.top.find(([i]) => i === id);
         const extra = h ? `<b>${pct(h[1] / q.t)}</b> ${k === "e" ? "das vendas" : "das compras"} brasileiras desse produto` : "";
         return itemProduto(c, v, v / x.t, k === "e" ? "das vendas do Brasil a esse parceiro" : "das compras do Brasil desse parceiro", { extra, fluxo: k });
       }).join("")}</ol>`;
   };
   garantirP();
   return `<div class="sec"><h3>O que o Brasil vende e compra · ${ap}</h3>
-      <p class="nota">Composição por produto só em ${juntarE(anosProd.map(String))}; ${ap !== a ? `para ${a}, mostra-se ${ap} (o recorte mais próximo).` : "não é uma série anual."}</p>
+      <p class="nota">Composição por produto em ${descAnos(lpa)}; ${ap !== a ? `para ${a}, mostra-se ${ap} (o recorte anterior mais próximo).` : anosSeguidos(lpa) ? "série anual." : "não é uma série anual."}</p>
       ${sobreDado(`Duas participações diferentes: <b>das vendas do Brasil a esse parceiro / das compras do Brasil desse parceiro</b> = valor do produto ÷ total trocado com o país no ano (composição bilateral). <b>Das vendas/compras brasileiras desse produto</b> = valor com o país ÷ total do Brasil daquele produto (aparece quando o país está no recorte detalhado do produto, os 12 maiores parceiros). Comex Stat, US$ FOB correntes; classificação SH4.`)}</div>
     <div class="duas-amplo"><div class="sec"><h3>O que o Brasil vende</h3>${bloco("e")}</div>
-    <div class="sec"><h3>O que o Brasil compra</h3>${bloco("i")}</div></div>`;
+    <div class="sec"><h3>O que o Brasil compra</h3>${bloco("i")}</div></div>
+    ${dpa ? secaoCamadas(dpa, "e", a, { titulo: "Vendas a esse parceiro: de onde saem e por onde passam", rotParte: "das vendas do Brasil a esse parceiro", chave: i3 + "-e" })
+      + secaoCamadas(dpa, "i", a, { titulo: "Compras desse parceiro: para onde vão e por onde entram", rotParte: "das compras do Brasil desse parceiro", chave: i3 + "-i" }) : ""}`;
 }
 function abaContexto(id, a) {
   const u = H.onu.paises[id], k = H.conflitos.paises[id], w = H.omc[id], e = H.economia[id];
@@ -1426,6 +1524,17 @@ function ligarConteudo($c) {
   $$("[data-pais]", $c).forEach((b) => (b.onclick = () => abrirPais(b.dataset.pais)));
   // fornecedor/destino de um produto: o país abre visto por esse produto, fluxo e ano (D48)
   $$("[data-pais-prod]", $c).forEach((b) => (b.onclick = () => ir({ pais: b.dataset.paisProd, vista: "produto", aba: "comercial" })));
+  // itens NCM de um SH4: o arquivo do produto só é buscado quando alguém abre "Detalhes"
+  $$("details.det[data-ncm]", $c).forEach((d) => d.addEventListener("toggle", () => {
+    if (!d.open || d.dataset.ncmPronto) return;
+    const alvo = $(".ncm-det", d); alvo.innerHTML = carregando("Carregando os itens NCM");
+    detAsync("prod", d.dataset.ncm).then((o) => {
+      d.dataset.ncmPronto = "1";
+      const r = camadaAno(o, "ncm", d.dataset.fluxo, st.ano);
+      alvo.innerHTML = r ? `<p class="nota" style="margin:8px 0 2px">${ROT_CAMADA.ncm[0]} · total do Brasil, todos os parceiros · ${r.ano}</p>${blocoCamada("ncm", r, d.dataset.fluxo, { limite: 8, rotParte: "do total brasileiro desse SH4" })}`
+        : `<p class="nota" style="margin:8px 0 0">Itens NCM: dados não disponíveis para este ano.</p>`;
+    });
+  }));
   $$("[data-recarregar-prod]", $c).forEach((b) => (b.onclick = () => { falhaP = false; carregandoP = null; render(); }));
   $$("[data-voltar-produto]", $c).forEach((b) => (b.onclick = () => ir({ pais: null, vista: "produto", m: "prod" })));
   $$("[data-ver-completo]", $c).forEach((b) => (b.onclick = () => ir({ prod: null, m: "corrente", aba: "comercial", vista: "inicio" })));
@@ -1438,11 +1547,11 @@ function ligarConteudo($c) {
   $$("[data-cena-ano]", $c).forEach((b) => (b.onclick = () => { const p = b.closest(".passo"); clearTimeout(cenaTempo); passoAtivo = p.id; aplicarCena(p, +b.dataset.cenaAno); }));
   if ($("#buscaInicio", $c)) autocompletar($("#buscaInicio", $c), $("#buscaInicioLista", $c), buscarPais, (id) => abrirPaisGeral(id));
   $$("[data-fluxo]", $c).forEach((b) => { if (!b.dataset.prodAbrir) b.onclick = () => ir({ fluxo: b.dataset.fluxo }, { push: false }); });
-  $$("[data-prod]", $c).forEach((b) => (b.onclick = () => ir({ prod: b.dataset.prod, m: "prod", ano: anosProd.includes(st.ano) ? st.ano : fim })));
+  $$("[data-prod]", $c).forEach((b) => (b.onclick = () => ir({ prod: b.dataset.prod, m: "prod", ano: anosDe(b.dataset.prod).includes(st.ano) ? st.ano : fim })));
   $$("[data-prod-abrir]", $c).forEach((b) => (b.onclick = () => ir({ vista: "produto", prod: b.dataset.prodAbrir, fluxo: b.dataset.fluxo, m: "prod", pais: null })));
   const rt = $("#rankTodos", $c); if (rt) rt.onclick = () => { rankTodos = !rankTodos; render(); };
   const bs = $("#baseSel", $c); if (bs) bs.onchange = () => ir({ base: +bs.value }, { push: false });
-  if ($("#buscaProd", $c) && P) autocompletar($("#buscaProd", $c), $("#buscaProdLista", $c), (q) => buscarProduto(q), (c) => ir({ prod: c, m: "prod", ano: anosProd.includes(st.ano) ? st.ano : fim }));
+  if ($("#buscaProd", $c) && P) autocompletar($("#buscaProd", $c), $("#buscaProdLista", $c), (q) => buscarProduto(q), (c) => ir({ prod: c, m: "prod", ano: anosDe(c).includes(st.ano) ? st.ano : fim }));
   // comparação: cada campo exclui o país escolhido no outro (não dá para comparar um país com ele mesmo)
   if ($("#cmpA", $c)) autocompletar($("#cmpA", $c), $("#cmpALista", $c), (q) => buscarPais(q).filter((x) => x.v !== st.b), (id) => ir({ a: id }));
   if ($("#cmpB", $c)) autocompletar($("#cmpB", $c), $("#cmpBLista", $c), (q) => buscarPais(q).filter((x) => x.v !== st.a), (id) => ir({ b: id }));
@@ -1506,7 +1615,8 @@ function renderLista() {
 function renderListaProd() {
   const L = $("#lista"), aviso = semGlobo ? `<p class="aviso-3d" role="status">O globo 3D não abriu neste navegador; a lista mostra a mesma métrica e o mesmo ano.</p>` : "";
   if (!P) { L.innerHTML = aviso + (falhaP ? falhaProdutos() : carregando("Carregando os dados de produtos")); return; }
-  const x = P.itens[st.prod]?.p?.[String(st.ano)]?.[st.fluxo], k = st.fluxo;
+  const x = distProd(st.prod, st.ano, st.fluxo), k = st.fluxo;
+  if (!x && esperaDet("prod", st.prod)) { L.innerHTML = aviso + carregando("Carregando a distribuição por parceiro"); return; }
   if (!x) { L.innerHTML = aviso + `<div class="vazio">Sem ${k === "e" ? "exportação" : "importação"} brasileira registrada de ${esc(nomeProd(st.prod).toLowerCase())} em ${st.ano}.</div>`; return; }
   const r = recorteProd(x), det = x.top.map(([id, v]) => [id, v / x.t]);
   const resto = IDS.filter((id) => !x.top.some(([i]) => i === id)).sort((a, b) => nome(a).localeCompare(nome(b)));
@@ -1609,6 +1719,14 @@ function desenharGraficos(forcar = false) {
         series: [{ name: "conflito no território", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.t ? 2 : null)), itemStyle: { color: (p) => (k[p.name]?.t >= 2 ? PAL.guerra : PAL.conflito) }, markLine: marca(false, H.conflitos.inicio, H.conflitos.fim) },
           { name: "lado principal", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.l ? 1 : null)), itemStyle: { color: PAL.rampa.onu[1] } },
           { name: "tropas de apoio (inclui missões de paz)", type: "scatter", symbol: "rect", symbolSize: [5, 14], data: lin((x) => (x.a ? 0 : null)), itemStyle: { color: mistura(PAL.imp, PAL.bg, 0.35) } }] }); }
+  }
+  const gpp = $("#gParteProd");
+  if (gpp) {
+    // eixo com todos os anos do intervalo: ano sem distribuição por parceiro fica em branco (o espaço entre 2000 e 2010 é real)
+    const anos = gpp.dataset.anos.split(",").map(Number), por = new Map(gpp.dataset.serie.split(",").map((v, j) => [anos[j], v === "" ? null : +v]));
+    const a0 = anos[0], a1 = anos[anos.length - 1], vals = Array.from({ length: a1 - a0 + 1 }, (_, j) => por.get(a0 + j) ?? null);
+    novo("#gParteProd", { tooltip: dica(pct), xAxis: eixoX(a0, a1), yAxis: eixoY(pctEixo),
+      series: [{ ...linha("Parte no total do produto", vals, st.fluxo === "e" ? PAL.exp : PAL.imp, { curto: "", larg: 2 }), endLabel: { show: false } }] });
   }
   if (P && st.prod && P.itens[st.prod] && $("#gProd")) {
     const it = P.itens[st.prod], k = st.fluxo, rot = `${fluxoRot(k)} brasileiras (total)`;   // só o fluxo da análise: título e gráfico dizem a mesma coisa
@@ -1729,6 +1847,16 @@ autocompletar($("#busca"), $("#buscaLista"), buscarPais, (id) => { $("#busca").v
 Object.assign(st, lerURL());
 if (location.hash && (!location.hash.includes("=") || anoAjuste)) history.replaceState(null, "", urlDe(st));   // converte #China em #pais=CHN…; ano ajustado vai para a URL
 render(true);
+fetch("dados/detalhe/indice.json").then((r) => (r.ok ? r.json() : null)).catch(() => null)
+  .then((o) => {
+    if (o?.schema !== SCHEMA_DET) return;
+    DET.indice = o;
+    // link direto para um ano que só o detalhamento tem (ex.: 2018): a página ajustou antes de o índice chegar; volta ao ano pedido
+    if (anoAjuste && st.prod && (st.m === "prod" || st.pais) && anosDe(st.prod).includes(anoAjuste.pedido)) {
+      st.ano = anoAjuste.pedido; anoAjuste = null; history.replaceState(null, "", urlDe(st));
+    }
+    render();
+  });
 $(".area").insertAdjacentHTML("beforeend", `<div class="carga-globo" id="cargaGlobo">${carregando("Carregando o mapa")}</div>`);
 (async () => {
   try {

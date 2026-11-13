@@ -232,6 +232,8 @@ def main(argv=None):
     mu.add_argument("--so-relacoes", action="store_true", help="só votos na ONU, disputas na OMC e conflitos armados (D42, D43)")
     mc = sub.add_parser("mundo-codigos", help="D46: gera catalog/paises_mundo.csv (ISO, Comex Stat, COW, GW e mapa)")
     mc.add_argument("--atlas", default=None, help="cópia local do countries-110m.json (world-atlas), se o CDN não estiver ao alcance")
+    dv = sub.add_parser("detalhe-validar", help="D61: confere os arquivos de detalhamento do atlas (docs/SCHEMA.md) antes de publicar")
+    dv.add_argument("pasta", nargs="?", default=None, help="padrão: prototipos/globo/dados/detalhe")
     sub.add_parser("contexto-atualizar", help="Fase 5: baixa só as séries públicas usadas no contexto do radar (catalog/contexto_radar.json)")
     sub.add_parser("siget-historico-exportar", help="acrescenta coletas e eventos novos a historico/*.csv (nunca reescreve)")
     sub.add_parser("siget-historico-importar", help="carrega historico/*.csv num banco novo (ex.: GitHub Actions)")
@@ -368,6 +370,14 @@ def main(argv=None):
     elif args.cmd == "mundo-codigos":
         from .mundo import build as mb, codigos
         codigos.montar(mb.BRUTOS / "onu", mb.BRUTOS / "ucdp", Path(args.atlas) if args.atlas else None)
+    elif args.cmd == "detalhe-validar":
+        from .mundo import detalhe
+        probs = detalhe.validar_pasta(Path(args.pasta) if args.pasta else detalhe.PASTA)
+        for x in probs[:200]:
+            print("✗", x)
+        print(f"{len(probs)} problema(s)" if probs else "detalhamento ok: índice e arquivos no formato rotzx.detalhe.v1")
+        if probs:
+            raise SystemExit(1)
     elif args.cmd == "contexto-atualizar":
         from .intelligence import contexto as ctxm
         update(ctxm.series_usadas())

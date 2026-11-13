@@ -574,3 +574,52 @@ As outras perguntas ficam em "Outras perguntas".
 - Gancho escolhido pelo autor: a China passou a Rússia **em toneladas em 2025**, mas não em dólares, e em jan–out/2026 a Rússia voltou à frente. O texto não arredonda isso para "a China passou a Rússia".
 - "85% importado": MAPA, apresentação na Câmara de 30/09/2025, slide 4 (PDF aberto pelo autor; o domínio da Câmara não é alcançável daqui).
 - Mapa de prévia: Natural Earth 110m via pacote npm `world-atlas@2.0.2` (o jsdelivr não é alcançável daqui). O Brasil (reimportação, 87 t) fica no total e fora do mapa.
+
+### D60 · 13/11/2026 · Troca de tela sem sobreposição (modo ampliado e demais)
+**Problema relatado:** com "Ampliar análise" (`amplo=1`), alternar entre Produtos, Comparar e Parceiros deixava cabeçalhos, textos e campos de busca da tela anterior sobrepostos à nova.
+
+**Diagnóstico:**
+- O código da página estava limpo: depois de cada troca havia um só título e só as buscas da tela atual.
+- A sobreposição vinha da transição da D54 (`document.startViewTransition` com `view-transition-name` em `#corpo`). O navegador fotografa a coluna de leitura inteira, inclusive a parte rolada para fora da tela, e desenha a foto antiga e a nova acima de toda a página.
+- Como `#corpo` fica dentro de uma área que rola (`#conteudo`), a foto antiga caía sobre o cabeçalho e a barra da análise, sobretudo no modo ampliado, com a coluna larga e rolada.
+- Confirmado por captura no meio da troca: atalhos de produto e campos de "Comparar" apareciam por cima do cabeçalho.
+
+**Decisão:**
+- Sai a View Transition. A troca é determinística: o conteúdo antigo deixa o DOM no mesmo instante, e o novo esmaece por 0,18 s (classe `entra`, só opacidade, só na coluna de leitura).
+- Mudar ano ou métrica no mesmo lugar não pisca.
+- Com movimento reduzido, nada se move.
+- Vale para o modo dividido, o ampliado e o celular.
+
+**Verificado:**
+- Captura no meio da troca, no computador e no celular.
+- Cliques rápidos seguidos, voltar e avançar.
+- 16 telas sem erros, com globo 3D e sem WebGL.
+- Os percursos da D54 (história, ▶, produto → país → volta, Comparar).
+
+**Junto:** o teste `test_noticias_combinam_rss_e_mantem_historico` dependia da data real. A manchete de exemplo, de 04/11/2026, saiu da janela de 7 dias em 12/11 e o teste quebrou, também na `main`. O teste passa a usar um relógio fixo; o código das notícias não muda.
+
+### D61 · 13/11/2026 · Detalhamento sob demanda: série anual por parceiro, UF, via, porto e NCM
+**Pedido:** a página deve suportar a distribuição por parceiro em todos os anos (não só 2000, 2010 e 2025), recortes por UF e via ou porto, e itens NCM de 8 dígitos. A coleta fica num projeto de dados à parte; este repositório define o formato e a página.
+
+**Formato:**
+- `rotzx.detalhe.v1`, descrito em `docs/SCHEMA.md`: `dados/detalhe/indice.json`, um arquivo por produto (`prod/{codigo}.json`) e um por país (`pais/{iso3}.json`).
+- Cada bloco `{t, n, top}` traz o denominador (`t`), quantos itens a fonte registra (`n`) e os maiores (`top`); o resto vira "Outros", sem valor individual.
+- Ano ausente é "sem registro", nunca zero.
+- Os exemplos do esquema usam marcadores (`<total>`, `<valor>`), não números, porque nem exemplo pode ter número inventado.
+
+**Página:**
+- **Carga:** o índice é lido ao abrir. Cada arquivo é buscado só quando a pessoa abre o produto ou o país, com cache em memória. Sem índice, ou com falha, tudo funciona como antes.
+- **Leitura centralizada:** `distProd` e `compPais` preferem o arquivo detalhado e recuam para `produtos.js` e `historia.js`; `anosDe` e `anosPais` juntam os anos dos dois.
+- **Linha do tempo:** encaixa em todos os anos com distribuição (ex.: "2000, 2010 e 2015–2025"). Um link direto para um ano que só o detalhamento tem volta ao ano pedido quando o índice chega.
+- **Produto → país:** tabela com todos os anos e gráfico da parte do parceiro ano a ano. O eixo é contínuo, e ano fora do recorte ou sem distribuição fica em branco.
+- **Camadas:** UF, via e porto no explorador e na aba Produtos do país, cada uma com o próprio total. Itens NCM no explorador e, sob demanda, em "Detalhes" de cada SH4 (o arquivo só é buscado ao abrir).
+- **Fontes e método:** diz se o detalhamento está publicado, de quando é e quantos produtos e países cobre.
+
+**Validação:**
+- `rotzx detalhe-validar [pasta]` (`rotzx/mundo/detalhe.py`) confere schema, campos obrigatórios, ordem, soma ≤ total, valores > 0, anos, códigos de país (tabela `catalog/paises_mundo.csv`), UF e NCM, e índice × arquivos.
+- Os testes rodam o validador sobre a pasta publicada, se existir.
+
+**Verificado:**
+- Com arquivos montados a partir do download real da rotzOn (fertilizantes, importações 2015–2025, via em 2025), o SH4 3105 em 2025 confere com o site: US$ 4,71 bi, 45 fornecedores, Rússia em 1º.
+- As camadas sem dado real (UF, porto, NCM, país) foram testadas com valores inventados e marcados como tal, só no teste.
+- Sem arquivos, nada muda na página.
