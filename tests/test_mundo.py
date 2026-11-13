@@ -185,7 +185,14 @@ def test_feed_que_falha_nao_derruba_os_outros(monkeypatch):
 
 
 def test_noticias_combinam_rss_e_mantem_historico(monkeypatch, tmp_path):
+    from datetime import datetime, timezone
     from rotzx.mundo import rss
+
+    class Relogio(datetime):            # data fixa: a manchete de exemplo (04/11/2026) precisa estar na janela de 7 dias
+        @classmethod
+        def now(cls, tz=None):
+            return datetime(2026, 11, 5, 12, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(build, "datetime", Relogio)
     monkeypatch.setattr(rss, "coletar", lambda: (rss.ler(RSS, "X"), {"Ruim": "OSError"}))
     n = build.noticias(tmp_path, log=lambda *a: None, usar_gdelt=False)
     assert [m["titulo"] for m in n["paises"]["156"]] == ["China anuncia compra recorde de soja"]
