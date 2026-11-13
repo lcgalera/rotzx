@@ -6,6 +6,24 @@
 <title>rotzx — Como o Brasil se conecta ao mundo</title>
 <meta name="description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
 <meta name="color-scheme" content="dark">
+<!-- compartilhamento (D63): os robôs das redes não rodam JS nem leem o #, então o cartão é o mesmo para todo link -->
+<link rel="canonical" href="https://lcgalera.github.io/rotzx/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rotzx">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Como o Brasil se conecta ao mundo — rotzx">
+<meta property="og:description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
+<meta property="og:url" content="https://lcgalera.github.io/rotzx/">
+<meta property="og:image" content="https://lcgalera.github.io/rotzx/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rotzx: Como o Brasil se conecta ao mundo. Mapa do Brasil e a frase: parceiros, produtos e mudanças do comércio exterior brasileiro com todos os países e territórios, desde 1997.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Como o Brasil se conecta ao mundo — rotzx">
+<meta name="twitter:description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
+<meta name="twitter:image" content="https://lcgalera.github.io/rotzx/og.png">
+<meta name="twitter:image:alt" content="rotzx: Como o Brasil se conecta ao mundo. Mapa do Brasil e a frase: parceiros, produtos e mudanças do comércio exterior brasileiro com todos os países e territórios, desde 1997.">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icone-180.png">
 <meta name="theme-color" content="#385344">
@@ -338,6 +356,19 @@
   .sub-camada small { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); }
   details.ncm > summary { cursor: pointer; list-style-position: outside; }
   .ncm-det .barras li { padding: 6px 0 7px; } .ncm-det .barras .lin { font-size: 13px; }
+  /* exportação e compartilhamento (D62) */
+  .acoes-dado { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; }
+  .acoes-dado .btn, .btn-leve { min-height: 32px; padding: 5px 11px; font-size: 13px; color: var(--ink-2); }
+  .btn-leve { border-color: var(--rule-2); background: transparent; }
+  #dlgIncorporar { max-width: min(560px, calc(100vw - 32px)); border: 1px solid var(--rule-2); border-radius: 4px; background: var(--surface); color: var(--ink); padding: 22px 24px; }
+  #dlgIncorporar::backdrop { background: rgba(20, 24, 21, .35); }
+  #dlgIncorporar h2 { font: 500 24px/1.2 var(--serif); margin: 0 0 6px; }
+  #codIframe { width: 100%; margin-top: 10px; font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: var(--bg); border: 1px solid var(--rule-2); border-radius: 3px; padding: 10px; resize: vertical; }
+  body.embed .barra, body.embed .lado-mapa, body.embed #alternarMapa, body.embed #incorporar, body.embed .pular { display: none !important; }
+  body.embed .quadro { height: 100vh; }
+  body.embed .lado-texto { max-width: none; border: 0; }
+  .selo-embed { position: fixed; right: 12px; bottom: 12px; z-index: 40; padding: 7px 12px; border-radius: 3px; background: var(--ink); color: var(--bg); font-size: 13px; text-decoration: none; }
+  .selo-embed[hidden] { display: none; }
   .aviso-geral { margin: 0; padding: 10px 40px; border-bottom: 1px solid var(--rule); background: var(--surface); font-size: 14px; color: var(--ink-2); }
   .aviso-geral::before, .aviso-ano::before { content: "Aviso"; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ochre); margin-right: 8px; }
   .pular { position: absolute; left: 12px; top: -60px; z-index: 50; padding: 8px 12px; background: var(--ink); color: var(--bg); border-radius: 3px; text-decoration: none; }
@@ -452,13 +483,24 @@
   <section class="lado-texto" id="conteudo" tabindex="-1" aria-label="Análise">
     <nav class="barra-analise" id="barra" aria-label="Onde você está" hidden>
       <div class="trilha" id="trilha"></div>
-      <div class="acoes"><button type="button" class="btn" id="alternarMapa"></button></div>
+      <div class="acoes"><button type="button" class="btn btn-leve" id="copiarLink" title="Copia o endereço com a seleção atual (país, produto, ano, métrica, comparação)">Copiar link</button>
+        <button type="button" class="btn btn-leve" id="incorporar" title="Código para mostrar esta análise em outro site">Incorporar</button>
+        <button type="button" class="btn" id="alternarMapa"></button></div>
       <div class="slot-ctl" id="slotCtl"></div>
     </nav>
     <div id="avisos"></div>
     <div id="corpo"></div>
   </section>
 </main>
+<dialog id="dlgIncorporar" aria-labelledby="dlgTit">
+  <h2 id="dlgTit">Incorporar esta análise</h2>
+  <p class="nota">Cole o código no seu site. A página incorporada mostra a análise atual, sem o cabeçalho do rotzx, com fonte e link para a versão completa.</p>
+  <label class="sr" for="codIframe">Código para incorporar</label>
+  <textarea id="codIframe" readonly rows="4"></textarea>
+  <div class="botoes"><button type="button" class="btn pri" id="copiarIframe">Copiar código</button><button type="button" class="btn" id="fecharDlg">Fechar</button></div>
+</dialog>
+<a class="selo-embed" id="seloEmbed" target="_blank" rel="noopener" hidden>rotzx · ver a análise completa ↗</a>
+<p class="sr" id="anuncio" aria-live="polite"></p>
 
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
@@ -778,13 +820,14 @@ function urlDe(s) {
   if (s.pais) q.set("pais", H.paises[s.pais].iso3);
   if (s.vista !== "inicio" && !s.pais) q.set("ver", s.vista);
   // na entrada, o produto de uma cena da história não vai para a URL (abrir o link levaria ao explorador de produtos)
-  if (!s.pais && s.vista === "inicio") { if (s.m !== "prod") { q.set("ano", s.ano); q.set("m", s.m); } return "#" + q.toString(); }
+  if (!s.pais && s.vista === "inicio") { if (s.m !== "prod") { q.set("ano", s.ano); q.set("m", s.m); } if (s.embed) q.set("embed", "1"); return "#" + q.toString(); }
   q.set("ano", s.ano); q.set("m", s.m);
   if (s.m === "mud" || s.vista === "ranking") q.set("base", s.base);
   if (s.prod) { q.set("prod", s.prod); q.set("fluxo", s.fluxo); }
   if (!s.pais && s.vista === "comparar") { if (s.a) q.set("a", H.paises[s.a].iso3); if (s.b) q.set("b", H.paises[s.b].iso3); }
   if (s.pais && s.aba !== "comercial" && !s.prod) q.set("aba", s.aba);
   if (s.amplo === true) q.set("amplo", "1"); else if (s.amplo === false) q.set("mapa", "1");
+  if (s.embed) q.set("embed", "1");
   return "#" + q.toString();
 }
 function lerURL() {
@@ -806,6 +849,7 @@ function lerURL() {
   s.a = cod("a"); s.b = cod("b") || cod("vs");
   if (s.a && s.a === s.b) { s.b = null; s.aviso = "Os dois campos tinham o mesmo parceiro: escolha outro para comparar."; }
   s.amplo = q.get("amplo") === "1" ? true : q.get("mapa") === "1" ? false : null;
+  s.embed = q.get("embed") === "1";
   s.m = MET[q.get("m")] ? q.get("m") : "corrente";
   s.ano = n("ano", fim); s.base = n("base", 2000);
   s.prod = q.get("prod") || null; s.fluxo = q.get("fluxo") === "i" ? "i" : "e";
@@ -851,7 +895,7 @@ function guardarRolagem() {
 }
 const analise = () => !!st.pais || st.vista !== "inicio";
 // no celular, a análise já abre com o mapa recolhido; a comparação também, porque precisa de largura para os dois lados (D49)
-const amplo = () => analise() && (st.amplo ?? (emColuna() || (!st.pais && st.vista === "comparar")));
+const amplo = () => (st.embed && analise()) || (analise() && (st.amplo ?? (emColuna() || (!st.pais && st.vista === "comparar"))));
 
 // ---------- render geral ----------
 let lugarAnterior = null, baseAnterior = null, enquadreAnterior = null;
@@ -891,11 +935,14 @@ function render() {
   document.body.classList.toggle("com-vista", !st.pais && st.vista !== "inicio");
   document.body.classList.toggle("analise", analise());
   document.body.classList.toggle("amplo", amplo());
-  document.title = st.pais ? `${nome(st.pais)} e o Brasil — rotzx` : "rotzx — Como o Brasil se conecta ao mundo";
+  atualizarMeta();
   $$("[data-nav]").forEach((b) => (!st.pais && st.vista === b.dataset.nav ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
   if (!st.pais && st.vista === "fontes") $("#abrirFontes").setAttribute("aria-current", "page"); else $("#abrirFontes").removeAttribute("aria-current");
   renderControles();
   if (st.m === "prod" && !P) garantirP();
+  CSVS.clear(); nCsv = 0;
+  document.body.classList.toggle("embed", !!st.embed);
+  const se = $("#seloEmbed"); se.hidden = !st.embed; if (st.embed) se.href = urlCompleta();
   const $c = $("#corpo"), $s = $("#conteudo");
   const focado = $s.contains(document.activeElement) ? document.activeElement.id : "";
   const html = st.pais ? painelPais(st.pais) : st.vista === "ranking" ? vistaRanking() : st.vista === "produto" ? vistaProduto()
@@ -918,6 +965,7 @@ function render() {
   }
   lugarAnterior = lugar;
   ligarConteudo($c);
+  ferramentas($c);
   if (focado && !$("#" + focado)?.closest(".ctl")) $("#" + focado)?.focus({ preventScroll: true });   // redesenhar não pode tirar o foco de quem usa teclado
   renderLista();
   if (globo) {
@@ -1194,7 +1242,11 @@ function vistaRanking() {
   const n = r.length;
   const baseSel = m === "mud" ? `<label class="ano-sel">Ano-base <select id="baseSel">${Array.from({ length: st.ano - ini }, (_, k) => ini + k).map((a) => `<option ${a === st.base ? "selected" : ""}>${a}</option>`).join("")}</select></label>` : "";
   const fonte_ = m === "onu" ? "Votos na ONU (Voeten et al.)" : m === "conf" ? "UCDP/PRIO" : "Comex Stat · US$ correntes";
-  return `<div class="sec"><div class="kicker">Ranking · ${st.ano}</div><h2>${esc(MET[m].cab)}</h2>
+  const unid = { usd: "US$ FOB correntes", pct: "fração do total (0 a 1)", pp: "diferença de participação (fração; 0,01 = 1 p.p.)", onu: "concordância (0 a 1)", conf: "1 = conflito, 2 = guerra no território" }[MET[m].tipo] || "";
+  const kcr = regCsv(["posicao", "pais", "iso3", "ano", ...(m === "mud" ? ["ano_base"] : []), "valor", ...(MET[m].tipo === "usd" ? ["participacao"] : [])],
+    r.map(([id, v], j) => [j + 1, nome(id), iso3De(id), st.ano, ...(m === "mud" ? [st.base] : []), v, ...(MET[m].tipo === "usd" ? [MET[m].p(trocas(id, st.ano))] : [])]),
+    { unidade: unid, fonte: m === "onu" ? "Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0)" : m === "conf" ? "UCDP/PRIO (CC BY 4.0)" : "Comex Stat (MDIC)" });
+  return `<div class="sec" data-csv="${kcr}"><div class="kicker">Ranking · ${st.ano}</div><h2>${esc(MET[m].cab)}</h2>
       <p class="lead">${esc(MET[m].desc)}${m === "mud" ? ` entre ${st.base} e ${st.ano}` : ""}.</p>${baseSel}
       ${fonteC(`${fonte_} · ${st.ano} · ${n} países e territórios com dado`)}
       ${sobreDado(`${MET[m].den ? esc(MET[m].den) + ". " : ""}${m === "onu" ? "Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0), " + H.onu.inicio + "–" + H.onu.fim + "." : m === "conf" ? "UCDP/PRIO Armed Conflict Dataset (CC BY 4.0), " + H.conflitos.inicio + "–" + H.conflitos.fim + "." : `Comex Stat (MDIC), valores FOB em dólares correntes, ${ini}–${fim}. Países e territórios sem registro no ano ficam fora do ranking.`}`)}</div>
@@ -1241,7 +1293,10 @@ function vistaProduto() {
           os 3 maiores somaram ${pct(x.top.slice(0, 3).reduce((q, [, v]) => q + v, 0) / x.t)}.</p>
         <p class="recorte">${textoRecorte(x, k)}${(() => { const sa = em(serie, anoP); return sa && (sa - x.t) / sa > 0.01
           ? ` A série anual do Brasil soma ${usd(sa)} neste ano porque inclui operações sem país definido (como combustível e provisões para navios e aeronaves); as participações usam o total com país identificado, ${usd(x.t)}.` : ""; })()}</p>
-        <ol class="barras parceiros-prod${k === "i" ? " imp" : ""}">${x.top.map(([id, v], j) => `<li><div class="lin"><span class="pnome">${bandeira(id)} <button type="button" class="link" data-pais-prod="${id}">${esc(nome(id))}</button></span><span class="v num">${usd(v)}</span></div>
+        <ol class="barras parceiros-prod${k === "i" ? " imp" : ""}" data-csv="${regCsv(["posicao", "pais", "iso3", "ano", "fluxo", "produto", "valor", "participacao"],
+          [...x.top.map(([id, v], j) => [j + 1, nome(id), iso3De(id), anoP, k === "e" ? "exportação" : "importação", it.nome, v, v / x.t]),
+           ...(!rc.completo ? [["", `Outros (${rc.outrosN})`, "", anoP, k === "e" ? "exportação" : "importação", it.nome, rc.outrosV, rc.outrosV / x.t]] : [])],
+          { unidade: "US$ FOB correntes; participação em fração do total do produto" })}">${x.top.map(([id, v], j) => `<li><div class="lin"><span class="pnome">${bandeira(id)} <button type="button" class="link" data-pais-prod="${id}">${esc(nome(id))}</button></span><span class="v num">${usd(v)}</span></div>
           <div class="trilho" aria-hidden="true"><i style="width:${(v / x.t * 100).toFixed(2)}%"></i></div><div class="parte"><b>${pct(v / x.t)}</b> ${rotParte} · ${j + 1}º</div></li>`).join("")}
           ${!rc.completo ? `<li class="outros"><div class="lin"><span>Outros ${rc.outrosN} ${origensPl(k)} <small>(sem valor individual)</small></span><span class="v num">${usd(rc.outrosV)}</span></div><div class="trilho" aria-hidden="true"><i style="width:${(rc.outrosV / x.t * 100).toFixed(2)}%;opacity:.45"></i></div><div class="parte"><b>${pct(rc.outrosV / x.t)}</b> ${rotParte}</div></li>` : ""}</ol>
         ${sobreDado(`Participação = valor do parceiro ÷ total ${k === "e" ? "exportado" : "importado"} pelo Brasil deste produto em ${anoP}. Barras de 0 a 100% do total do produto. Comex Stat, US$ FOB correntes.`)}`
@@ -1282,7 +1337,11 @@ function vistaComparar() {
   };
   const cabCol = (id) => `<div class="cab-col ser-${id === a ? "a" : "b"}"><span class="ponto"></span>${bandeira(id)} ${esc(nome(id))}</div>`;
   return cab + `<div class="sec"><h3>Em ${ano}</h3>${fonteC(`Comex Stat · US$ correntes · mesmos critérios para os dois`)}
-      <table class="comp cmp"><thead><tr><th scope="col"><span class="sr">Medida</span></th><th scope="col" class="ser-a"><span class="ponto"></span>${bandeira(a)} ${esc(nome(a))}</th><th scope="col" class="ser-b"><span class="ponto"></span>${bandeira(b)} ${esc(nome(b))}</th></tr></thead><tbody>
+      <table class="comp cmp" data-csv="${regCsv(["medida", nome(a), nome(b)], [
+        ["exportacoes", ta?.e ?? null, tb?.e ?? null], ["parte_exportacoes", ta?.e == null ? null : ta.pe, tb?.e == null ? null : tb.pe],
+        ["importacoes", ta?.i ?? null, tb?.i ?? null], ["parte_importacoes", ta?.i == null ? null : ta.pi, tb?.i == null ? null : tb.pi],
+        ["saldo", ta ? ta.s : null, tb ? tb.s : null], ["corrente", ta?.t ?? null, tb?.t ?? null]],
+        { unidade: `US$ FOB correntes em ${ano}; partes em fração do total do Brasil` })}"><thead><tr><th scope="col"><span class="sr">Medida</span></th><th scope="col" class="ser-a"><span class="ponto"></span>${bandeira(a)} ${esc(nome(a))}</th><th scope="col" class="ser-b"><span class="ponto"></span>${bandeira(b)} ${esc(nome(b))}</th></tr></thead><tbody>
         ${lin("Exportações do Brasil", (t) => usdR(t?.e))}${lin("Parte das exportações do Brasil", (t) => parteR(t, "e"))}
         ${lin("Importações do Brasil", (t) => usdR(t?.i))}${lin("Parte das importações do Brasil", (t) => parteR(t, "i"))}
         ${lin("Saldo", (t) => (t ? (t.s >= 0 ? "+" : "") + usd(t.s) : "sem registro"))}${lin("Corrente (exp. + imp.)", (t) => usd(t?.t ?? null))}
@@ -1512,11 +1571,127 @@ function painelBrasil(a) {
       <div class="grafico" id="gValores" role="img" aria-label="Exportações e importações totais do Brasil por ano"></div>${tabelaSerie([["Exportações", C.brasil.e], ["Importações", C.brasil.i]])}</div>
     <div class="sec"><div class="botoes"><button class="btn pri" type="button" data-ir='${JSON.stringify({ vista: "ranking", m: "corrente", pais: null })}'>Ver os maiores parceiros</button></div></div>`;
 }
-function tabelaSerie(series, f = usd, a0 = ini, vazio = "sem registro") {
+// ---------- exportação (D62): CSV com os números brutos, PNG com título, fonte e assinatura ----------
+// Cada bloco que tem dados registra aqui, a cada desenho, o que vai para o CSV; o botão só aponta para a chave.
+const CSVS = new Map();
+let nCsv = 0;
+function regCsv(cab, linhas, { unidade = "", fonte = "Comex Stat (MDIC)" } = {}) {
+  const k = "csv" + ++nCsv;
+  CSVS.set(k, { cab: [...cab, "unidade", "fonte"], linhas: linhas.map((l) => [...l, unidade, fonte]) });
+  return k;
+}
+function tabelaSerie(series, f = usd, a0 = ini, vazio = "sem registro", { unidade = f === pct ? "fração do total (0 a 1)" : "US$ FOB correntes", fonte = "Comex Stat (MDIC)" } = {}) {
   const anos = series[0][1].map((_, k) => a0 + k);
-  return `<details class="dados"><summary>Ver os dados em tabela</summary><table><thead><tr><th scope="col">Ano</th>${series.map(([n]) => `<th scope="col">${esc(n)}</th>`).join("")}</tr></thead>
+  const kc = regCsv(["ano", ...series.map(([n]) => n)], anos.map((a, k) => [a, ...series.map(([, sr]) => sr[k])]), { unidade, fonte });
+  return `<details class="dados" data-csv="${kc}"><summary>Ver os dados em tabela</summary><table><thead><tr><th scope="col">Ano</th>${series.map(([n]) => `<th scope="col">${esc(n)}</th>`).join("")}</tr></thead>
     <tbody>${anos.map((a, k) => `<tr><td>${a}</td>${series.map(([, s]) => `<td>${s[k] == null ? vazio : f(s[k])}</td>`).join("")}</tr>`).join("")}</tbody></table></details>`;
 }
+
+// ---------- título e descrição da tela (D63): aba do navegador, favoritos e quem lê a página já desenhada ----------
+const DESC_PADRAO = document.querySelector('meta[name="description"]').content;
+function tituloTela() {
+  const fl = st.fluxo === "e" ? "exportações" : "importações";
+  if (st.pais) return { t: `${nome(st.pais)} e o Brasil`, d: `Comércio do Brasil com ${nome(st.pais)} desde ${ini}: exportações, importações, produtos e contexto, ano ${st.ano}. Comex Stat (MDIC).` };
+  if (st.vista === "comparar" && st.a && st.b) return { t: `${nome(st.a)} × ${nome(st.b)}`, d: `${nome(st.a)} e ${nome(st.b)} lado a lado no comércio com o Brasil, ano ${st.ano}. Comex Stat (MDIC).` };
+  if (st.prod && P?.itens?.[st.prod]) return { t: `${P.itens[st.prod].nome}: ${fl} do Brasil`, d: `${st.fluxo === "e" ? "Para onde vão" : "De onde vêm"} as ${fl} brasileiras de ${P.itens[st.prod].nome.toLowerCase()}, ano ${st.ano}. Comex Stat (MDIC).` };
+  if (st.vista === "ranking") return { t: `${MET[st.m].cab} · ${st.ano}`, d: `${MET[st.m].desc[0].toUpperCase() + MET[st.m].desc.slice(1)}, ${st.ano}.` };
+  if (st.vista === "fontes") return { t: "Fontes e método", d: "De onde vêm os dados do atlas, licenças, cobertura e limites." };
+  return null;
+}
+function atualizarMeta() {
+  const x = tituloTela(), t = x ? `${x.t} — rotzx` : "rotzx — Como o Brasil se conecta ao mundo", d = x?.d || DESC_PADRAO;
+  document.title = t;
+  const pm = (sel, v) => { const m = document.querySelector(sel); if (m) m.content = v; };
+  pm('meta[name="description"]', d); pm('meta[property="og:title"]', t); pm('meta[name="twitter:title"]', t);
+  pm('meta[property="og:description"]', d); pm('meta[name="twitter:description"]', d);
+  pm('meta[property="og:url"]', urlCompleta());
+}
+
+// ---------- exportar e compartilhar (D62) ----------
+const anuncia = (t) => { const a = $("#anuncio"); a.textContent = ""; setTimeout(() => (a.textContent = t), 30); };
+function baixar(nome_, blob) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nome_;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+const slug = (t) => norm(t || "rotzx").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "rotzx";
+// contexto da análise em uma linha (vai no cartão e no nome do arquivo)
+function contextoAtual() {
+  const partes = [];
+  if (st.pais) partes.push(nome(st.pais));
+  if (!st.pais && st.vista === "comparar" && st.a && st.b) partes.push(`${nome(st.a)} × ${nome(st.b)}`);
+  if (st.prod && P?.itens?.[st.prod]) partes.push(`${P.itens[st.prod].nome} · ${st.fluxo === "e" ? "exportações" : "importações"} brasileiras`);
+  partes.push(String(st.ano));
+  return partes.join(" · ");
+}
+// CSV para planilha em português: separador ";", vírgula decimal, UTF-8 com BOM; ausente = célula vazia (nunca zero)
+function csvTexto({ cab, linhas }) {
+  const cel = (v) => { if (v == null || (typeof v === "number" && !Number.isFinite(v))) return "";
+    const t = typeof v === "number" ? String(v).replace(".", ",") : String(v); return /[;"\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+  return "﻿" + [cab, ...linhas].map((l) => l.map(cel).join(";")).join("\r\n") + "\r\n";
+}
+function exportarCSV(k, titulo) {
+  const d = CSVS.get(k); if (!d) return;
+  baixar(`rotzx-${slug(titulo)}-${slug(contextoAtual())}.csv`, new Blob([csvTexto(d)], { type: "text/csv;charset=utf-8" }));
+  anuncia("CSV baixado.");
+}
+// cartão PNG: título, contexto, o gráfico, a fonte e a assinatura do rotzx, nas cores do tema ativo (2× para telas densas)
+async function exportarPNG(el) {
+  const g = echarts.getInstanceByDom(el); if (!g) return;
+  const sec = el.closest(".sec"), titulo = sec?.querySelector("h3, h2")?.textContent.replace(/\s+/g, " ").trim() || "rotzx";
+  const fonte = (sec?.querySelector(".fonte")?.textContent || "").replace(/\s+/g, " ").trim()
+    .split(" · ").filter((t) => !/^(clique|toque|passe|use|veja)\b/i.test(t)).join(" · ");   // tira dicas de interface do rodapé
+  const w = Math.max(640, el.clientWidth), h = el.clientHeight, pad = 32, topo = 92, rodape = 70, K = 2;
+  if (w !== el.clientWidth) g.resize({ width: w });
+  const svg = g.renderToSVGString();
+  if (w !== el.clientWidth) g.resize();
+  const img = new Image(), url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  img.src = url; await img.decode(); URL.revokeObjectURL(url);
+  const cv = document.createElement("canvas"); cv.width = (w + pad * 2) * K; cv.height = (h + topo + rodape) * K;
+  const c = cv.getContext("2d"); c.scale(K, K);
+  c.fillStyle = PAL.bg; c.fillRect(0, 0, w + pad * 2, h + topo + rodape);
+  const corta = (t, max, fnt) => { c.font = fnt; if (c.measureText(t).width <= max) return t; while (t.length > 4 && c.measureText(t + "…").width > max) t = t.slice(0, -1); return t + "…"; };
+  c.fillStyle = PAL.ink; c.font = "500 24px Newsreader, Georgia, serif"; c.textBaseline = "alphabetic";
+  c.fillText(corta(titulo, w, c.font), pad, 46);
+  c.fillStyle = PAL.muted; c.font = "14px 'IBM Plex Sans', system-ui, sans-serif"; c.fillText(corta(contextoAtual(), w, c.font), pad, 72);
+  c.drawImage(img, pad, topo, w, h);
+  c.strokeStyle = PAL.rule; c.lineWidth = 1; c.beginPath(); c.moveTo(pad, topo + h + 16); c.lineTo(pad + w, topo + h + 16); c.stroke();
+  c.fillStyle = PAL.muted; c.font = "12.5px 'IBM Plex Sans', system-ui, sans-serif";
+  c.fillText(corta(fonte ? `Fonte: ${fonte}` : "Fonte: Comex Stat (MDIC)", w - 260, c.font), pad, topo + h + 44);
+  c.fillStyle = PAL.exp; c.font = "600 16px Newsreader, Georgia, serif"; c.textAlign = "right";
+  c.fillText("rotzx · lcgalera.github.io/rotzx", pad + w, topo + h + 45);
+  cv.toBlob((b) => { baixar(`rotzx-${slug(titulo)}-${slug(contextoAtual())}.png`, b); anuncia("Imagem baixada."); }, "image/png");
+}
+// ferramentas de cada seção: imagem para cada gráfico, CSV para cada bloco com dados registrados
+function ferramentas($c) {
+  $$(".sec", $c).forEach((sec) => {
+    if (sec.querySelector(":scope > .acoes-dado")) return;
+    const grafs = $$(".grafico[id]", sec).filter((g) => g.closest(".sec") === sec), csvs = $$("[data-csv]", sec).filter((x) => x.closest(".sec") === sec);
+    if (sec.dataset.csv) csvs.unshift(sec);
+    if (!grafs.length && !csvs.length) return;
+    const titulo = (sec.querySelector("h3, h2")?.textContent || "").replace(/\s+/g, " ").trim();
+    const bar = document.createElement("div"); bar.className = "acoes-dado"; bar.setAttribute("role", "group"); bar.setAttribute("aria-label", `Exportar: ${titulo || "dados"}`);
+    bar.innerHTML = grafs.map((g, i) => `<button type="button" class="btn" data-png="${g.id}">Exportar imagem${grafs.length > 1 ? ` ${i + 1}` : ""}</button>`).join("")
+      + csvs.slice(0, 1).map((x) => `<button type="button" class="btn" data-csv-baixar="${x.dataset.csv}">Baixar CSV</button>`).join("");
+    sec.appendChild(bar);
+    $$("[data-png]", bar).forEach((b) => (b.onclick = () => exportarPNG($("#" + b.dataset.png)).catch(() => anuncia("Não foi possível gerar a imagem."))));
+    $$("[data-csv-baixar]", bar).forEach((b) => (b.onclick = () => exportarCSV(b.dataset.csvBaixar, titulo)));
+  });
+}
+// link com o estado completo e código de incorporação
+const urlCompleta = (s = st) => location.origin + location.pathname + urlDe({ ...s, embed: false });
+async function copiar(texto, botao, rotOk) {
+  try { await navigator.clipboard.writeText(texto); } catch {
+    const t = document.createElement("textarea"); t.value = texto; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); } catch { /* sem área de transferência */ } t.remove(); }
+  const antes = botao.textContent; botao.textContent = rotOk; anuncia(rotOk); setTimeout(() => (botao.textContent = antes), 1800);
+}
+function codigoIframe() {
+  const src = location.origin + location.pathname + urlDe({ ...st, embed: true });
+  return `<iframe src="${src}" width="100%" height="640" style="border:0" loading="lazy" title="${esc(document.title)}"></iframe>`;
+}
+$("#copiarLink").onclick = (e) => copiar(urlCompleta(), e.currentTarget, "Link copiado");
+$("#incorporar").onclick = () => { $("#codIframe").value = codigoIframe(); $("#dlgIncorporar").showModal(); $("#codIframe").select(); };
+$("#copiarIframe").onclick = (e) => copiar($("#codIframe").value, e.currentTarget, "Código copiado");
+$("#fecharDlg").onclick = () => $("#dlgIncorporar").close();
 
 // ---------- ligações de eventos do conteúdo ----------
 function ligarConteudo($c) {
