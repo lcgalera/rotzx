@@ -707,3 +707,13 @@ As outras perguntas ficam em "Outras perguntas".
 - **Rolagem e cabeçalho:** no desktop, a página não rola e o cabeçalho fica no topo, mesmo com a coluna rolada até o fim. Não há rolagem horizontal.
 - **Botões:** na troca normal → ampliado → normal, eles não se mexem.
 - **Console:** sem erros.
+
+### D65 · 13/11/2026 · Sem slogans; contato do autor no rodapé
+**Pedido do dono:** tirar "Como o Brasil se conecta ao mundo" de junto da marca e "Pátria amada, Brasil." do rodapé, e pôr o LinkedIn e o GitHub do autor no rodapé.
+
+- **Cabeçalho:** sai a descrição ao lado da logo.
+- **Rodapé:**
+  - "Pátria amada, Brasil." dá lugar a "Autor: LinkedIn · GitHub", com links para linkedin.com/in/lucasfgalera e github.com/lcgalera, abertos em nova aba.
+  - A silhueta do Brasil e a linha de fontes ficam.
+- **Nome do atlas:** "Como o Brasil se conecta ao mundo" continua só como nome no título da aba, nas meta tags e no cartão `og.png` (o teste `test_compat_nome` confere o nome).
+- **Verificado:** Chromium sem tela, em 1440×900 e 390×844, sem rolagem horizontal e sem erros.
