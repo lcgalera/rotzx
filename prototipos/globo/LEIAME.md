@@ -2,6 +2,8 @@
 
 **Estado em 09/11/2026:** esta pasta é o site público inteiro, publicado na raiz de https://lcgalera.github.io/rotzx/ (D53; `/globo/` redireciona). A descrição atual está em `docs/PROJETO.md`, seção 7.
 
+**D62 (13/11/2026):** botões "Exportar imagem" (PNG com título, fonte e assinatura) e "Baixar CSV" em cada seção com dados; "Copiar link" e "Incorporar" na barra da análise; `#…&embed=1` abre o modo incorporado.
+
 **D61 (13/11/2026):** a página lê, se existir, o detalhamento em `dados/detalhe/` (formato em `docs/SCHEMA.md`).
 
 **Desde 06/11/2026 (D47–D54):** atlas das relações comerciais do Brasil. D48 refinou o espaço de leitura, a informação em dois níveis, o percurso produto → país e a comparação. D49 deu a identidade editorial: tema claro, Newsreader e IBM Plex Sans, globo cartográfico sem a imagem de satélite. D50 deu mais espaço à leitura, uma abertura própria ao país visto por um produto e um só controle de ano. D51 fechou a versão estável: cobertura do recorte por produto explícita, avisos de estado, falhas recuperáveis e os detalhes brasileiros (silhueta no carregamento, "Pátria amada, Brasil." na entrada). D54 (08/11/2026) tirou as repetições (um controle de métrica e ano, um caminho de volta, posição uma vez só) e deu movimento: entrada em forma de história que conduz o globo, linha do tempo com ▶, números e gráficos que transitam, globo e listas sincronizados. A descrição abaixo é histórica. Ver `docs/PROJETO.md`, seção 7: o que a pessoa vê, definições dos

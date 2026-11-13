@@ -623,3 +623,30 @@ As outras perguntas ficam em "Outras perguntas".
 - Com arquivos montados a partir do download real da rotzOn (fertilizantes, importações 2015–2025, via em 2025), o SH4 3105 em 2025 confere com o site: US$ 4,71 bi, 45 fornecedores, Rússia em 1º.
 - As camadas sem dado real (UF, porto, NCM, país) foram testadas com valores inventados e marcados como tal, só no teste.
 - Sem arquivos, nada muda na página.
+
+### D62 · 13/11/2026 · Exportar imagem, baixar CSV, copiar link e incorporar
+**Pedido:** etapa 3 do plano de produto: exportar o gráfico como PNG, baixar os dados da tela em CSV, compartilhar a análise pelo endereço e incorporar a visualização em outro site.
+
+**Exportar imagem:**
+- Botão "Exportar imagem" em cada seção com gráfico.
+- Gera um cartão PNG em 2× com o título da seção, o contexto (país, comparação ou produto e o ano), o gráfico, a fonte da seção e a assinatura "rotzx · lcgalera.github.io/rotzx".
+- Usa as cores do tema ativo (claro ou escuro). O gráfico vem do próprio ECharts (`renderToSVGString`) desenhado num `<canvas>`; nada é enviado a servidor.
+
+**Baixar CSV:**
+- Botão "Baixar CSV" nas séries (tabelas "ver os números"), no ranking, nos parceiros de um produto e na comparação.
+- O CSV sai dos números brutos, não do texto formatado: separador `;`, vírgula decimal, UTF-8 com BOM (abre direto em planilha em português).
+- Cada linha traz `unidade` e `fonte`. Participações vão em fração do total, e a unidade diz o denominador. Na mudança, o arquivo traz o ano-base.
+- Dado ausente sai como célula vazia, nunca zero.
+
+**Link e incorporação:**
+- "Copiar link" copia o endereço com o estado completo (país, produto, fluxo, ano, métrica, ano-base, comparação, aba, ampliado), que já estava no `#` da URL.
+- "Incorporar" abre um diálogo com o código `<iframe>` da visão atual com `embed=1`.
+- O modo incorporado esconde o cabeçalho do site e o mapa, mostra a análise ampliada e põe um selo "rotzx · ver a análise completa ↗" com o link sem `embed`. Fontes, avisos e créditos continuam na página.
+
+**Fora do escopo:** sem coleta nova, sem trava de monetização, sem mudança de dados.
+
+**Verificado:**
+- Chromium sem tela, em 1440×900 e 390×844, nos temas claro e escuro: downloads de PNG e CSV na China, no ranking (exportações e mudança), no produto 3105 e na comparação China × EUA.
+- Os valores do CSV conferem com a tela.
+- O link copiado reabre a mesma visão, e o iframe abre no modo incorporado.
+- Sem rolagem horizontal no celular e sem erros de console.
