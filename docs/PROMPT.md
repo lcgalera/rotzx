@@ -16,7 +16,7 @@ disputas na OMC, conflitos armados, ficha econômica do Banco Mundial). Só dado
 
 ## Leia antes de mudar qualquer coisa
 - docs/PROJETO.md (visão geral, fontes, arquitetura, dados, comandos, publicação, limitações)
-- docs/DECISOES.md (D1–D74: cada escolha e o motivo; registre uma decisão nova para cada mudança relevante)
+- docs/DECISOES.md (D1–D75: cada escolha e o motivo; registre uma decisão nova para cada mudança relevante)
 - docs/SCHEMA.md (formato do detalhamento) e README.md
 
 ## Regras que não podem ser quebradas

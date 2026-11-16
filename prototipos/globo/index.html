@@ -394,21 +394,24 @@
   /* guia passo a passo (D72): foco no elemento, linha até ele e um cartão com o que ele faz */
   #guiaAbrir { font: 600 15px/1 var(--sans); }
   .guia[hidden] { display: none; }
-  .guia { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
-  .guia-foco { position: fixed; border-radius: 6px; box-shadow: 0 0 0 2px var(--accent), 0 0 0 9999px rgba(18, 22, 19, .48); transition: all .25s ease; }
+  .guia { position: fixed; inset: 0; z-index: 80; pointer-events: auto; touch-action: none; overscroll-behavior: contain; }   /* D75: a página não mexe por baixo */
+  .guia-foco { position: fixed; border-radius: 6px; box-shadow: 0 0 0 2px var(--accent), 0 0 0 9999px rgba(18, 22, 19, .48); pointer-events: none; }
   .guia-linha { position: fixed; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .guia-linha line { stroke: var(--accent); stroke-width: 1.5; }
   .guia-linha circle { fill: var(--accent); }
   .guia-card { position: fixed; width: min(340px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--rule-2); border-top: 3px solid var(--accent);
-    border-radius: 4px; padding: 16px 18px 14px; pointer-events: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, .18); transition: top .25s ease, left .25s ease; }
+    border-radius: 4px; padding: 16px 18px 14px; pointer-events: auto; touch-action: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, .18); animation: guiaEntra .18s ease; }
+  @keyframes guiaEntra { from { opacity: 0; } to { opacity: 1; } }
+  .guia-linha { pointer-events: none; }
   .guia-card:focus { outline: none; }
   .guia-passo { margin: 0 0 4px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); }
   .guia-card h2 { font: 500 21px/1.2 var(--serif); margin: 0 0 6px; }
   .guia-card p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
   .guia-botoes { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
-  .guia-botoes span { display: flex; gap: 8px; }
+  .guia-botoes span { display: flex; gap: 8px; margin-left: auto; }
+  .guia-botoes .btn, .guia-botoes .link { white-space: nowrap; }
   .guia-botoes .btn { min-height: 34px; padding: 6px 12px; font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { .guia-foco, .guia-card { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .guia-card { animation: none; } }
   .aviso-geral { margin: 0; padding: 10px 40px; border-bottom: 1px solid var(--rule); background: var(--surface); font-size: 14px; color: var(--ink-2); }
   .aviso-geral::before, .aviso-ano::before { content: "Aviso"; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ochre); margin-right: 8px; }
   .pular { position: absolute; left: 12px; top: -60px; z-index: 50; padding: 8px 12px; background: var(--ink); color: var(--bg); border-radius: 3px; text-decoration: none; }
@@ -1746,7 +1749,7 @@ const PASSOS_GUIA = [
   { alvo: ".ctl .metricas", tit: "Escolha o que o mapa mostra", txt: "Exportações, importações, corrente, participação no total do Brasil ou mudança entre dois anos. Em “Contexto”: votos na ONU e conflitos." },
   { alvo: ".ctl .tempo", tit: "Volte no tempo", txt: "Arraste para escolher o ano, de 1997 a 2025, ou aperte ▶ para ver o comércio mudar ano a ano." },
   { alvo: ".nav", tit: "Três jeitos de explorar", txt: "Parceiros: o ranking dos países. Produtos: para onde vai e de onde vem cada produto. Comparar: dois países lado a lado." },
-  { alvo: "#passo-brasil", tit: "Leia a história", txt: "Role o texto: cada parte muda o globo para mostrar o que você está lendo. Os botões levam à análise completa." },
+  { alvo: "#passo-brasil .manchete", tit: "Leia a história", txt: "Role o texto: cada parte muda o globo para mostrar o que você está lendo. Os botões levam à análise completa." },
   { alvo: "#abrirFontes", tit: "De onde vem cada número", txt: "Fontes e método traz as bases, as licenças e as definições. Em cada análise, “Baixar CSV” e “Exportar imagem” levam os dados com você." },
 ];
 const GUIA = { i: 0, passos: [], ativo: false };
@@ -1756,25 +1759,40 @@ function abrirGuia() {
   GUIA.passos = PASSOS_GUIA.filter((x) => visivel($(x.alvo)));
   if (!GUIA.passos.length) return;
   GUIA.i = 0; GUIA.ativo = true; $("#guia").hidden = false;
+  if (tocando) pararTempo();
+  acompanharGuia();
   try { localStorage.setItem("rotzx-guia", "visto"); } catch { /* sem armazenamento: o guia pode voltar na próxima visita */ }
   evento("guia");
   mostrarPasso();
 }
-function fecharGuia() { GUIA.ativo = false; $("#guia").hidden = true; $("#guiaAbrir").focus({ preventScroll: true }); }
+function fecharGuia() { GUIA.ativo = false; cancelAnimationFrame(GUIA.raf); $("#guia").hidden = true; $("#guiaAbrir").focus({ preventScroll: true }); }
+// D75: o destaque segue o elemento a cada quadro (fontes que carregam, globo que redimensiona, barra que quebra linha);
+// só mexe no DOM quando alguma posição muda
+function acompanharGuia() {
+  cancelAnimationFrame(GUIA.raf);
+  const passo = () => { if (!GUIA.ativo) return; posicionarGuia(); GUIA.raf = requestAnimationFrame(passo); };
+  GUIA.raf = requestAnimationFrame(passo);
+}
 function mostrarPasso() {
   const x = GUIA.passos[GUIA.i], el = $(x.alvo), n = GUIA.passos.length, ult = GUIA.i === n - 1;
   $("#guiaPasso").textContent = `${GUIA.i + 1} de ${n}`;
   $("#guiaTit").textContent = x.tit; $("#guiaTxt").textContent = x.txt;
-  $("#guiaVoltar").hidden = GUIA.i === 0; $("#guiaProx").textContent = ult ? "Começar a explorar" : "Próximo";
+  $("#guiaVoltar").hidden = GUIA.i === 0; $("#guiaPular").hidden = ult; $("#guiaProx").textContent = ult ? "Começar a explorar" : "Próximo";
   const r0 = el.getBoundingClientRect();
-  if (r0.top < 0 || r0.bottom > innerHeight) el.scrollIntoView({ block: "center", behavior: reduzir ? "auto" : "smooth" });
-  setTimeout(posicionarGuia, reduzir ? 0 : 260);
-  $(".guia-card").focus({ preventScroll: true });
+  // alvo fora da tela: leva até ele na hora (rolagem suave deixava o destaque correndo atrás); alvo maior que a tela fica pelo topo
+  if (r0.top < 0 || r0.bottom > innerHeight) el.scrollIntoView({ block: r0.height > innerHeight * 0.7 ? "start" : "center", behavior: "auto" });
+  GUIA.ult = ""; posicionarGuia();
+  const card = $(".guia-card"); card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
+  card.focus({ preventScroll: true });
 }
 function posicionarGuia() {
   if (!GUIA.ativo) return;
   const el = $(GUIA.passos[GUIA.i].alvo), card = $(".guia-card"), M = 16, F = 6;
+  if (!visivel(el)) return fecharGuia();                   // a tela mudou e o elemento sumiu: o guia sai em vez de apontar para o nada
   const r = el.getBoundingClientRect(), W = innerWidth, Hh = innerHeight;
+  const chave = [r.left, r.top, r.width, r.height, W, Hh, card.offsetHeight, GUIA.i].map(Math.round).join(",");
+  if (chave === GUIA.ult) return;
+  GUIA.ult = chave;
   // o foco não passa da tela (o globo e a história podem ser maiores que ela)
   const f = { l: Math.max(4, r.left - F), t: Math.max(4, r.top - F), r: Math.min(W - 4, r.right + F), b: Math.min(Hh - 4, r.bottom + F) };
   Object.assign($(".guia-foco").style, { left: f.l + "px", top: f.t + "px", width: f.r - f.l + "px", height: f.b - f.t + "px" });
@@ -1808,8 +1826,20 @@ addEventListener("keydown", (e) => {
   else if (e.key === "ArrowRight" && !e.target.closest("input")) $("#guiaProx").click();
   else if (e.key === "ArrowLeft" && !e.target.closest("input") && GUIA.i > 0) $("#guiaVoltar").click();
 }, true);
-addEventListener("resize", () => posicionarGuia());
-addEventListener("scroll", () => posicionarGuia(), true);
+// D75: com o guia aberto a página não rola nem recebe cliques (rolar mudava a cena da história e deixava o destaque para trás)
+const travaGuia = (e) => { if (GUIA.ativo && !e.target.closest?.(".guia-card")) e.preventDefault(); };
+$("#guia").addEventListener("wheel", travaGuia, { passive: false });
+$("#guia").addEventListener("touchmove", travaGuia, { passive: false });
+$("#guia").addEventListener("mousedown", (e) => { if (!e.target.closest(".guia-card")) { e.preventDefault(); $(".guia-card").focus({ preventScroll: true }); } });
+addEventListener("keydown", (e) => {
+  if (!GUIA.ativo) return;
+  if (["PageDown", "PageUp", "Home", "End", " ", "ArrowDown", "ArrowUp"].includes(e.key) && !e.target.closest("input, textarea")) e.preventDefault();
+  if (e.key === "Tab") {                                   // o foco fica dentro do cartão
+    const bs = $$(".guia-card button").filter((b) => !b.hidden);
+    const i = bs.indexOf(document.activeElement);
+    e.preventDefault(); bs[(i + (e.shiftKey ? bs.length - 1 : 1) + bs.length) % bs.length].focus();
+  }
+});
 // primeira visita, pela entrada, fora do modo incorporado: o guia abre sozinho depois que a página assenta
 function guiaNaPrimeiraVisita() {
   let visto = false; try { visto = !!localStorage.getItem("rotzx-guia"); } catch { visto = true; }
