@@ -861,3 +861,33 @@ As outras perguntas ficam em "Outras perguntas".
 - O ranking abre sem a lista duplicada, sem WebGL e com a lista escolhida.
 - Os links diretos voltam ao mesmo estado (14 de 14 casos).
 - CSV, PNG e código de incorporar funcionam na comparação nova.
+
+### D72 · 16/11/2026 · Título "rotzx", abertura com o dado e guia passo a passo
+**Pedido do dono (para apresentar o projeto no LinkedIn):**
+- tirar o slogan do título da aba;
+- trocar a abertura da entrada, que "passava uma vibe de vibe code";
+- criar um guia com balões que mostram o que cada parte faz, passo a passo.
+
+**Título:** a aba mostra só "rotzx" na entrada. As outras telas seguem "China e o Brasil — rotzx", "China × Estados Unidos — rotzx" etc. O cartão de compartilhamento (`og:title`) continua com o nome do atlas.
+
+**Abertura:**
+- Saem o selo em maiúsculas, o título-slogan e a linha de metadados com pontos.
+- Entra uma manchete com o dado do último ano, calculada como antes: "Em 2025, o Brasil exportou US$ 348 bi. *O maior destino: China, com 28,7%.*"
+- Abaixo, uma frase curta sobre o que é o atlas.
+- A cobertura (países e territórios, anos) foi para a linha de fonte.
+- O parágrafo seguinte deixou de repetir a fatia do maior destino.
+
+**Guia (botão "?" no cabeçalho):**
+- Abre sozinho só na primeira visita pela entrada, sem `#` e fora do modo incorporado; a escolha fica no `localStorage`.
+- Depois, abre pelo botão "?".
+- Cada passo escurece a página, destaca a parte com um contorno, liga um cartão a ela por uma linha e explica o que ela faz.
+- Passos: busca; globo; métricas; linha do tempo; Parceiros/Produtos/Comparar; história; Fontes e método.
+- No celular, os passos de partes escondidas (métricas e linha do tempo da entrada) são pulados.
+- Controles: Próximo, Voltar e Pular. Setas e Esc também funcionam.
+- O cartão é um `role="dialog"` que recebe o foco. Com movimento reduzido, sem transições.
+- A medição conta `acao/guia`.
+
+**Verificado:** Chromium sem tela, em 1440×900 e 390×844 no tema claro e em 1280×760 no escuro.
+- Nenhum cartão sai da tela, e a segunda visita não abre o guia sozinha.
+- Esc fecha o guia.
+- Sem erros e sem rolagem horizontal.

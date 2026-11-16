@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>rotzx — Como o Brasil se conecta ao mundo</title>
+<title>rotzx</title>
 <meta name="description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
 <meta name="color-scheme" content="light dark">
 <!-- compartilhamento (D63): os robôs das redes não rodam JS nem leem o #, então o cartão é o mesmo para todo link -->
@@ -199,6 +199,9 @@
 
   /* entrada em forma de história (D54): cada passo pinta o globo quando chega ao meio da leitura */
   .abertura { padding-top: 34px; padding-bottom: 30px; }
+  /* D72: a entrada abre com o dado, como manchete de jornal; a segunda frase em tom de apoio */
+  h1.manchete { font: 500 clamp(30px, 3.4vw, 44px)/1.12 var(--serif); letter-spacing: -.012em; margin: 0 0 16px; max-width: 22ch; text-wrap: balance; }
+  h1.manchete span { color: var(--ink-2); font-style: italic; font-weight: 400; }
   .passo { position: relative; padding-top: 34px; padding-bottom: 38px; transition: background-color .3s; }
   .passo::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); transform: scaleY(0); transform-origin: top; transition: transform .35s ease; }
   .passo.ativo::before { transform: scaleY(1); }
@@ -385,6 +388,24 @@
   body.embed .lado-texto { max-width: none; border: 0; }
   .selo-embed { position: fixed; right: 12px; bottom: 12px; z-index: 40; padding: 7px 12px; border-radius: 3px; background: var(--ink); color: var(--bg); font-size: 13px; text-decoration: none; }
   .selo-embed[hidden] { display: none; }
+  /* guia passo a passo (D72): foco no elemento, linha até ele e um cartão com o que ele faz */
+  #guiaAbrir { font: 600 15px/1 var(--sans); }
+  .guia[hidden] { display: none; }
+  .guia { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+  .guia-foco { position: fixed; border-radius: 6px; box-shadow: 0 0 0 2px var(--accent), 0 0 0 9999px rgba(18, 22, 19, .48); transition: all .25s ease; }
+  .guia-linha { position: fixed; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .guia-linha line { stroke: var(--accent); stroke-width: 1.5; }
+  .guia-linha circle { fill: var(--accent); }
+  .guia-card { position: fixed; width: min(340px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--rule-2); border-top: 3px solid var(--accent);
+    border-radius: 4px; padding: 16px 18px 14px; pointer-events: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, .18); transition: top .25s ease, left .25s ease; }
+  .guia-card:focus { outline: none; }
+  .guia-passo { margin: 0 0 4px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); }
+  .guia-card h2 { font: 500 21px/1.2 var(--serif); margin: 0 0 6px; }
+  .guia-card p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+  .guia-botoes { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+  .guia-botoes span { display: flex; gap: 8px; }
+  .guia-botoes .btn { min-height: 34px; padding: 6px 12px; font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { .guia-foco, .guia-card { transition: none; } }
   .aviso-geral { margin: 0; padding: 10px 40px; border-bottom: 1px solid var(--rule); background: var(--surface); font-size: 14px; color: var(--ink-2); }
   .aviso-geral::before, .aviso-ano::before { content: "Aviso"; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ochre); margin-right: 8px; }
   .pular { position: absolute; left: 12px; top: -60px; z-index: 50; padding: 8px 12px; background: var(--ink); color: var(--bg); border-radius: 3px; text-decoration: none; }
@@ -476,6 +497,7 @@
     <ul id="buscaLista" role="listbox" hidden></ul>
   </div>
   <button class="fontes-link" type="button" id="abrirFontes">Fontes e método</button>
+  <button class="tema" type="button" id="guiaAbrir" aria-label="Como usar o atlas: guia passo a passo" title="Como usar o atlas">?</button>
   <button class="tema" type="button" id="tema" aria-label="Tema: automático. Trocar">◐</button>
 </header>
 
@@ -515,6 +537,15 @@
 </dialog>
 <a class="selo-embed" id="seloEmbed" target="_blank" rel="noopener" hidden>rotzx · ver a análise completa ↗</a>
 <p class="sr" id="anuncio" aria-live="polite"></p>
+<div class="guia" id="guia" hidden>
+  <div class="guia-foco" aria-hidden="true"></div>
+  <svg class="guia-linha" aria-hidden="true"><line/><circle r="4"/></svg>
+  <div class="guia-card" role="dialog" aria-modal="false" aria-labelledby="guiaTit" aria-describedby="guiaTxt" tabindex="-1">
+    <p class="guia-passo" id="guiaPasso"></p><h2 id="guiaTit"></h2><p id="guiaTxt"></p>
+    <div class="guia-botoes"><button type="button" class="link" id="guiaPular">Pular o guia</button>
+      <span><button type="button" class="btn" id="guiaVoltar">Voltar</button><button type="button" class="btn pri" id="guiaProx">Próximo</button></span></div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
@@ -1140,16 +1171,15 @@ function vistaInicio() {
   const cena = (o) => `data-cena='${JSON.stringify(o)}'`;
   const porta = (t, d, alvo) => `<li><button type="button" data-ir='${irJ(alvo)}'><b>${t}</b><span>${d}</span></button></li>`;
   return `<section class="sec abertura passo" id="passo-brasil" ${cena({ m: "corrente", ano: fim })}>
-      <div class="kicker">Atlas do comércio exterior brasileiro</div><h1>Como o Brasil se conecta ao mundo</h1>
-      <p class="lead">De quem o Brasil depende para vender e para comprar, e como isso mudou desde ${ini}. Parceiros, produtos e concentração, sempre com a fonte e o ano de cada número.</p>
-      <p class="meta"><span>${IDS.length} países e territórios</span><span>${ini}–${fim}</span><span>Comex Stat (MDIC) e outras fontes abertas</span></p>
+      <h1 class="manchete">Em ${a}, o Brasil exportou ${usd(e).replace(/ /g, "\u00a0")}. <span>O maior destino: ${esc(nome(ce.top[0]))}, com\u00a0${pct(ce.p1)}.</span></h1>
+      <p class="lead">Com quem o Brasil compra e vende, o quê, e como isso mudou desde ${ini}. Cada número traz a fonte e o ano.</p>
       <div class="kpis" style="margin-top:22px"><div class="kpi"><span>Exportações em ${a}</span><b class="num">${usd(e)}</b></div><div class="kpi"><span>Importações em ${a}</span><b class="num">${usd(i)}</b></div>
         <div class="kpi"><span>Saldo</span><b class="num">${(e - i >= 0 ? "+" : "") + usd(e - i)}</b><small>${e - i >= 0 ? "superávit" : "déficit"}</small></div>
         <div class="kpi"><span>Corrente (exp. + imp.)</span><b class="num">${usd(e + i)}</b></div></div>
-      <p class="resumo-txt" style="margin-top:14px">${bandeira(ce.top[0])} <b>${esc(nome(ce.top[0]))}</b> recebeu ${pct(ce.p1)} das exportações brasileiras; os 5 maiores destinos somaram ${pct(ce.p5)}.
+      <p class="resumo-txt" style="margin-top:14px">Os 5 maiores destinos somaram ${pct(ce.p5)} das exportações brasileiras.
         ${bandeira(ci.top[0])} <b>${esc(nome(ci.top[0]))}</b> foi a origem de ${pct(ci.p1)} das importações; as 5 maiores origens, ${pct(ci.p5)}.
         O Brasil vendeu para ${ce.n} e comprou de ${ci.n} países e territórios.</p>
-      ${fonteC(`Comex Stat · US$ FOB correntes · ${a}`)}
+      ${fonteC(`Comex Stat (MDIC) · US$ FOB correntes · ${IDS.length} países e territórios, ${ini}–${fim}`)}
       ${sobreDado(`Participações calculadas sobre o total exportado ou importado pelo Brasil no ano, que inclui operações sem país definido (provisão de navios e aeronaves, por exemplo). Valores FOB em dólares correntes, sem correção pela inflação.`)}
       <p class="nota">Role a página: a cada parte, o globo muda para mostrar o que você está lendo.</p></section>
     ${ch0 && ch ? `<section class="sec passo" id="passo-china" ${cena({ m: "part", ano: fim, foco: "156", alt: 1.7 })}>
@@ -1693,12 +1723,89 @@ function caminhoMedicao() {
 }
 const evento = (nome_) => window.rotzxContar && rotzxContar(`acao/${nome_}`, nome_, true);
 function atualizarMeta() {
-  const x = tituloTela(), t = x ? `${x.t} — rotzx` : "rotzx — Como o Brasil se conecta ao mundo", d = x?.d || DESC_PADRAO;
+  const x = tituloTela(), t = x ? `${x.t} — rotzx` : "rotzx", d = x?.d || DESC_PADRAO;
   document.title = t;
   const pm = (sel, v) => { const m = document.querySelector(sel); if (m) m.content = v; };
   pm('meta[name="description"]', d); pm('meta[property="og:title"]', t); pm('meta[name="twitter:title"]', t);
   pm('meta[property="og:description"]', d); pm('meta[name="twitter:description"]', d);
   pm('meta[property="og:url"]', urlCompleta());
+}
+
+// ---------- guia passo a passo (D72): mostra o que cada parte faz, na primeira visita e pelo botão "?" ----------
+const PASSOS_GUIA = [
+  { alvo: "#busca", tit: "Busque um país", txt: "Digite o nome de qualquer país ou território para abrir o perfil dele: quanto o Brasil vende e compra, quais produtos e como isso mudou." },
+  { alvo: "#globo", tit: "O globo responde ao que você escolhe", txt: "Cada país é pintado pela medida escolhida. Clique num país para abrir o perfil; arraste para girar. Em “Lista”, a mesma informação em ordem." },
+  { alvo: ".ctl .metricas", tit: "Escolha o que o mapa mostra", txt: "Exportações, importações, corrente, participação no total do Brasil ou mudança entre dois anos. Em “Contexto”: votos na ONU e conflitos." },
+  { alvo: ".ctl .tempo", tit: "Volte no tempo", txt: "Arraste para escolher o ano, de 1997 a 2025, ou aperte ▶ para ver o comércio mudar ano a ano." },
+  { alvo: ".nav", tit: "Três jeitos de explorar", txt: "Parceiros: o ranking dos países. Produtos: para onde vai e de onde vem cada produto. Comparar: dois países lado a lado." },
+  { alvo: "#passo-brasil", tit: "Leia a história", txt: "Role o texto: cada parte muda o globo para mostrar o que você está lendo. Os botões levam à análise completa." },
+  { alvo: "#abrirFontes", tit: "De onde vem cada número", txt: "Fontes e método traz as bases, as licenças e as definições. Em cada análise, “Baixar CSV” e “Exportar imagem” levam os dados com você." },
+];
+const GUIA = { i: 0, passos: [], ativo: false };
+const visivel = (el) => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== "hidden";
+function abrirGuia() {
+  if (st.pais || st.vista !== "inicio") ir({ pais: null, vista: "inicio", prod: null, m: "corrente" });
+  GUIA.passos = PASSOS_GUIA.filter((x) => visivel($(x.alvo)));
+  if (!GUIA.passos.length) return;
+  GUIA.i = 0; GUIA.ativo = true; $("#guia").hidden = false;
+  try { localStorage.setItem("rotzx-guia", "visto"); } catch { /* sem armazenamento: o guia pode voltar na próxima visita */ }
+  evento("guia");
+  mostrarPasso();
+}
+function fecharGuia() { GUIA.ativo = false; $("#guia").hidden = true; $("#guiaAbrir").focus({ preventScroll: true }); }
+function mostrarPasso() {
+  const x = GUIA.passos[GUIA.i], el = $(x.alvo), n = GUIA.passos.length, ult = GUIA.i === n - 1;
+  $("#guiaPasso").textContent = `${GUIA.i + 1} de ${n}`;
+  $("#guiaTit").textContent = x.tit; $("#guiaTxt").textContent = x.txt;
+  $("#guiaVoltar").hidden = GUIA.i === 0; $("#guiaProx").textContent = ult ? "Começar a explorar" : "Próximo";
+  const r0 = el.getBoundingClientRect();
+  if (r0.top < 0 || r0.bottom > innerHeight) el.scrollIntoView({ block: "center", behavior: reduzir ? "auto" : "smooth" });
+  setTimeout(posicionarGuia, reduzir ? 0 : 260);
+  $(".guia-card").focus({ preventScroll: true });
+}
+function posicionarGuia() {
+  if (!GUIA.ativo) return;
+  const el = $(GUIA.passos[GUIA.i].alvo), card = $(".guia-card"), M = 16, F = 6;
+  const r = el.getBoundingClientRect(), W = innerWidth, Hh = innerHeight;
+  // o foco não passa da tela (o globo e a história podem ser maiores que ela)
+  const f = { l: Math.max(4, r.left - F), t: Math.max(4, r.top - F), r: Math.min(W - 4, r.right + F), b: Math.min(Hh - 4, r.bottom + F) };
+  Object.assign($(".guia-foco").style, { left: f.l + "px", top: f.t + "px", width: f.r - f.l + "px", height: f.b - f.t + "px" });
+  const cw = card.offsetWidth, ch = card.offsetHeight, gap = 56;
+  const lugares = [
+    { lado: "dir", x: f.r + gap, y: (f.t + f.b) / 2 - ch / 2, cabe: f.r + gap + cw <= W - M },
+    { lado: "esq", x: f.l - gap - cw, y: (f.t + f.b) / 2 - ch / 2, cabe: f.l - gap - cw >= M },
+    { lado: "baixo", x: (f.l + f.r) / 2 - cw / 2, y: f.b + gap, cabe: f.b + gap + ch <= Hh - M },
+    { lado: "cima", x: (f.l + f.r) / 2 - cw / 2, y: f.t - gap - ch, cabe: f.t - gap - ch >= M },
+  ];
+  const L = lugares.find((q) => q.cabe) || { lado: "dentro", x: W / 2 - cw / 2, y: Hh - ch - M };
+  const x = Math.min(Math.max(M, L.x), W - cw - M), y = Math.min(Math.max(M, L.y), Hh - ch - M);
+  card.style.left = x + "px"; card.style.top = y + "px";
+  // a linha sai da borda do cartão mais próxima e termina no meio da borda do elemento
+  const cx = Math.min(Math.max((f.l + f.r) / 2, x), x + cw), cy = Math.min(Math.max((f.t + f.b) / 2, y), y + ch);
+  const a = L.lado === "dir" ? [x, cy] : L.lado === "esq" ? [x + cw, cy] : L.lado === "baixo" ? [cx, y] : L.lado === "cima" ? [cx, y + ch] : [cx, y];
+  const b = L.lado === "dir" ? [f.r, Math.min(Math.max(cy, f.t + 8), f.b - 8)] : L.lado === "esq" ? [f.l, Math.min(Math.max(cy, f.t + 8), f.b - 8)]
+    : L.lado === "baixo" ? [Math.min(Math.max(cx, f.l + 8), f.r - 8), f.b] : [Math.min(Math.max(cx, f.l + 8), f.r - 8), f.t];
+  const ln = $(".guia-linha line"), ci = $(".guia-linha circle");
+  ln.setAttribute("x1", a[0]); ln.setAttribute("y1", a[1]); ln.setAttribute("x2", b[0]); ln.setAttribute("y2", b[1]);
+  ci.setAttribute("cx", b[0]); ci.setAttribute("cy", b[1]);
+  $(".guia-linha").style.display = L.lado === "dentro" ? "none" : "";
+}
+$("#guiaAbrir").onclick = abrirGuia;
+$("#guiaPular").onclick = fecharGuia;
+$("#guiaVoltar").onclick = () => { if (GUIA.i > 0) { GUIA.i--; mostrarPasso(); } };
+$("#guiaProx").onclick = () => { if (GUIA.i < GUIA.passos.length - 1) { GUIA.i++; mostrarPasso(); } else fecharGuia(); };
+addEventListener("keydown", (e) => {
+  if (!GUIA.ativo) return;
+  if (e.key === "Escape") { e.stopImmediatePropagation(); fecharGuia(); }
+  else if (e.key === "ArrowRight" && !e.target.closest("input")) $("#guiaProx").click();
+  else if (e.key === "ArrowLeft" && !e.target.closest("input") && GUIA.i > 0) $("#guiaVoltar").click();
+}, true);
+addEventListener("resize", () => posicionarGuia());
+addEventListener("scroll", () => posicionarGuia(), true);
+// primeira visita, pela entrada, fora do modo incorporado: o guia abre sozinho depois que a página assenta
+function guiaNaPrimeiraVisita() {
+  let visto = false; try { visto = !!localStorage.getItem("rotzx-guia"); } catch { visto = true; }
+  if (!visto && !st.embed && !st.pais && st.vista === "inicio" && !location.hash) setTimeout(() => { if (!st.pais && st.vista === "inicio" && !GUIA.ativo) abrirGuia(); }, 1400);
 }
 
 // ---------- exportar e compartilhar (D62) ----------
@@ -2125,6 +2232,7 @@ autocompletar($("#busca"), $("#buscaLista"), buscarPais, (id) => { $("#busca").v
 Object.assign(st, lerURL());
 if (location.hash && (!location.hash.includes("=") || anoAjuste)) history.replaceState(null, "", urlDe(st));   // converte #China em #pais=CHN…; ano ajustado vai para a URL
 render(true);
+guiaNaPrimeiraVisita();
 fetch("dados/detalhe/indice.json").then((r) => (r.ok ? r.json() : null)).catch(() => null)
   .then((o) => {
     if (o?.schema !== SCHEMA_DET) return;
