@@ -19,6 +19,10 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from . import bancomundial, codigos, comex, conflitos, omc, onu, produtos_nomes
+from .. import config
+
+SAIDA = config.ROOT / "prototipos" / "globo" / "dados"   # o que a página lê (historia.js|json, produtos.js|json)
+BRUTOS = config.DATA_DIR / "fontes" / "mundo"           # respostas guardadas das fontes (fora do git)
 
 ANO_COMEX = 1997
 ANO_ONU = 1946
@@ -191,6 +195,12 @@ def montar(saida: Path, brutos: Path, ano_fim_comex: Optional[str] = None, log=p
     agora = datetime.now(timezone.utc).isoformat(timespec="seconds")
     out = {"gerado_em": agora, "falhas": {}, "paises": {r["iso_num"]: {"nome": r["nome"], "iso3": r["iso3"], "iso2": r.get("iso2", ""),
                                                                     "tipo": r.get("tipo", ""), "no_mapa": r["no_mapa"]} for r in tabela}}
+    for nome, baixar in (("onu_download", lambda: onu.baixar(brutos / "onu")), ("ucdp_download", lambda: conflitos.baixar(brutos / "ucdp"))):
+        try:
+            baixar()                                   # versão mais recente; sem rede, vale a cópia já guardada em data/
+        except (OSError, ValueError, KeyError) as e:
+            out["falhas"][nome] = f"{type(e).__name__}: {e}"[:200]
+            log(f"{nome}: falhou ({out['falhas'][nome]}); usando a cópia guardada, se houver")
     pares: dict = {}
     etapas = [
         ("comercio", lambda: comercio(tabela, fim, brutos / "comex", pares_saida=pares)),

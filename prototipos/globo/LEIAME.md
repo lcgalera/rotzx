@@ -1,84 +1,15 @@
-# Como o Brasil se conecta ao mundo (D38–D54)
+# Atlas rotzx (prototipos/globo)
 
-**Estado em 09/11/2026:** esta pasta é o site público inteiro, publicado na raiz de https://lcgalera.github.io/rotzx/ (D53; `/globo/` redireciona). A descrição atual está em `docs/PROJETO.md`, seção 7.
+Esta pasta é o site público inteiro, publicado na raiz de https://lcgalera.github.io/rotzx/ pelo workflow **Publicar**
+(`/globo/` redireciona para a raiz). O build copia tudo, menos este arquivo, e acrescenta as páginas por país e por produto.
 
-**D73 (16/11/2026):** scripts externos com integridade (SRI) e todos pelo jsDelivr (o ECharts saiu do cdnjs); política de conteúdo (CSP) na página; `#prod=` só aceita códigos da base.
+- `index.html`: a página inteira (HTML, CSS e JS, sem build; bibliotecas por CDN com versão exata e SRI).
+- `dados/historia.js|json`, `dados/produtos.js|json`: o retrato (`rotzx mundo-atualizar`).
+- `dados/detalhe/`: o detalhamento ano a ano, buscado sob demanda (`rotzx detalhe-gerar`; formato em `docs/SCHEMA.md`).
+- `medicao.js`: medição de acessos sem cookies (GoatCounter).
+- `og.png`, `icone.svg`, `icone-180.png`: cartão de compartilhamento e ícones.
 
-**D68 (16/11/2026):** `dados/detalhe/` gerado (`rotzx detalhe-gerar`): parceiros de cada produto e produtos de cada país, de 1997 a 2025.
+Para ver localmente: `python3 -m http.server 8000` nesta pasta. Precisa de internet para as bibliotecas e de WebGL para o globo
+(sem WebGL, a lista assume).
 
-**D66 (16/11/2026):** `medicao.js` (medição sem cookies, desligada até preencher o código); o build público gera páginas estáticas por país e produto.
-
-**D64 (13/11/2026):** painel produto × país com os três denominadores; controles do mapa só onde servem; no desktop só a coluna da análise rola; botões da barra estáveis.
-
-**D63 (13/11/2026):** `og.png` e meta tags de compartilhamento; título e descrição mudam conforme a tela.
-
-**D62 (13/11/2026):** botões "Exportar imagem" (PNG com título, fonte e assinatura) e "Baixar CSV" em cada seção com dados; "Copiar link" e "Incorporar" na barra da análise; `#…&embed=1` abre o modo incorporado.
-
-**D61 (13/11/2026):** a página lê, se existir, o detalhamento em `dados/detalhe/` (formato em `docs/SCHEMA.md`).
-
-**Desde 06/11/2026 (D47–D54):** atlas das relações comerciais do Brasil. D48 refinou o espaço de leitura, a informação em dois níveis, o percurso produto → país e a comparação. D49 deu a identidade editorial: tema claro, Newsreader e IBM Plex Sans, globo cartográfico sem a imagem de satélite. D50 deu mais espaço à leitura, uma abertura própria ao país visto por um produto e um só controle de ano. D51 fechou a versão estável: cobertura do recorte por produto explícita, avisos de estado, falhas recuperáveis e os detalhes brasileiros (silhueta no carregamento, "Pátria amada, Brasil." na entrada). D54 (08/11/2026) tirou as repetições (um controle de métrica e ano, um caminho de volta, posição uma vez só) e deu movimento: entrada em forma de história que conduz o globo, linha do tempo com ▶, números e gráficos que transitam, globo e listas sincronizados. A descrição abaixo é histórica. Ver `docs/PROJETO.md`, seção 7: o que a pessoa vê, definições dos
-denominadores, esquema de `dados/historia.json` e `dados/produtos.json`, coleta e limitações. Teste no navegador: desktop 1440×900 e
-celular 390×844, com e sem WebGL. Bandeiras: flag-icons 7.5.0 (MIT) pela jsDelivr. O texto abaixo registra as versões anteriores.
-
----
-
-## Versão de 05/11/2026 (D46)
-
-**Desde 05/11/2026 (D45, D46):** portfólio histórico. Todos os países × Brasil de 1946 a 2025 (comércio, votos na ONU, conflitos, OMC,
-economia), com indicador, barra de ano e ▶ embaixo do globo, ranking do ano à direita e painel por país com gráficos (ECharts 5.5.0 pela
-cdnjs). Dados em `dados/historia.json|js` (`rotzx mundo-atualizar --historico`), tabela de países em `catalog/paises_mundo.csv`.
-Notícias pausadas e escondidas (`NOTICIAS = false`). O texto abaixo registra as versões anteriores.
-
----
-
-
-Abra `index.html` no navegador (precisa de internet para as bibliotecas e de WebGL).
-
-**O que funciona:** globo que gira sozinho; arrastar para girar e rolar para aproximar; passar o mouse mostra o nome; clicar num país (ou buscar pelo nome)
-dá zoom nele e abre o painel. Fecha com "Voltar ao mundo", com o × ou com Esc. Cada país tem link direto (`index.html#China`).
-Um quadro só, dividido em dois, com uma barra em cima. A barra mostra a marca, de quando são os dados (e se alguma fonte de manchetes
-não respondeu) e a busca. À esquerda, o globo, com a opção "Lista de países" (que também substitui o globo quando o navegador não tem
-WebGL) e botões de zoom. À direita, "Mundo agora": abas Agora (geopolítica e temas globais), No Brasil, Conflitos e Comércio do Brasil, com filtros
-por categoria e contagem; a ordem é por data, sem ranking de importância. Ao clicar num país, o painel dele entra no lugar.
-No celular, o globo fica em cima e o texto embaixo. Começa com o Brasil de frente, gira devagar, e "Mundo" volta para o Brasil.
-O planeta usa a imagem de satélite Blue Marble (NASA, domínio público), tingida de verde-petróleo, com mapa de relevo, servidas pelo pacote `three-globe@2.45.6` (MIT);
-os países são camadas translúcidas por cima: Brasil em verde, os 20 países do protótipo em azul-acinzentado, o selecionado em branco.
-
-**O que não é real ainda:** nenhum número, manchete ou texto do painel. Os blocos mostram só de onde cada coisa vai vir:
-Comex Stat (relação comercial com o Brasil), Banco Mundial e FMI (economia), GDELT e feeds RSS (manchetes, só título + veículo + link)
-e um texto de "por que importa para o Brasil" marcado como interpretação.
-
-**Os 20 países** foram escolhidos para testar a navegação; a lista final sai dos dados de comércio exterior.
-Singapura ficou de fora porque não aparece no mapa nesta escala.
-
-**Bibliotecas** (fixadas por versão, via jsDelivr): `globe.gl@2.46.2` (MIT), `topojson-client@3.1.0` (ISC) e
-`world-atlas@2.0.2` (ISC; contornos do Natural Earth 1:110m, domínio público).
-Texturas: `three-globe@2.45.6/example/img/earth-blue-marble.jpg` e `earth-topology.png`.
-
-**Testado** em Chromium sem tela (WebGL por software), em 1280×800 e 390×844: carrega o globo, abre por busca e por clique,
-troca as abas, fecha com Esc e não tem rolagem horizontal no celular.
-
-**Próximo passo:** liberar na rede do ambiente `api.gdeltproject.org`, `api.worldbank.org`, `www.imf.org` e `api-comexstat.mdic.gov.br`,
-conferir licença e termos de uso de cada um e ligar os dados aos 20 países.
-
-## Dados (desde 04/11/2026)
-
-`rotzx mundo-atualizar` gera `dados/mundo.json|js` (comércio e economia) e `dados/noticias.json|js` (manchetes); o globo lê os `.js`,
-o que funciona também abrindo o arquivo direto no computador.
-
-| Bloco | Fonte | O que entra |
-|---|---|---|
-| Relação com o Brasil | Comex Stat (MDIC) | exportações, importações, saldo, posição no ranking e os 5 principais produtos (SH4) de cada lado, no último ano completo |
-| Economia | Banco Mundial (CC BY 4.0) | crescimento do PIB, inflação, PIB e população, o valor mais recente de cada um |
-| Sinais da relação: ONU | votos na Assembleia Geral (Voeten, Strezhnev e Bailey, Harvard Dataverse, CC0) | concordância com o Brasil no último ano e média de 5 anos, posição entre todos os países (D42) |
-| Sinais da relação: OMC | lista oficial de disputas do site da OMC | disputas com o Brasil desde 1995 e, na visão externa, as do país com outros países nos últimos 5 anos; para a UE, as da UE |
-| Conflitos armados | UCDP/PRIO Armed Conflict Dataset (Uppsala, CC BY 4.0) | conflitos dos últimos 5 anos com um governo de um dos lados e 25+ mortes em combate no ano: lados, apoio com tropas, o que está em disputa, intensidade (D43) |
-| Manchetes | feeds RSS de veículos em português (g1, Folha, BBC News Brasil, DW, Agência Brasil, RFI) e GDELT | manchetes dos últimos 7 dias que citam o país no título; só título, veículo, data e link |
-
-- O FMI ficou de fora: o servidor dele barra acesso automatizado ("Access Denied").
-- O resumo de cada país é gerado dos números do Comex Stat e só descreve: posição, valores, participação e saldo. Os produtos ficam
-  fora da frase porque os nomes oficiais dos grupos SH4 são longos e abreviá-los pode enganar (ex.: "Barcos-faróis…", que inclui plataformas).
-- As manchetes são classificadas por palavras-chave no título (`rotzx/mundo/gdelt.py`), e isso pode errar.
-- O workflow `.github/workflows/globo.yml` atualiza as manchetes todo dia e o comércio, os votos na ONU, as disputas na OMC e os conflitos armados todo dia 15.
-- Não há nota de relação "boa" ou "ruim": o painel mostra sinais medidos, cada um com a fonte (D42).
-- Manchetes (D44): em cima, os assuntos cobertos por mais veículos (agrupados pelas palavras do título); embaixo, o resto por dia, com a hora de Brasília. Cada manchete é marcada com os países que o título cita, e o globo pinta os países por número de manchetes (camada "Notícias"). Tudo automático, pode errar, e a página avisa.
+A descrição completa está em `docs/PROJETO.md`, e o histórico das versões em `docs/DECISOES.md`.

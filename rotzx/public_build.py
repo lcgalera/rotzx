@@ -1,257 +1,55 @@
-"""Build público: site estático (HTML + JSON) só com séries de uso público.
+"""Site público do rotzx (`python -m rotzx publicar`): o atlas na raiz, páginas estáticas e cartões.
 
-    .venv/bin/python -m rotzx publicar              # gera ./site: só o atlas, na raiz (D53)
-    .venv/bin/python -m rotzx publicar --completo   # site antigo completo (radares, previsões, atlas em /globo/)
-    .venv/bin/python -m rotzx publicar --saida X    # gera em X
-
-O resultado pode ser hospedado como está (GitHub Pages, Cloudflare Pages): não depende
-do servidor FastAPI. Desde a D53, o site público é só o atlas "Como o Brasil se conecta ao mundo" na raiz;
-/globo/ redireciona para a raiz mantendo o que vem depois do # (país, ano, filtros). O modo completo usa a
-interface de web/ em modo estático (window.ROTZX_STATIC) e continua disponível para voltar atrás.
-
-Regras (D20):
-- entram só séries com uso == "publico" no catálogo; tudo que é pessoal (Macrodados) fica de fora
-  do banco, dos JSON, dos gráficos e dos CSV;
-- números derivados também: a análise setorial é REFEITA só com candidatos públicos (e com a
-  correção de Holm sobre essa família), em vez de filtrar um resultado calculado com dados pessoais;
-- ao final, `verificar` varre a saída e falha se encontrar identificador, código, nome ou sequência
-  de valores de qualquer série de uso pessoal.
+Saída em site/ (fora do git), enviada ao GitHub Pages pelo workflow `publicar.yml`:
+- o atlas (prototipos/globo) na raiz, sem os arquivos de trabalho;
+- /globo/ redireciona para a raiz levando o que vem depois do # (links antigos continuam valendo, D53);
+- uma página por país e por produto, sitemap.xml e robots.txt (D66) e o cartão de cada uma (D70).
 """
-import json
 import shutil
-import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
-import numpy as np
+from . import __version__, config
 
-from . import __version__, config, payloads, storage, transforms
-from . import catalog as cat
-
-MARCA_ANTIGA = ".econatlas-publico"  # pastas geradas até a v0.12 (D35)
 MARCA = ".rotzx-publico"  # arquivo que identifica uma pasta gerada por este build (só ela pode ser apagada)
-JANELA = 6                    # tamanho da sequência de valores usada na detecção de vazamento
-
-
-class VazamentoPublico(Exception):
-    """A saída pública contém algo de uma série de uso pessoal."""
-
-
-def _write(path: Path, obj) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":"), default=str), encoding="utf-8")
+GLOBO = config.ROOT / "prototipos" / "globo"
+FORA = ("LEIAME.md", "__pycache__")                                  # arquivos de trabalho que não vão para o site
+REDIRECIONA_GLOBO = """<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>rotzx</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="../">
+<script>location.replace("../" + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=../"></head>
+<body style="font-family:system-ui,sans-serif;background:#F3F0E8;color:#222721;padding:24px">
+<p>O atlas agora fica em <a href="../">lcgalera.github.io/rotzx/</a>.</p></body></html>
+"""
 
 
 def _prepare_dir(out: Path) -> None:
     if out.exists():
-        if not any((out / m).exists() for m in (MARCA, MARCA_ANTIGA)) and any(out.iterdir()):
+        if not (out / MARCA).exists() and any(out.iterdir()):
             raise RuntimeError(f"{out} existe e não foi gerada por este build; escolha outra pasta")
         shutil.rmtree(out)
     out.mkdir(parents=True)
     (out / MARCA).write_text("pasta gerada por rotzx publicar; pode ser apagada e refeita\n")
 
 
-def _public_db(conn, dest: Path, permitidas: set) -> Dict:
-    """Cópia do banco só com o que é público. Mantém versões, hashes e os gatilhos de imutabilidade."""
-    from .forecast import focus, registry, setorial
-    from .analysis import leading
-    pub = storage.connect(dest)
-    registry.ensure_schema(pub)
-    setorial.ensure_schema(pub)
-    focus.ensure_schema(pub)
-    ids = sorted(permitidas)
-    marks = ",".join("?" * len(ids))
-    conn.row_factory = sqlite3.Row
-    vint = conn.execute(f"SELECT * FROM vintages WHERE series_id IN ({marks})", ids).fetchall()
-    pub.executemany(f"INSERT INTO vintages VALUES ({','.join('?' * len(vint[0].keys()))})", [tuple(r) for r in vint])
-    obs = conn.execute(f"SELECT * FROM observations WHERE series_id IN ({marks})", ids).fetchall()
-    pub.executemany("INSERT INTO observations VALUES (?,?,?,?)", [tuple(r) for r in obs])
-    registry.ensure_schema(conn)
-    prev = conn.execute("SELECT * FROM previsoes").fetchall()  # IPCA e Focus: dados públicos
-    if prev:
-        pub.executemany(f"INSERT INTO previsoes VALUES ({','.join('?' * len(prev[0].keys()))})", [tuple(r) for r in prev])
-    setorial.ensure_schema(conn)
-    setores_pub = [s for s, c in leading.SETORES.items() if c["alvo"] in permitidas]
-    ps = conn.execute(f"SELECT * FROM previsoes_setoriais WHERE setor IN ({','.join('?' * len(setores_pub)) or 'NULL'}) "
-                      f"AND serie_id IN ({marks})", setores_pub + ids).fetchall()
-    if ps:
-        pub.executemany(f"INSERT INTO previsoes_setoriais VALUES ({','.join('?' * len(ps[0].keys()))})", [tuple(r) for r in ps])
-    focus.ensure_schema(conn)
-    fc = conn.execute("SELECT * FROM focus_ipca_mensal").fetchall()
-    if fc:
-        pub.executemany("INSERT INTO focus_ipca_mensal VALUES (?,?,?,?,?,?)", [tuple(r) for r in fc])
-    pub.commit()
-    pub.close()
-    return {"vintages": len(vint), "observacoes": len(obs), "previsoes_ipca": len(prev),
-            "previsoes_setoriais": len(ps), "focus": len(fc)}
-
-
-def _static_assets(out: Path) -> None:
-    for name in ("styles.css", "texto.js", "app.js", "icone.svg", "icone-180.png"):
-        shutil.copy2(config.WEB_DIR / name, out / name)
-    html = (config.WEB_DIR / "index.html").read_text(encoding="utf-8")
-    html = html.replace('href="/static/', 'href="').replace('src="/static/', 'src="')
-    html = html.replace('<script src="app.js', '<script>window.ROTZX_STATIC = true;</script>\n  <script src="app.js', 1)
-    html = html.replace("Dados de fontes públicas oficiais (Banco Central do Brasil e IBGE), citados em cada indicador.",
-                        "Versão pública: somente dados abertos (Banco Central do Brasil e IBGE), citados em cada indicador.")
-    (out / "index.html").write_text(html, encoding="utf-8")
-    (out / ".nojekyll").write_text("")  # GitHub Pages: servir arquivos como estão
-    globo = config.ROOT / "prototipos" / "globo"  # atlas "Como o Brasil se conecta ao mundo" (D41, D47): só dados abertos
-    if globo.exists():
-        shutil.copytree(globo, out / "globo", ignore=shutil.ignore_patterns("LEIAME.md", "__pycache__"))
-
-
-GLOBO = config.ROOT / "prototipos" / "globo"   # atlas (D41, D47–D52): só dados abertos
-REDIRECIONA_GLOBO = """<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><title>rotzx — Como o Brasil se conecta ao mundo</title>
-<meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="../">
-<script>location.replace("../" + location.hash);</script>
-<meta http-equiv="refresh" content="0; url=../"></head>
-<body style="font-family:system-ui,sans-serif;background:#F3F0E8;color:#222721;padding:24px">
-<p>O atlas “Como o Brasil se conecta ao mundo” agora fica em <a href="../">lcgalera.github.io/rotzx/</a>.</p></body></html>
-"""
-
-
-def _so_atlas(out: Path, cartoes: bool = True) -> None:
-    """Site público só com o atlas, na raiz; /globo/ redireciona levando o hash (links antigos continuam valendo)."""
+def _so_atlas(out: Path, cartoes: bool = True) -> Dict:
+    """Atlas na raiz; /globo/ redireciona; páginas estáticas e cartões."""
     for p in GLOBO.iterdir():
-        if p.name in ("LEIAME.md", "__pycache__"):
+        if p.name in FORA:
             continue
         (shutil.copytree if p.is_dir() else shutil.copy2)(p, out / p.name)
-    for velho in ("mundo.js", "mundo.json", "noticias.js", "noticias.json"):   # D73: dados das versões antigas, sem uso na página
-        (out / "dados" / velho).unlink(missing_ok=True)
     (out / "globo").mkdir()
     (out / "globo" / "index.html").write_text(REDIRECIONA_GLOBO, encoding="utf-8")
     from .mundo import paginas                     # D66: uma página estática por país e por produto (buscadores não leem o #)
-    paginas.gerar(out, out / "dados", cartoes=cartoes)
+    r = paginas.gerar(out, out / "dados", cartoes=cartoes)
     (out / ".nojekyll").write_text("")  # GitHub Pages: servir arquivos como estão
+    return r
 
 
-def build(out: Optional[Path] = None, conn=None, catalog: Optional[Dict] = None, completo: bool = False, cartoes: bool = True) -> Dict:
-    from .analysis import leading
-    from .forecast import setorial
+def build(out: Optional[Path] = None, cartoes: bool = True) -> Dict:
     out = Path(out or config.PUBLIC_SITE_DIR)
-    conn = conn or storage.connect()
-    full = catalog if catalog is not None else cat.load_catalog()
-    if not completo:                               # D53: o site público é só o atlas
-        _prepare_dir(out)
-        _so_atlas(out, cartoes)
-        meta = {"gerado_em": datetime.now(timezone.utc).isoformat(timespec="seconds"), "versao_codigo": __version__,
-                "site": "atlas", "aviso": "Somente dados abertos."}
-        verificar(out, full, conn)
-        return meta
-    pub_cat = {k: m for k, m in full.items() if m.uso == "publico"}
-    permitidas = set(pub_cat)
     _prepare_dir(out)
-    data = out / "data"
-
-    _write(data / "catalogo.json", payloads.catalogo(conn, pub_cat))
-    n_series = 0
-    for sid, meta in pub_cat.items():
-        if storage.latest_vintage(conn, sid) is None:
-            continue
-        n_series += 1
-        for t in transforms.available(meta):
-            try:
-                _write(data / "series" / sid / f"{t['id']}.json", payloads.series(conn, pub_cat, sid, t["id"]))
-            except (ValueError, LookupError):
-                continue
-        _write(data / "series" / sid / "versoes.json", payloads.versoes(conn, sid))
-    _write(data / "qualidade.json", payloads.qualidade(conn, pub_cat))
-    _write(data / "previsoes_ipca.json", payloads.previsoes_ipca(conn))
-
-    setores_pub = [s for s, c in leading.SETORES.items() if c["alvo"] in permitidas
-                   and storage.latest_vintage(conn, c["alvo"]) is not None]
-    agora = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    analises = []
-    for s in setores_pub:
-        a = leading.run(conn, s, permitidas=permitidas)
-        a["executado_em"] = agora
-        analises.append(a)
-    _write(data / "analises_setores.json", analises)
-    prev_setores = [s for s in setorial.SETORES_PREVISAO if s in setores_pub]
-    _write(data / "previsoes_setoriais.json", payloads.previsoes_setoriais(conn, prev_setores))
-
-    db_stats = _public_db(conn, data / "rotzx_publico.sqlite", permitidas)
-    _static_assets(out)
-    meta = {"gerado_em": agora, "versao_codigo": __version__, "series": n_series, "setores_analise": setores_pub,
-            "setores_previsao": prev_setores, "banco": db_stats,
-            "aviso": "Somente dados abertos. Séries de uso pessoal (Macrodados) não entram nesta versão."}
-    _write(data / "meta.json", meta)
-    verificar(out, full, conn)
-    return meta
-
-
-# ---------------------------------------------------------------- verificação
-
-def _proibidos(catalog: Dict) -> Dict[str, List[str]]:
-    """Textos que não podem aparecer na saída pública: ids, códigos, nomes de séries pessoais."""
-    out = {}
-    for m in catalog.values():
-        if m.uso == "publico":
-            continue
-        tokens = {m.id, m.nome, m.extra.get("codigo_md") or "", m.extra.get("arquivo_original") or "",
-                  m.extra.get("coluna_valor") or ""}
-        out[m.id] = sorted(t for t in tokens if t and len(t) >= 5)
-    return out
-
-
-def _windows(values, n=JANELA):
-    v = [round(float(x), 6) for x in values if x is not None and not np.isnan(x)]
-    return {tuple(v[i:i + n]) for i in range(len(v) - n + 1)}
-
-
-def _numeric_runs(obj, acc):
-    """Coleta sequências de valores das listas [[data, valor], ...] em qualquer JSON."""
-    if isinstance(obj, list):
-        if obj and all(isinstance(p, list) and len(p) == 2 and isinstance(p[0], str) for p in obj):
-            acc.append([p[1] for p in obj if isinstance(p[1], (int, float))])
-        else:
-            for x in obj:
-                _numeric_runs(x, acc)
-    elif isinstance(obj, dict):
-        for x in obj.values():
-            _numeric_runs(x, acc)
-
-
-def verificar(out: Path, catalog: Dict, conn=None) -> None:
-    """Falha (VazamentoPublico) se a saída contiver qualquer rastro de série de uso pessoal."""
-    from .analysis import leading
-    out = Path(out)
-    problemas = []
-    proibidos = _proibidos(catalog)
-    texto = {p: p.read_text(encoding="utf-8", errors="ignore") for p in out.rglob("*")
-             if p.is_file() and p.suffix in (".json", ".html", ".js")}
-    for sid, toks in proibidos.items():
-        for p, t in texto.items():
-            for tok in toks:
-                if tok in t:
-                    problemas.append(f"{p.relative_to(out)}: contém '{tok}' (série pessoal {sid})")
-    for p in out.rglob("*.sqlite"):
-        db = sqlite3.connect(p)
-        for sid in proibidos:
-            for tabela, col in (("vintages", "series_id"), ("observations", "series_id"), ("previsoes_setoriais", "serie_id")):
-                try:
-                    n = db.execute(f"SELECT COUNT(*) FROM {tabela} WHERE {col} = ?", (sid,)).fetchone()[0]
-                except sqlite3.OperationalError:
-                    n = 0
-                if n:
-                    problemas.append(f"{p.relative_to(out)}: tabela {tabela} tem {n} linhas da série pessoal {sid}")
-        db.close()
-    if conn is not None and proibidos:
-        runs = []
-        for p, t in texto.items():
-            if p.suffix == ".json":
-                _numeric_runs(json.loads(t), runs)
-        publicadas = set().union(*(_windows(r) for r in runs)) if runs else set()
-        for sid in proibidos:
-            s = storage.load_observations(conn, sid)
-            if s.empty:
-                continue
-            for nome, serie in (("nível", s), ("var. 12m", leading.transform(s, "log12").dropna())):
-                hits = _windows(serie.values) & publicadas
-                if hits:
-                    problemas.append(f"valores da série pessoal {sid} ({nome}) aparecem na saída ({len(hits)} sequências)")
-    if problemas:
-        raise VazamentoPublico("saída pública contém dados de uso pessoal:\n  " + "\n  ".join(problemas[:30]))
+    paginas = _so_atlas(out, cartoes)
+    return {"gerado_em": datetime.now(timezone.utc).isoformat(timespec="seconds"), "versao_codigo": __version__, "paginas": paginas}

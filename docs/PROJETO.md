@@ -1,180 +1,102 @@
-# rotzx — documentação do projeto
+# rotzx — visão do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D73). Este documento descreve o projeto inteiro: o que ele faz,
-de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D73). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
-
-- Repositório: https://github.com/lcgalera/rotzx
-- Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
-
----
+Estado em 16/11/2026 (v1.0.0; decisões até D74). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D74).
+Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é
 
-rotzx é um projeto pessoal de **inteligência econômica com dados abertos e rastreáveis**. Tem três frentes, construídas
-nesta ordem. A frente em foco é o atlas, que é também o único conteúdo do site público (D53); as outras duas continuam no repositório
-e rodam localmente.
+**rotzx** é um atlas do comércio exterior brasileiro, publicado em https://lcgalera.github.io/rotzx/.
 
-| Frente | Para quem | O que entrega | Onde |
-|---|---|---|---|
-| **Radar econômico e setorial** | quem acompanha economia e a indústria de materiais elétricos | séries oficiais (BCB, IBGE, Focus), previsões registradas antes dos dados saírem, placar de acertos e erros | `rotzx/forecast`, `rotzx/analysis`, `registro/` (público no git), interface local (`rotzx servir`) |
-| **Radar de oportunidades (transmissão de energia)** | fornecedores do setor elétrico (B2B) | projetos do SIGET/ANEEL com evidência por regra, score explicado, histórico de mudanças, leilões e contexto econômico | `rotzx/intelligence`, `historico/`, `docs/03`–`08` |
-| **Atlas "Como o Brasil se conecta ao mundo"** | pessoas comuns que querem entender o comércio do Brasil | globo interativo: parceiros, produtos, concentração e comparação desde 1997, com contexto diplomático; notícias pausadas | `rotzx/mundo`, `prototipos/globo/`, site público (raiz) |
+Pergunta-guia: **com quem o Brasil compra e vende, o quê, e como isso mudou desde 1997?**
 
-O nome é **rotzx**, sempre em minúsculas (D25, D35). O nome antigo, EconAtlas, ainda funciona por compatibilidade
-(`python -m econatlas` redireciona; o banco `data/econatlas.sqlite` é renomeado no primeiro uso).
+O atlas cobre todos os países e territórios com comércio registrado com o Brasil, de 1997 a 2025, e acrescenta o contexto de cada relação:
+votos na ONU, disputas na OMC, conflitos armados e uma ficha econômica.
 
-## 2. Princípios (valem para tudo)
+Até a v0.13 o repositório tinha outras frentes: radar econômico e previsões do IPCA, radar de transmissão de energia, newsletter rotzOn
+e o nome antigo econatlas. Elas foram removidas na D74 e estão no histórico do git (último commit com elas: `081a87c`).
 
-1. **Só dado real, com fonte.** Cada número mostra de onde veio e de quando é. Nada de valor inventado, nem em exemplo de interface.
-2. **Interpretação nunca passa por fato.** Frases geradas a partir de números só descrevem; o que for interpretação aparece marcado.
-   Na relação entre países não existe nota de "boa" ou "ruim": aparecem sinais medidos (D42).
-3. **Proveniência.** Cada coleta guarda o arquivo bruto com SHA-256; cada versão dos dados é uma *vintage* (D2, D3).
-4. **Previsão registrada antes e imutável.** Especificação fixa antes do backtest (D9); registro só recebe acréscimos e é verificado contra o git (D10, D23).
-5. **Dado privado nunca vai para o público.** Séries da Macrodados são de uso pessoal (termos proíbem redistribuição): ficam fora do git,
-   e duas guardas impedem vazamento — a varredura do build e os testes do repositório (D4, D13, D20).
-6. **Notícias: só título, veículo, data e link.** O texto fica no site do veículo (D38, D40).
-7. **Automático pode errar, e a página avisa.** Categorias, assuntos e países citados são marcados por palavras do título.
-8. **Comunicação sem exagero** (D26, D27): frases de comparação sempre dizem a direção; nada de "comprovado" quando é associação.
+## 2. Princípios
+
+- **Só dado real**, com fonte e data. Nunca inventar número, nem em exemplo de interface. Fixtures de teste são marcadas como inventadas.
+- **Interpretação não passa por fato.** Nada de nota "boa/ruim" ou de risco entre países, só medidas com fonte.
+- **Participação sempre com o denominador dito.** Mudança de participação em p.p.
+- **Dado ausente é "sem registro", nunca zero.**
+- **Créditos e licenças das fontes sempre visíveis** na página "Fontes e método".
+- **A página não tem build:** um HTML com bibliotecas por CDN em versão exata e com integridade (SRI).
 
 ## 3. Arquitetura
 
 ```
-Fontes oficiais ──► providers/ e mundo/ (coleta, com novas tentativas e limite de ritmo)
-                     │
-                     ├─► storage.py  SQLite + arquivos brutos com SHA-256 (vintages)          ─┐
-                     ├─► historico/*.csv  SIGET e leilões (só acréscimos, no git)              │
-                     └─► prototipos/globo/dados/*.json|js  globo (comércio, relações, manchetes)│
-                                                                                                ▼
-prototipos/globo/ ──────────────────────────────────────────────► public_build.py ──► site/ (GitHub Pages: só o atlas, D53)
-forecast/, analysis/, intelligence/ ──► registro/*.csv (previsões)  ──► api.py + web/ (uso local, FastAPI; site antigo com --completo)
+prototipos/globo/          o site: index.html (a página inteira), medicao.js, og.png, ícones e dados/
+  dados/historia.js|json   retrato por país (comércio, ONU, conflitos, OMC, economia)
+  dados/produtos.js|json   explorador por produto (séries e maiores parceiros)
+  dados/detalhe/           detalhamento ano a ano, buscado sob demanda (formato em docs/SCHEMA.md)
+rotzx/                     código Python: coleta, retrato, detalhamento, páginas estáticas e build
+  mundo/                   fontes (comex, onu, omc, conflitos, bancomundial), tabela de países, retrato,
+                           detalhamento, páginas estáticas e cartões (com as fontes tipográficas em mundo/fontes/)
+  public_build.py          gera site/ para o GitHub Pages
+  cli.py                   python -m rotzx <comando>
+catalog/paises_mundo.csv   tabela de países e territórios (ISO 3166 × Comex Stat × ONU × UCDP)
+tests/                     pytest
+docs/                      PROJETO, DECISOES, SCHEMA, PROMPT
+.github/workflows/         publicar.yml (site) e dados.yml (atualização dos dados)
 ```
 
-- **Python 3.9**, monolítico (D1): FastAPI para uso local, HTML/JS sem build (ECharts e globe.gl por CDN com versão fixa).
-- **SQLite** com gatilhos que impedem alterar previsões registradas (D10).
-- **Dependências fixas** em `requirements.txt` (o Actions calcula com as mesmas bibliotecas do Mac).
-- **Site público estático**: `rotzx publicar` gera `site/` com o atlas na raiz e um redirecionamento em `/globo/` (D53); `--completo` gera o
-  site antigo com os radares. Os dois modos terminam com a varredura anti-vazamento (que lê também `.js`, D41).
-
-### Pastas
-
-| Pasta / arquivo | Conteúdo |
-|---|---|
-| `catalog/` | `series.json` (metadados conferidos nas fontes oficiais, D19), categorias de produto, perfil de demonstração, contexto do radar, contratos de leilões |
-| `rotzx/providers/` | BCB/SGS, BCB/Expectativas (Focus), IBGE/SIDRA, arquivos, Macrodados (uso pessoal), CKAN/ANEEL, SIGET, leilões |
-| `rotzx/forecast/` | modelos do IPCA (ingênuo, sazonal, SARIMA, Focus), backtest, faixa empírica, registro, previsão setorial |
-| `rotzx/analysis/leading.py` | indicadores antecedentes fora da amostra (Clark-West + Holm, D14–D17) |
-| `rotzx/intelligence/` | radar de oportunidades: evidências R1–R5, score, histórico do SIGET, leilões, contexto econômico, relatório |
-| `rotzx/mundo/` | globo: Comex Stat, Banco Mundial, RSS, GDELT, ONU, OMC, UCDP, países e montagem dos dados |
-| `rotzx/storage.py`, `transforms.py`, `payloads.py`, `quality.py`, `registro.py`, `public_build.py`, `api.py`, `cli.py` | núcleo |
-| `web/` | interface dos radares (local; publicada só com `publicar --completo`) |
-| `prototipos/globo/` | o atlas: `index.html` (página única), ícones (`icone.svg`, `icone-180.png`, D52) e `dados/` (gerados) |
-| `registro/` | previsões públicas e coletas (CSV, só acréscimos) |
-| `historico/` | SIGET (coletas, eventos, estado) e leilões de transmissão (CSV, só acréscimos; ODbL) |
-| `avaliacoes/` | avaliação humana de relevância do SIGET (conjunto de teste das regras) |
-| `tests/` | pytest: 148 testes + 1 pulado em 09/11/2026 (inclui as guardas do repositório público) |
-| `docs/` | avaliações, diagnósticos, fontes, mercado, validação, motor, contexto, leilões, decisões, este documento e o prompt |
-| `privado/`, `data/`, `site/`, `docs/DIARIO.md` | só locais, fora do git |
+O build copia `prototipos/globo/` para a raiz do site, menos o `LEIAME.md`. `/globo/` redireciona para a raiz levando o que vem depois do
+`#`, então links antigos continuam valendo. O build também gera uma página por país e por produto, com o cartão de compartilhamento de cada
+uma.
 
 ## 4. Fontes de dados
 
 | Fonte | Usada em | Licença / termos | Observações |
 |---|---|---|---|
-| BCB/SGS e BCB/Expectativas (Focus) | radar econômico | dados abertos | câmbio e Selic mensal desde jul/1994 (D7) |
-| IBGE/SIDRA | radar; PIM-PF seção 3.27 no setorial | dados abertos | 3.27 não mede investimento em transmissão |
-| Macrodados | só uso pessoal, no Mac | proíbe redistribuição | importação manual, nunca automatizada (D13) |
-| ANEEL SIGET (CKAN) | radar de oportunidades | ODbL | validado (D30), coleta semanal (D33) |
-| ANEEL resultados de leilões | leilões de transmissão | dados abertos | planilha baixada à mão (o site tem desafio Cloudflare) (D37) |
-| Comex Stat (MDIC) | globo: comércio | dados abertos | só o formato antigo `GET /general?filter=` funciona; ~12 s entre consultas |
-| Banco Mundial (WDI) | globo: economia | CC BY 4.0 | PIB, crescimento, inflação, população |
-| Feeds RSS (g1, Folha, BBC News Brasil, DW, Agência Brasil, RFI) | globo: manchetes | só título, veículo, data, link | fonte principal das manchetes (D40) |
-| GDELT DOC 2.0 | globo: manchetes | aberto | complemento; limita IPs compartilhados |
-| Votos na Assembleia Geral da ONU (Voeten, Strezhnev e Bailey, Harvard Dataverse) | globo: sinais da relação | CC0 | índice de Lijphart; sensível à pauta do ano (D42) |
-| Disputas na OMC (site da OMC) | globo: sinais e visão externa | site oficial | lido como texto; países da UE aparecem pela UE (D42) |
-| UCDP/PRIO Armed Conflict Dataset (Uppsala) | globo: conflitos armados | CC BY 4.0 | 25+ mortes em combate/ano; conta tropas de missões multinacionais como apoio (D43) |
-| Newsreader e IBM Plex Sans (Google Fonts; cópia em `rotzx/mundo/fontes/` para os cartões, D70) | tipografia do atlas | SIL Open Font License | serifa nos títulos, sans no texto (D49) |
-| ISO 3166 (pycountry / iso-codes do Debian) | tabela de países | LGPL (dados ISO) | só para gerar `catalog/paises_mundo.csv` (D46) |
-| flag-icons 7.5.0 | bandeiras | MIT | bandeira atual, não a do ano (D47) |
-| Itamaraty — relações bilaterais | link no painel | site oficial | desafio anti-robô: só o índice, sem conferir página por país (D46) |
-| Natural Earth 1:110m (via `world-atlas@2.0.2`) | contornos dos países | domínio público (pacote ISC) | ids = ISO 3166 numérico |
+| [Comex Stat (MDIC)](https://comexstat.mdic.gov.br) | comércio por país e produto (SH4), 1997–2025 | dados abertos | só o formato `GET /general?filter=` funciona; ~12 s entre consultas |
+| [Votos na Assembleia Geral da ONU](https://doi.org/10.7910/DVN/LEJUQZ) (Voeten, Strezhnev e Bailey, Harvard Dataverse) | concordância com o Brasil, 1946– | CC0 | índice de Lijphart; muda com a pauta do ano |
+| [Disputas na OMC](https://www.wto.org/english/tratop_e/dispu_e/dispu_by_country_e.htm) | disputas com o Brasil desde 1995 | site oficial | países da UE aparecem pela UE |
+| [UCDP/PRIO Armed Conflict Dataset](https://ucdp.uu.se/downloads/) | conflitos armados, 1946– | CC BY 4.0 | 25+ mortes em combate no ano; conta tropas de missões multinacionais |
+| [Banco Mundial (WDI)](https://data.worldbank.org) | PIB, crescimento, inflação, população | CC BY 4.0 | valor mais recente de cada indicador |
+| ISO 3166 (pycountry / iso-codes) | tabela de países | LGPL (dados ISO) | só para gerar `catalog/paises_mundo.csv` |
+| Natural Earth 1:110m (via `world-atlas@2.0.2`) | contornos | domínio público (pacote ISC) | ids = ISO 3166 numérico |
+| globe.gl 2.46.2, topojson-client 3.1.0, ECharts 5.5.0 | globo e gráficos | MIT, ISC, Apache-2.0 | jsDelivr, com SRI |
+| flag-icons 7.5.0 | bandeiras | MIT | bandeira atual, não a do ano |
+| Newsreader e IBM Plex Sans | tipografia (página e cartões) | SIL Open Font License | cópia em `rotzx/mundo/fontes/`, com as licenças |
+| GoatCounter | medição de acessos | serviço externo | sem cookies; respeita "não rastrear" |
 
-Ficaram de fora, com motivo registrado: FMI (barra acesso automatizado, D39); blocos e alianças pelo Wikidata (erros
-encontrados, D42); API da UCDP (pede chave; o download não pede, D43).
+Ficaram de fora, com motivo registrado: FMI (barra acesso automatizado, D39); blocos e alianças pelo Wikidata (erros encontrados, D42);
+API da UCDP (pede chave; o download não pede, D43).
 
-## 5. Frente 1 — radar econômico e setorial
+## 5. O que a pessoa vê
 
-- **Radar Brasil:** 18 séries públicas (inflação, juros, câmbio, atividade, renda, crédito).
-- **MacroForecast (IPCA):** ingênuo, sazonal ingênuo, SARIMA e Focus; backtest desde 2016; faixa de 80% empírica (erros dos últimos 60 meses, por horizonte, D21).
-- **Setorial:** indústria de máquinas e materiais elétricos (IBGE 3.27) a 3 e 6 meses, especificação `setorial_v1` com hash (D18, D22).
-  As faixas cobriram 61–69% no backtest para meta de 80%: o próximo passo é uma `setorial_v2`, sem mexer na v1.
-- **Indicadores antecedentes:** avaliados fora da amostra, em tempo pseudo-real, com Clark-West e correção de Holm; achado só vale se replicar (D14–D17).
-- **Página "Indústria de materiais elétricos: o que os juros indicam"** em linguagem simples, com todo número calculado dos dados (D24).
+Cabeçalho: logo, navegação (Início · Parceiros · Produtos · Comparar), busca de país, Fontes e método, guia (?) e tema claro/escuro.
 
-## 6. Frente 2 — radar de oportunidades (transmissão)
+- **Início:** uma manchete com o dado do último ano e uma história em passos (China desde 2000, China × EUA, soja, fertilizantes).
+  - Cada passo pinta o globo.
+  - Um guia passo a passo abre na primeira visita (D72).
+- **Globo e controles:**
+  - métricas: exportações, importações, corrente, participação e mudança em p.p.; em "Contexto", votos na ONU e conflitos;
+  - linha do tempo com ▶;
+  - "Lista" como alternativa sem 3D, que assume sozinha sem WebGL.
+- **Parceiros:** ranking da métrica no ano.
+- **Painel do país:**
+  - **Abertura:** valores, partes com o denominador e posição.
+  - **Relação comercial:** séries de 1997 a 2025.
+  - **Produtos e concentração:** maiores produtos de cada lado, ano a ano, e por onde passam.
+  - **Contexto diplomático:** ONU, OMC, conflitos e ficha econômica.
+- **Explorar por produto:** maiores destinos ou origens ano a ano, série do Brasil e itens NCM quando houver. Um país aberto a partir de um
+  produto mostra o total do produto, a fatia do país e o peso do produto no comércio com ele (D64).
+- **Comparar dois parceiros:** comércio, produtos e participação lado a lado, mais diplomacia, conflitos e economia (D71).
+- **Fontes e método:** fontes com links, cobertura, definições, licenças e a nota sobre a medição.
+- **Exportar e compartilhar:**
+  - PNG de cada gráfico e CSV dos números brutos;
+  - "Copiar link" com o estado completo;
+  - "Incorporar" (`<iframe>` com `embed=1`);
+  - cartão de link por página (D62, D63, D70).
+- **Páginas estáticas:** uma por país e por produto, com tabelas e link para o atlas no estado certo (D66).
+- **URL:** `#pais=CHN`, `#ver=ranking&m=mud&base=2000`, `#ver=produto&prod=1201&fluxo=e`, `#ver=comparar&a=CHN&b=USA`, `&ano=`, `&aba=`,
+  `&amplo=1`, `&embed=1`. Voltar, avançar e recarregar mantêm o estado.
 
-Fases (detalhes em `docs/02`, `03`, `06`, `07`, `08`):
-1. **Fonte:** exploração do portal da ANEEL e validação do SIGET (D28, D30).
-2. **Histórico:** coletas que só baixam o que mudou, eventos de mudança e estado em `historico/` (D33), toda segunda-feira (`radar-siget.yml`).
-3. **Motor:** regras determinísticas R1–R5 com evidência por regra e score separado da evidência (D32); precisão de 80% (IC 58–92%) numa amostra aleatória avaliada à mão (D31).
-4. **Leilões:** resultado dos leilões de transmissão como sinal antecipado, com ligação lote → contrato (D37).
-5. **Contexto econômico** no relatório, fora do score (D34).
-
-Pendente: conversas com compradores antes de construir interface (D29), nova amostra fora da amostra, janela por categoria.
-
-## 7. Frente 3 — Atlas "Como o Brasil se conecta ao mundo" (globo)
-
-Pergunta-guia: **de quem o Brasil depende para vender e para comprar — e como isso mudou ao longo do tempo?** (D47).
-A página é `prototipos/globo/index.html`, publicada **na raiz do site** pelo build, que copia a pasta inteira, exceto o `LEIAME.md`
-(D53; `/globo/` redireciona para a raiz levando o que vem depois do `#`). É uma página única, sem build: globe.gl 2.46.2, ECharts 5.5.0,
-bandeiras flag-icons 7.5.0 e dados em `dados/*.js`. É um retrato fechado, coletado à mão e sem atualização automática (D45); a página
-diz a data do retrato. As notícias estão pausadas (seção 7.5).
-
-### 7.1 O que a pessoa vê
-
-Cabeçalho: logo rotzx (D52), "Como o Brasil se conecta ao mundo", navegação (Início · Parceiros · Produtos · Comparar), busca de país ou
-território, Fontes e método e o botão de tema (claro, escuro ou do sistema, D49).
-
-- **Início, em forma de história (D54):** seis passos — o Brasil no ano, a China desde 2000, China × EUA, a soja em 2000 e agora, os
-  fertilizantes e "Escolha seu caminho" (busca e quatro portas: Maiores parceiros, Quem ganhou espaço, Produtos, Comparar). Cada passo,
-  ao chegar ao meio da leitura, pinta o globo (métrica, ano, produto) e o leva ao país em foco, sem mudar a URL. Todos os números dos textos
-  são calculados dos dados; o "maior parceiro" de cada passo também. A entrada termina com a assinatura "Pátria amada, Brasil." e a data do
-  retrato (D51).
-- **Mapa e controle único (D54):**
-  - métricas: exportações, importações, corrente, participação, mudança em p.p. e, em segundo plano, contexto (votos na ONU, conflitos);
-  - um controle só de métrica e ano, a linha do tempo com ▶: fica no painel do mapa ou, com o mapa recolhido (sempre no celular), na barra
-    da análise; em produto, encaixa nos anos do recorte (2000, 2010, 2025) como "Ano do recorte";
-  - legenda com o significado das cores e da escala, fixa para todos os anos (exceto a de mudança, ajustada ao par de anos e dita);
-  - o globo destaca o país escolhido, o cartão mostra a variação sobre o ano anterior quando os dois anos têm dado, e globo e listas
-    realçam o mesmo país. A **Lista** é a alternativa sem 3D e assume sozinha sem WebGL.
-- **Parceiros:** ranking da métrica no ano, com barra na linha e escala explicada, e o grupo recolhido dos países sem registro no ano.
-- **Painel do país (248 países e territórios):**
-  - abertura com bandeira, nome (com marca de território), ano e os números do topo: valor, parte (com o denominador) e posição, uma vez só;
-  - frase de abertura por regras fixas, só com o que os números não dizem (produtos, mudança desde o ano-base);
-  - **Relação comercial:** tabela ano-base × ano (em p.p.) e valores e participações de 1997 a 2025, com tabela alternativa aos gráficos;
-  - **Produtos e concentração:** 10 maiores de cada lado em 2000, 2010 e 2025, a soma dos 5 maiores e a parte do país no total do produto;
-  - **Contexto diplomático:** ONU, OMC, conflitos (cada um com tabela), link do Itamaraty e ficha econômica recolhível.
-- **Explorar por produto:** busca e atalhos com rótulos curtos (D50), exportações ou importações, maiores destinos ou origens com
-  participação, o texto do recorte ("12 maiores detalhados; a fonte registra N; os demais estão em Outros", D51) e a série anual do Brasil,
-  identificada como "Total do Brasil — todos os parceiros".
-- **País visto por um produto (D48, D50):** um fornecedor ou destino aberto pelo explorador mostra o país naquele produto, fluxo e ano
-  (posição e parte no total brasileiro do produto; "fora do recorte detalhado" quando não está entre os 12 maiores), com volta à exploração
-  e acesso a todo o comércio com o parceiro. A busca do topo abre sempre o painel geral.
-- **Comparar dois parceiros:** duas colunas com cores de série fixas (A verde, B ocre), tabela no ano, exportações e participação no mesmo
-  eixo e 5 maiores produtos lado a lado; no celular, cada valor fica junto do nome do país. Um país não pode ser comparado com ele mesmo.
-- **Fontes e método:** fonte, cobertura, unidade, definições, critérios, limitações e licenças.
-- **Leitura e estados:**
-  - "Ampliar análise" recolhe o mapa e "Mostrar mapa" o devolve (D48); a trilha (Início › …) e o ✕ são os caminhos de volta (D54);
-  - dois níveis de informação: valor, participação, ano e fonte visíveis; código SH4, descrição oficial, fórmula e limitações em
-    "Detalhes" e "Sobre este dado" (D48);
-  - avisos curtos para ano fora da cobertura, ano sem recorte e parâmetro inválido na URL; falha de carga com "Tentar de novo";
-    carregamento com a silhueta do Brasil (D51);
-  - movimento: números que contam até o novo valor, gráficos atualizados sem ser recriados, troca de tela com esmaecer curto do conteúdo novo (D60); tudo some com
-    "reduzir movimento" (D54).
-- **URL:** `#pais=RUS&prod=g-fertilizantes&fluxo=i&ano=2025` (país visto por um produto), `#ver=comparar&a=CHN&b=USA`, `&amplo=1`,
-  `&aba=produtos`, `#ver=ranking&m=mud&base=2000`. Voltar, avançar e recarregar mantêm o estado; `#China`, `vs=` e os links antigos
-  em `/globo/#…` continuam funcionando.
-
-### 7.2 Definições (o denominador muda; a tela sempre diz qual)
+### Definições (o denominador muda; a tela sempre diz qual)
 
 | Medida | Cálculo |
 |---|---|
@@ -182,144 +104,81 @@ território, Fontes e método e o botão de tema (claro, escuro ou do sistema, D
 | Concentração de origens | importações do país ÷ importações totais do Brasil |
 | Participação (mapa) | corrente com o país ÷ corrente total do Brasil |
 | Mudança | participação no ano − participação no ano-base, em p.p. (só com comércio registrado nos dois anos) |
-| Composição bilateral | produto ÷ total trocado com o país (total exato: vem da distribuição completa) |
-| Fornecedores de um produto | importações do produto vindas do país ÷ importações totais do produto |
+| Composição bilateral | produto ÷ total trocado com o país |
+| Parte no produto | valor com o país ÷ total do Brasil naquele produto (operações com país identificado) |
 
-Não há nota de risco nem de dependência: participação alta indica concentração, não vulnerabilidade. Os totais do Brasil incluem operações sem
-país definido.
+Participação alta indica concentração, não vulnerabilidade. Os totais do Brasil incluem operações sem país definido.
 
-### 7.3 Dados
+## 6. Dados
 
-- `catalog/paises_mundo.csv`: `iso_num`, `iso3`, `iso2`, `nome`, `tipo` (país ou território), `comex`, `cow`, `gw`, `no_mapa`.
-  Gerado por `rotzx mundo-codigos`.
-- `dados/historia.json|js` (`window.HISTORIA`), gerado por `rotzx mundo-atualizar --historico`:
-  - `comercio`: séries por país de 1997 a 2025 (`e`, `i`), totais do Brasil, `anos_produtos` ([2000, 2010, 2025]);
-  - por país e ano, `p[ano][e|i] = {t, n, top: [[sh4, valor] ×10]}`;
-  - `sh4` (nomes oficiais) e `curtos` (nomes revisados);
-  - `onu`, `conflitos`, `omc`, `economia` (D46).
-- `dados/produtos.json|js` (`window.PRODUTOS`, carregado sob demanda): em `itens[código]`,
-  - `nome`, `oficial` e, nos grupos, `grupo`;
-  - séries `e` e `i` de 1997 a 2025;
-  - `p[ano][e|i] = {t, n, top: [[iso_num, valor] ×12]}`.
-- Ano sem registro = `null`.
-- **Detalhamento sob demanda (D61, D68):** `dados/detalhe/` (índice, `prod/{codigo}.json`, `pais/{iso3}.json`) no formato `rotzx.detalhe.v1` de
-  [`SCHEMA.md`](SCHEMA.md). Gerado por `rotzx detalhe-gerar` (58 consultas ao Comex Stat, com cache em `data/fontes/mundo/detalhe/`) e
-  conferido com `rotzx detalhe-validar`. Hoje traz parceiros de cada produto e produtos de cada país, de 1997 a 2025; UF, via, porto e NCM ainda não.
-- **Páginas estáticas (D66):** o build gera `pais/{slug}/` e `produto/{codigo}/`, índices, `sitemap.xml` e `robots.txt` (`rotzx/mundo/paginas.py`), para buscadores.
-- **Cartão por página (D70):** `rotzx/mundo/cartao.py` desenha `cartao.png` (1200×630) para cada país e produto no build, com Pillow e as fontes em `rotzx/mundo/fontes/`.
-- **Medição (D66):** `medicao.js`, GoatCounter sem cookies, código `rotz` em `ROTZX_MEDICAO.goatcounter` (vazio desliga).
-- **Compartilhamento (D63):** `og.png` 1200×630 e meta tags OpenGraph/Twitter fixas (as redes não leem o `#`); título e descrição da aba mudam por tela.
-- **Exportar e compartilhar (D62):** PNG por gráfico (título, contexto, fonte e assinatura, no tema ativo), CSV dos números brutos
-  (`;`, vírgula decimal, BOM; ausente = célula vazia), "Copiar link" com o estado da URL e "Incorporar" (`<iframe>` com `embed=1`).
+- **`catalog/paises_mundo.csv`:** `iso_num`, `iso3`, `iso2`, `nome`, `tipo` (país ou território), `comex`, `cow`, `gw`, `no_mapa`.
+- **`dados/historia.json|js`** (`window.HISTORIA`):
+  - `comercio`: séries por país de 1997 a 2025 (`e`, `i`) e totais do Brasil;
+  - `p[ano][e|i] = {t, n, top}` em 2000, 2010 e 2025;
+  - nomes de produtos;
+  - `onu`, `conflitos`, `omc` e `economia`.
+- **`dados/produtos.json|js`** (`window.PRODUTOS`): por produto (SH4 ou grupo), séries de 1997 a 2025 e os 12 maiores parceiros em 2000,
+  2010 e 2025.
+- **`dados/detalhe/`:**
+  - parceiros de cada produto e produtos de cada país em todos os anos;
+  - formato `rotzx.detalhe.v1` em [`SCHEMA.md`](SCHEMA.md).
+- Ano sem registro = `null`. Valores em US$ FOB correntes.
 
-### 7.4 Coleta
-
-Tudo de uma vez, à mão (`workflow_dispatch` do workflow Globo, ou localmente), com cerca de 10 consultas ao Comex Stat:
-- séries por país;
-- séries por produto;
-- pares país × produto em 2000, 2010 e 2025.
-Os arquivos brutos da ONU e da UCDP ficam em `data/fontes/mundo/`, fora do git.
-
-### 7.5 Notícias (pausadas)
-
-Coletores e testes em `rotzx/mundo/` (`rss.py`, `gdelt.py`, `paises.py`: `MENCOES` e `citados`). A interface antiga das manchetes (assuntos,
-linha do tempo, mapa de calor) está no histórico do git: `prototipos/globo/index.html` no commit `d193691`. Regras que continuam valendo: só
-título, veículo, data e link; país citado com acento e palavra inteira.
-
-## 8. Automação (GitHub Actions)
-
-| Workflow | Quando | O que faz |
-|---|---|---|
-| `rotina-mensal.yml` | dias 12 e 20, ou à mão | testes, registro, dados abertos, previsões, backtest, calibração, verificação do registro, build do site, commit e deploy no Pages |
-| `radar-siget.yml` | toda segunda, ou à mão | histórico do SIGET, eventos, contexto, relatório (artefato 90 dias), commit de `historico/` |
-| `globo.yml` | só à mão (agendamentos pausados, D45) | testes; retrato histórico (`--historico`) e commit dos dados |
-
-Actions em Node 24 (D36), em `ubuntu-24.04` (D58: o `ubuntu-latest` 26.04 não tem Python 3.9). Python 3.9 no Actions e no Mac; não atualizar `setup-python` para v7 sem migrar o Python.
-O site só muda quando a rotina mensal roda: ela publica o que estiver na `main` (inclusive os dados do atlas em `prototipos/globo/dados/`).
-Para publicar uma mudança antes do dia 12, rode a rotina à mão (*Actions › Rotina mensal › Run workflow*).
-
-Se o deploy no Pages falhar:
-- **"Deployment failed, try again later"** (o pedido fica em `deployment_queued` e é recusado): repetir só o job `site` resolveu (06/11/2026).
-- **Travado em "updating_pages" até o tempo limite** (três vezes em 06/11/2026, com o site e o pacote corretos): repetir o job não resolve,
-  porque o Pages identifica a publicação pelo commit, e a do commit cancelado não volta. Publique a partir de um commit novo na `main`.
-- Depois de publicar, confira a página ao vivo numa aba anônima: o Pages e o navegador guardam a versão anterior por até cerca de 10 minutos.
-
-## 9. Linha de comando
+## 7. Comandos
 
 `.venv/bin/python -m rotzx <comando>`:
 
 | Comando | O que faz |
 |---|---|
-| `atualizar [séries]` | baixa as séries do catálogo (vintages com SHA-256) |
-| `prever` / `prever-setor [--pessoal]` | registra as previsões do IPCA / setoriais |
-| `backtest`, `calibrar-setorial`, `analisar-setor` | backtest do IPCA, cobertura das faixas setoriais, indicadores antecedentes |
-| `publicar [--saida pasta] [--completo]` | gera o site público (só o atlas na raiz; `--completo` = site antigo com os radares) com a varredura anti-vazamento |
-| `registro-exportar` / `registro-importar` / `registro-verificar [--contra REF]` | registro público em CSV |
-| `importar-macrodados arquivo.csv` | só no Mac, uso pessoal |
-| `qualidade` | verificações de consistência |
-| `fonte-explorar`, `siget-atualizar`, `siget-amostra`, `siget-historico-exportar/importar` | radar de oportunidades |
-| `leiloes-importar arquivo.xlsx`, `contexto-atualizar`, `oportunidades [--perfil] [--top]` | leilões, contexto, relatório |
-| `mundo-atualizar [--ano A] [--historico] [--sem-noticias] [--so-noticias] [--so-relacoes]` | dados do globo (`--historico`: retrato de todos os países) |
-| `mundo-codigos [--atlas arquivo]` | gera `catalog/paises_mundo.csv` |
-| `detalhe-gerar [--de ANO] [--ate ANO]` | gera o detalhamento do atlas a partir do Comex Stat (D68) |
-| `detalhe-validar [pasta]` | confere os arquivos de detalhamento do atlas antes de publicar (D61, `docs/SCHEMA.md`) |
-| `servir` | interface local dos radares em http://127.0.0.1:8000 (o atlas fica em `/globo`) |
+| `mundo-atualizar [--ano A]` | baixa a versão mais recente da ONU e da UCDP e refaz `historia` e `produtos` (Comex Stat, OMC, Banco Mundial); fonte que falha vai para `falhas` |
+| `detalhe-gerar [--de A] [--ate A]` | refaz `dados/detalhe/` (58 consultas ao Comex Stat, com cache em `data/fontes/mundo/detalhe/`) |
+| `detalhe-validar [pasta]` | confere o detalhamento contra o formato (sai com erro se houver problema) |
+| `mundo-codigos` | regera `catalog/paises_mundo.csv` |
+| `publicar [--sem-cartoes]` | gera `site/` (atlas, páginas estáticas, cartões, sitemap) |
 
-## 10. Como rodar
+Para ver a página localmente: `cd prototipos/globo && python3 -m http.server 8000` e abrir http://localhost:8000.
 
-```bash
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m rotzx atualizar
-.venv/bin/python -m rotzx servir                 # http://127.0.0.1:8000
-.venv/bin/python -m pytest -q                    # 148 passam, 1 pulado (09/11/2026)
-```
+## 8. Publicação e automação (GitHub Actions)
 
-Só o globo: `python3 -m http.server 8000 --directory prototipos/globo` e abrir http://localhost:8000 (precisa de internet para as bibliotecas e de WebGL;
-sem WebGL, a lista de países assume).
+- **Publicar** (`publicar.yml`, à mão): testes, `detalhe-validar` e `rotzx publicar`; depois envia `site/` ao GitHub Pages.
+- **Dados** (`dados.yml`, à mão): testes, `mundo-atualizar` e, se marcado, `detalhe-gerar`; faz commit dos dados novos. Depois é preciso
+  rodar "Publicar".
+- Os dois rodam em `ubuntu-24.04`, fixo porque o 26.04 não tem Python 3.9 (D58).
+- O cache do GitHub Pages leva cerca de 10 minutos; para conferir, use uma aba anônima.
+- **Falhas conhecidas do Pages:**
+  - "try again later" no deploy: rodar de novo só o job `site`;
+  - deploy travado em "updating_pages": um commit novo destrava.
 
-## 11. Testes e guardas
+## 9. Testes e guardas
 
-- 148 testes (`tests/`), com fixtures sintéticas **no formato real** das fontes e valores inventados, marcados como tal.
-- Guardas do repositório público: falham se um arquivo versionado estiver em pastas privadas ou citar um código do catálogo da Macrodados.
-- Varredura do build: falha se o site tiver id, código, nome ou sequência de valores (inclusive derivados) de série pessoal.
-- Build público: um teste confere que o site é só o atlas na raiz, com os scripts e dados que a página carrega, e que `/globo/` redireciona (D53).
-- Globo: testes de marcação de países (inclusive falsos positivos), categorias, hora de Brasília, ONU, OMC, UCDP, isolamento de falhas entre fontes.
-- A interface do globo foi verificada em Chromium sem tela (WebGL por software), em 1440×900 e 390×844.
+- `.venv/bin/python -m pytest -q`: fontes e retrato com fixtures marcadas, detalhamento, páginas estáticas, cartões, build e repositório.
+  - O teste do repositório confere que `privado/`, `data/` e `site/` nunca são versionados.
+- **Interface:** testar no Chromium sem tela em 1440×900 e 390×844, nos temas claro e escuro, com e sem WebGL, sem erros de console e sem
+  violações da política de conteúdo (CSP). Hoje os scripts de Playwright ficam fora da suíte.
+- **Segurança (D73):**
+  - SRI nos scripts de fora e no contorno dos países;
+  - CSP no atlas e nas páginas estáticas;
+  - texto vindo da URL sempre escapado e `#prod=` só com códigos da base;
+  - CSV sem injeção de fórmula.
 
-## 12. Limitações conhecidas
+## 10. Limitações conhecidas
 
-- Atlas: retrato fechado (sem atualização automática); fronteiras atuais para países que não existem mais; bandeira atual, não a do ano.
-- Composição por produto ano a ano (D68), mas o explorador detalha só os 12 maiores parceiros de cada produto (os demais ficam em
-  "Outros", sem valor individual, D51). Ano sem recorte cai no recorte anterior, com aviso.
-- Valores em dólares correntes: alta em valor não prova alta em volume. Códigos SH4 mudaram nas revisões do Sistema Harmonizado.
-- O índice de votos na ONU muda com a pauta do ano; a página mostra a série com a mediana dos países, e concordância não equivale a aliança.
-- A OMC não dá encerramento formal a muitos casos antigos; a página lista as disputas com o Brasil desde 1995, com a situação informada pela OMC.
-- Notícias (pausadas): agrupamento de assuntos, categorias e países citados são automáticos e podem errar; a página avisa quando voltarem.
-- A UCDP conta tropas de missões de paz como apoio: o Brasil aparece na República Centro-Africana ao lado de 38 países.
-- Nomes de lados em conflitos e títulos de disputas na OMC ficam em inglês, como nas fontes.
-- Faixas setoriais estreitas (61–69% de cobertura para meta de 80%).
-- O registro é auditável, não impossível de reescrever: quem controla o repositório poderia reescrever o histórico do git (D27).
+- **Retrato fechado:** sem atualização automática. A data aparece na página.
+- **Mapa e bandeiras:** fronteiras atuais para países que não existem mais; bandeira atual, não a do ano.
+- **Detalhes por produto:**
+  - o explorador detalha os 12 maiores parceiros de cada produto e o país, os 10 maiores produtos;
+  - o resto fica em "Outros", sem valor individual;
+  - UF, via, porto e NCM ainda não estão no detalhamento.
+- **Valores em dólares correntes:** alta em valor não prova alta em volume. Os códigos SH4 mudaram nas revisões do Sistema Harmonizado.
+- **ONU:** o índice muda com a pauta do ano, e concordância não equivale a aliança.
+- **UCDP:** conta tropas de missões de paz como apoio.
+- **OMC:** não dá encerramento formal a muitos casos antigos.
+- **Compartilhamento:** as redes não leem o `#`. O cartão próprio aparece só ao compartilhar a página estática do país ou do produto.
 
-## 13. Próximos passos sugeridos
+## 11. Próximos passos sugeridos
 
-**Atlas**
-- Mais anos de composição por produto (a consulta do Comex é uma por ano e fluxo).
-- Séries em valores reais ou em volume (kg), para separar preço de quantidade.
-- "Por que importa para o Brasil": texto curto por país, com a fonte de cada número e a interpretação marcada.
-- Blocos e alianças de fonte oficial (os sites de cada bloco), em vez do Wikidata.
-- Testes de interface (hoje feitos com Playwright fora do pytest) dentro da suíte.
-
-**Radar**
-- `setorial_v2` com janela recente de erros; primeiras avaliações do IPCA (nov/2026) e da indústria (dez/2026).
-- Validação com compradores (5 conversas) antes da interface do radar de oportunidades.
-
-## 14. Índice das decisões
-
-| Faixa | Assunto |
-|---|---|
-| D1–D13 | arquitetura, dados, previsões, identidade visual, Macrodados |
-| D14–D24 | indicadores antecedentes, previsão setorial, metadados, site público, rotina mensal, página do setor |
-| D25–D27, D35 | nome rotzx e comunicação sem exagero |
-| D28–D34, D37 | radar de oportunidades (SIGET, avaliação, motor, histórico, contexto, leilões) |
-| D36 | Actions em Node 24 |
-| D38–D55 | o globo: fontes, publicação, relações, conflitos, manchetes (pausadas), retrato histórico, atlas comercial, refinamento da leitura, identidade editorial, acabamento, versão estável, logo, atlas como site público e fluxo enxuto e dinâmico |
+- Atualização mensal com "o que mudou este mês" (o Comex Stat sai todo mês).
+- Volume (kg) além de valor, para separar preço de quantidade.
+- Visão por estado (UF) no detalhamento.
+- Domínio próprio e cadastro no Google Search Console (o `sitemap.xml` já existe).
+- Carregar `produtos.js` só quando a história chegar à soja (alivia a primeira carga no celular).

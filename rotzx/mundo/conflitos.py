@@ -113,14 +113,13 @@ def resumir(linhas: List[dict], iso3: List[str], anos: int = 5) -> dict:
             "mundo": {"ativos": ativos, "total": len(ativos), "guerras": sum(c["guerra_no_ultimo_ano"] for c in ativos)}}
 
 
-def coletar(iso3: List[str], pasta: Optional[Path] = None) -> dict:
+def baixar(pasta: Path) -> Path:
+    """Guarda em `pasta` o CSV (zip) da versão mais recente da base; uma versão já baixada não é baixada de novo."""
     with _abrir(PAGINA, 60) as r:
         url = link_mais_recente(r.read().decode("utf-8", errors="replace"))
-    with _abrir(url) as r:
-        dados = r.read()
-    if pasta:
+    destino = pasta / url.rsplit("/", 1)[-1]
+    if not destino.exists():
         pasta.mkdir(parents=True, exist_ok=True)
-        (pasta / url.rsplit("/", 1)[-1]).write_bytes(dados)
-    out = resumir(ler(dados), iso3)
-    out["versao"] = re.search(r"acd-(\d+)-csv", url).group(1)
-    return out
+        with _abrir(url) as r:
+            destino.write_bytes(r.read())
+    return destino

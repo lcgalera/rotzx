@@ -924,3 +924,43 @@ As outras perguntas ficam em "Outras perguntas".
 - **Ações do GitHub:** estão fixadas por versão (`@v5`), não por commit; fixar por SHA protege mais, mas pede atualização manual.
 - **CSP:** ainda permite script inline (`'unsafe-inline'`), porque a página é um arquivo só.
 - **`produtos.js`:** 1,4 MB, mas cerca de 300 KB com a compressão do GitHub Pages; é carregado logo na entrada para a história da soja e poderia esperar a rolagem.
+
+### D74 · 16/11/2026 · O repositório passa a ser só o atlas rotzx (v1.0.0)
+**Pedido do dono:** "não pretendo voltar para os outros, apenas seguir com o rotzx". Apagar o nome antigo (econatlas), a newsletter
+(rotzOn) e o que não é o atlas.
+
+**Removido (continua no histórico do git; último commit com tudo: `081a87c`):**
+- **Nome antigo e newsletter:** o atalho do nome antigo (`econatlas/`, D35) e a newsletter (`rotzon/`).
+- **Radar econômico e setorial (D1–D27):** `rotzx/forecast/`, `rotzx/analysis/`, `rotzx/providers/` (BCB, IBGE, Focus, Macrodados,
+  SIGET, CKAN, leilões), `storage`, `quality`, `transforms`, `payloads`, `registro.py`, `catalog.py`, o registro de previsões
+  (`registro/`), o site antigo (`web/`) e o servidor FastAPI (`api.py`, `rotzx servir`).
+- **Radar de transmissão (D28–D37):** `rotzx/intelligence/`, `historico/`, `avaliacoes/`, catálogos e o workflow `radar-siget.yml`.
+- **Globo v1 e notícias pausadas (D38–D45):** `rotzx/mundo/build.py`, `gdelt.py`, `rss.py`, `paises.py` e `dados/mundo.*` e
+  `dados/noticias.*`. A página não usava nada disso desde a D53.
+- **Testes e documentos dessas frentes:** os testes correspondentes e `docs/01`–`08`.
+
+**Mudou:**
+- **CLI:** fica com `mundo-atualizar`, `detalhe-gerar`, `detalhe-validar`, `mundo-codigos` e `publicar`.
+  - `mundo-atualizar` faz o retrato, o antigo `--historico`.
+  - Antes, baixa a versão mais recente da ONU e da UCDP; esse download ficava no globo v1 e foi para `onu.baixar` e `conflitos.baixar`.
+    Se falhar, vale a cópia guardada e o erro vai para `falhas`.
+- **Build (`public_build.py`):** só o atlas. Saem o modo `--completo` e o verificador de séries da Macrodados, porque não há mais séries
+  pessoais no projeto. Fica a marca que impede apagar pasta alheia.
+- **Workflows:**
+  - `rotina-mensal.yml` virou `publicar.yml`: à mão; testes, `detalhe-validar`, build e deploy. Sem agendamento, sem BCB/IBGE e sem
+    commit de registro; `contents: read`.
+  - `globo.yml` virou `dados.yml`: à mão; testes, `mundo-atualizar` e, se pedido, `detalhe-gerar`, com commit dos dados.
+- **Dependências:** `requirements.txt` fica com pytest, pycountry e Pillow (saem pandas, numpy, scipy, statsmodels, patsy, fastapi,
+  uvicorn, openpyxl e httpx).
+- **Docs:**
+  - `README`, `PROJETO`, `PROMPT`, `CLAUDE.md` e o `LEIAME` do atlas foram reescritos só sobre o atlas;
+  - as regras de Macrodados e de notícias saíram das regras ativas;
+  - fica a regra de nada de uso pessoal no repositório.
+- **Versão:** 1.0.0.
+
+**Verificado:**
+- O pytest passa, só com os testes do atlas.
+- `detalhe-validar` passa.
+- O site gerado tem os mesmos arquivos de antes, menos `dados/mundo.*` e `dados/noticias.*`, e o mesmo `index.html`.
+- No Chromium sem tela, em 1440×900 e 390×844: sem erros e sem violação de CSP.
+- Uma instalação limpa com o `requirements.txt` novo passa nos testes e gera o site.
