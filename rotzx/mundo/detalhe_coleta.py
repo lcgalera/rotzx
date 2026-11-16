@@ -11,6 +11,8 @@ Camadas geradas:
 UF, via, porto e NCM pedem outras consultas e ficam para depois; a página já sabe lê-las.
 """
 import json
+import time
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -20,6 +22,7 @@ from . import codigos, comex, detalhe, historia, produtos_nomes
 
 CACHE = config.ROOT / "data" / "fontes" / "mundo" / "detalhe"
 FLUXOS = (("exportacao", "e"), ("importacao", "i"))
+TENTATIVAS, ESPERA = 6, 90
 CONSULTA = "api-comexstat.mdic.gov.br /general; detailDatabase=[noPaispt, noSh4pt]; uma consulta por ano e fluxo; {a}–{b}"
 
 
@@ -37,7 +40,16 @@ def pares_do_ano(ano: int, k: str, fluxo: str, ponte: Dict[str, str], cache: Opt
         return json.loads(arq.read_text(encoding="utf-8"))
     log(f"  Comex Stat: {ano} {fluxo}")
     por_iso: Dict[str, Dict[str, float]] = {}
-    for nome, itens in comex.produtos_todos(str(ano), fluxo).items():
+    for t in range(TENTATIVAS):                        # a API às vezes recusa (403/5xx) por alguns minutos: espera e tenta de novo
+        try:
+            bruto = comex.produtos_todos(str(ano), fluxo)
+            break
+        except (urllib.error.URLError, TimeoutError, ValueError) as e:
+            if t == TENTATIVAS - 1:
+                raise
+            log(f"    falhou ({type(e).__name__}: {e}); nova tentativa em {ESPERA * (t + 1)} s")
+            time.sleep(ESPERA * (t + 1))
+    for nome, itens in bruto.items():
         iso = ponte.get(nome)
         if not iso:
             continue                                   # operações sem país identificado ficam fora, como no retrato
