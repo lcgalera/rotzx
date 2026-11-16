@@ -779,6 +779,8 @@ As outras perguntas ficam em "Outras perguntas".
 - No atlas, a linha do tempo passa a andar ano a ano no explorador de produtos, no produto dentro do país, na aba de produtos do país e na comparação.
 - País com comércio esporádico continua mostrando só os anos com registro, com o aviso de que não é série anual.
 - UF, via, porto e NCM pedem outras consultas e ficam para depois.
+- As páginas estáticas (D66) passam a ler o detalhamento: a tabela do último ano vem dele, sem item de valor zero, e cada página ganha "Principal destino/origem em cada ano" (produto) ou "Principal produto vendido/comprado em cada ano" (país).
+- Dois países têm "US$ 0" na série anual porque o Comex Stat registra a operação com valor zero; isso é diferente de "sem registro" e fica como na fonte.
 
 **Verificado:**
 - `rotzx detalhe-validar`: sem problemas.
