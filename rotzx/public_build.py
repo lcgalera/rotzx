@@ -113,7 +113,7 @@ REDIRECIONA_GLOBO = """<!doctype html>
 """
 
 
-def _so_atlas(out: Path) -> None:
+def _so_atlas(out: Path, cartoes: bool = True) -> None:
     """Site público só com o atlas, na raiz; /globo/ redireciona levando o hash (links antigos continuam valendo)."""
     for p in GLOBO.iterdir():
         if p.name in ("LEIAME.md", "__pycache__"):
@@ -122,11 +122,11 @@ def _so_atlas(out: Path) -> None:
     (out / "globo").mkdir()
     (out / "globo" / "index.html").write_text(REDIRECIONA_GLOBO, encoding="utf-8")
     from .mundo import paginas                     # D66: uma página estática por país e por produto (buscadores não leem o #)
-    paginas.gerar(out, out / "dados")
+    paginas.gerar(out, out / "dados", cartoes=cartoes)
     (out / ".nojekyll").write_text("")  # GitHub Pages: servir arquivos como estão
 
 
-def build(out: Optional[Path] = None, conn=None, catalog: Optional[Dict] = None, completo: bool = False) -> Dict:
+def build(out: Optional[Path] = None, conn=None, catalog: Optional[Dict] = None, completo: bool = False, cartoes: bool = True) -> Dict:
     from .analysis import leading
     from .forecast import setorial
     out = Path(out or config.PUBLIC_SITE_DIR)
@@ -134,7 +134,7 @@ def build(out: Optional[Path] = None, conn=None, catalog: Optional[Dict] = None,
     full = catalog if catalog is not None else cat.load_catalog()
     if not completo:                               # D53: o site público é só o atlas
         _prepare_dir(out)
-        _so_atlas(out)
+        _so_atlas(out, cartoes)
         meta = {"gerado_em": datetime.now(timezone.utc).isoformat(timespec="seconds"), "versao_codigo": __version__,
                 "site": "atlas", "aviso": "Somente dados abertos."}
         verificar(out, full, conn)
