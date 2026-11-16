@@ -2,6 +2,8 @@
 
 **Estado em 09/11/2026:** esta pasta é o site público inteiro, publicado na raiz de https://lcgalera.github.io/rotzx/ (D53; `/globo/` redireciona). A descrição atual está em `docs/PROJETO.md`, seção 7.
 
+**D73 (16/11/2026):** scripts externos com integridade (SRI) e todos pelo jsDelivr (o ECharts saiu do cdnjs); política de conteúdo (CSP) na página; `#prod=` só aceita códigos da base.
+
 **D68 (16/11/2026):** `dados/detalhe/` gerado (`rotzx detalhe-gerar`): parceiros de cada produto e produtos de cada país, de 1997 a 2025.
 
 **D66 (16/11/2026):** `medicao.js` (medição sem cookies, desligada até preencher o código); o build público gera páginas estáticas por país e produto.

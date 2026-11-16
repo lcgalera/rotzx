@@ -109,6 +109,8 @@ def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, cont
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://rotz.goatcounter.com; connect-src https://rotz.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{e(titulo)} — rotzx</title>
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
