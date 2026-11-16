@@ -10,3 +10,4 @@ openpyxl==3.1.5
 pytest==8.4.2
 httpx==0.28.1
 pycountry==24.6.1   # só para gerar catalog/paises_mundo.csv (D46)
+Pillow==11.3.0      # cartões de compartilhamento das páginas estáticas do atlas (D70)

@@ -801,3 +801,25 @@ As outras perguntas ficam em "Outras perguntas".
 - Quando o arquivo de detalhamento chega com a pessoa na entrada, a página só repinta o mapa; não redesenha o conteúdo.
 
 **Verificado:** Chromium sem tela, em 1440×900 e 390×844: rolagem contínua em sete telas sem nenhum salto para trás; ir da entrada a um país e voltar devolve a posição; sem erros. O teste reproduzia o salto antes da correção.
+
+### D70 · 16/11/2026 · Cartão de compartilhamento próprio para cada país e produto
+**Pedido do dono:** o item 5 dos próximos passos. Antes, todo link colado em rede social mostrava a mesma imagem.
+
+**Como funciona (`rotzx/mundo/cartao.py`):**
+- O build público desenha um PNG de 1200×630 para cada página estática (247 países e 695 produtos) e o grava como `cartao.png` na pasta da página.
+- O cartão é desenhado sobre uma base fixa (`rotzx/mundo/fontes/cartao-base.png`: marca, silhueta do Brasil, faixa e fonte dos dados).
+- Texto do cartão: rótulo, título e até três números que já estão na página, com o denominador.
+  - País: exportações, importações e saldo do último ano.
+  - Produto: o fluxo maior, o principal parceiro desse fluxo e o outro fluxo.
+- O módulo só escreve o texto que recebe; não calcula número.
+- `og:image` e `twitter:image` de cada página apontam para o próprio cartão. Os índices e o atlas continuam com `og.png`.
+
+**Dependências:**
+- Pillow 11.3.0 entra em `requirements.txt` (licença MIT-CMU).
+- As fontes Newsreader e IBM Plex Sans (SIL Open Font License) vão em `rotzx/mundo/fontes/`, convertidas para TTF, com os textos das licenças.
+
+**Custos:** o build leva cerca de um minuto e meio a mais, e o site publicado passa de 43 MB para 68 MB (cada cartão tem cerca de 20 KB). Nada disso entra no git: os cartões são gerados a cada publicação.
+
+**Limite:** o link do atlas com `#` (por exemplo `#pais=CHN`) continua mostrando o cartão geral, porque as redes não leem o `#`. O cartão próprio aparece ao compartilhar a página estática (`/pais/china/`).
+
+**Verificado:** os 942 cartões foram gerados; conferi uma amostra com título curto, título de duas linhas, país com um fluxo só e grupo de produtos. pytest tem o teste novo do cartão.

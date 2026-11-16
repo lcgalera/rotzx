@@ -1,8 +1,8 @@
 # rotzx — documentação do projeto
 
-Estado em 09/11/2026 (v0.13; decisões até D69). Este documento descreve o projeto inteiro: o que ele faz,
+Estado em 09/11/2026 (v0.13; decisões até D70). Este documento descreve o projeto inteiro: o que ele faz,
 de onde vem cada dado, como as peças se encaixam e como operar. O porquê de cada escolha está em [`DECISOES.md`](DECISOES.md)
-(D1–D69). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
+(D1–D70). Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 - Repositório: https://github.com/lcgalera/rotzx
 - Site público: https://lcgalera.github.io/rotzx/ (só o atlas "Como o Brasil se conecta ao mundo", D53; `/globo/` redireciona para a raiz)
@@ -92,7 +92,7 @@ forecast/, analysis/, intelligence/ ──► registro/*.csv (previsões)  ─�
 | Votos na Assembleia Geral da ONU (Voeten, Strezhnev e Bailey, Harvard Dataverse) | globo: sinais da relação | CC0 | índice de Lijphart; sensível à pauta do ano (D42) |
 | Disputas na OMC (site da OMC) | globo: sinais e visão externa | site oficial | lido como texto; países da UE aparecem pela UE (D42) |
 | UCDP/PRIO Armed Conflict Dataset (Uppsala) | globo: conflitos armados | CC BY 4.0 | 25+ mortes em combate/ano; conta tropas de missões multinacionais como apoio (D43) |
-| Newsreader e IBM Plex Sans (Google Fonts) | tipografia do atlas | SIL Open Font License | serifa nos títulos, sans no texto (D49) |
+| Newsreader e IBM Plex Sans (Google Fonts; cópia em `rotzx/mundo/fontes/` para os cartões, D70) | tipografia do atlas | SIL Open Font License | serifa nos títulos, sans no texto (D49) |
 | ISO 3166 (pycountry / iso-codes do Debian) | tabela de países | LGPL (dados ISO) | só para gerar `catalog/paises_mundo.csv` (D46) |
 | flag-icons 7.5.0 | bandeiras | MIT | bandeira atual, não a do ano (D47) |
 | Itamaraty — relações bilaterais | link no painel | site oficial | desafio anti-robô: só o índice, sem conferir página por país (D46) |
@@ -206,6 +206,7 @@ país definido.
   [`SCHEMA.md`](SCHEMA.md). Gerado por `rotzx detalhe-gerar` (58 consultas ao Comex Stat, com cache em `data/fontes/mundo/detalhe/`) e
   conferido com `rotzx detalhe-validar`. Hoje traz parceiros de cada produto e produtos de cada país, de 1997 a 2025; UF, via, porto e NCM ainda não.
 - **Páginas estáticas (D66):** o build gera `pais/{slug}/` e `produto/{codigo}/`, índices, `sitemap.xml` e `robots.txt` (`rotzx/mundo/paginas.py`), para buscadores.
+- **Cartão por página (D70):** `rotzx/mundo/cartao.py` desenha `cartao.png` (1200×630) para cada país e produto no build, com Pillow e as fontes em `rotzx/mundo/fontes/`.
 - **Medição (D66):** `medicao.js`, GoatCounter sem cookies, código `rotz` em `ROTZX_MEDICAO.goatcounter` (vazio desliga).
 - **Compartilhamento (D63):** `og.png` 1200×630 e meta tags OpenGraph/Twitter fixas (as redes não leem o `#`); título e descrição da aba mudam por tela.
 - **Exportar e compartilhar (D62):** PNG por gráfico (título, contexto, fonte e assinatura, no tema ativo), CSV dos números brutos

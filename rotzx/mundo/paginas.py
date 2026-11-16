@@ -100,9 +100,10 @@ footer{max-width:860px;margin:0 auto;padding:18px 20px 40px;border-top:1px solid
 """
 
 
-def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, contar: str, gerado: str) -> str:
+def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, contar: str, gerado: str, cartao: bool = False) -> str:
     e = html.escape
     url = BASE + caminho
+    img = url + "cartao.png" if cartao else BASE + "og.png"     # D70: cartão próprio de cada país e produto
     return f"""<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -117,11 +118,14 @@ def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, cont
 <meta property="og:title" content="{e(titulo)} — rotzx">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{BASE}og.png">
+<meta property="og:image" content="{img}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{e(titulo)}. {e(desc)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{e(titulo)} — rotzx">
 <meta name="twitter:description" content="{e(desc)}">
-<meta name="twitter:image" content="{BASE}og.png">
+<meta name="twitter:image" content="{img}">
 <link rel="icon" href="{raiz}icone.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,8 +170,10 @@ def _serie_tabela(cab: List[str], linhas: List[List[str]]) -> str:
     return f'<div class="rolavel"><table><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>'
 
 
-def gerar(out: Path, dados: Path) -> Dict[str, int]:
-    """Escreve as páginas em `out` a partir de `dados/historia.json` e `dados/produtos.json`."""
+def gerar(out: Path, dados: Path, cartoes: bool = True) -> Dict[str, int]:
+    """Escreve as páginas em `out` a partir de `dados/historia.json` e `dados/produtos.json`.
+    `cartoes=False` pula as imagens de compartilhamento (usado nos testes que não precisam delas)."""
+    from . import cartao as cartao_m
     out, dados = Path(out), Path(dados)
     H = json.loads((dados / "historia.json").read_text(encoding="utf-8"))
     P = json.loads((dados / "produtos.json").read_text(encoding="utf-8")) if (dados / "produtos.json").exists() else {"itens": {}}
@@ -198,7 +204,13 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
         d, nome = C["paises"][i], paises[i]["nome"]
         ex, im = _em(d.get("e"), fim, ini), _em(d.get("i"), fim, ini)
         terr = paises[i].get("tipo") == "territorio"
-        kp = []
+        kp, nums = [], []
+        if ex is not None:
+            nums.append(("Exportações do Brasil", usd(ex), f"{pct(ex / br_e(fim))} do total exportado" + (f" · {rk_e[i]}º destino de {len(rk_e)}" if i in rk_e else "")))
+        if im is not None:
+            nums.append(("Importações do Brasil", usd(im), f"{pct(im / br_i(fim))} do total importado" + (f" · {rk_i[i]}ª origem de {len(rk_i)}" if i in rk_i else "")))
+        if ex is not None and im is not None:
+            nums.append(("Saldo", ("+" if ex - im > 0 else "") + usd(ex - im), ("superávit" if ex - im >= 0 else "déficit") + " do Brasil"))
         if ex is not None:
             kp.append(f'<div class="kpi"><span>Exportações do Brasil</span><b>{usd(ex)}</b><small>{pct(ex / br_e(fim))} do total exportado pelo Brasil em {fim}'
                       + (f" · {rk_e[i]}º destino de {len(rk_e)}" if i in rk_e else "") + "</small></div>")
@@ -245,7 +257,9 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
         (out / cam / "index.html").write_text(_pagina(
             titulo=f"{nome} e o Brasil: exportações e importações, {ini}–{fim}",
             desc=f"{resumo} Série anual desde {ini} e principais produtos. Fonte: {FONTE}.",
-            caminho=cam, raiz="../../", corpo=corpo, contar=f"/pais/{paises[i]['iso3']}", gerado=gerado), encoding="utf-8")
+            caminho=cam, raiz="../../", corpo=corpo, contar=f"/pais/{paises[i]['iso3']}", gerado=gerado, cartao=cartoes), encoding="utf-8")
+        if cartoes:
+            cartao_m.desenhar(out / cam / "cartao.png", f"Comércio com o Brasil · {fim}", f"{nome} e o Brasil", nums)
         urls.append(cam)
 
     lis = "".join(f'<li><a href="{sl[i]}/">{e(paises[i]["nome"])}</a></li>' for i in sorted(ids, key=lambda i: slug(paises[i]["nome"])))
@@ -267,6 +281,7 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
               f'<div class="kpi"><span>Importações do Brasil</span><b>{usd(vi)}</b><small>' + (f"{pct(vi / br_i(fim))} do total importado pelo Brasil em {fim}" if vi else f"em {fim}") + "</small></div>"]
         partes = []
         dt = _det(dados, "prod", cod, "parceiros")
+        lider = {}
         for k, rot, papel in (("e", "Para onde o Brasil vende", "destinos"), ("i", "De onde o Brasil compra", "origens")):
             anos_k = sorted((int(a) for a in (dt.get(k) or {})), reverse=True)
             ap = anos_k[0] if anos_k else max([a for a in anos_p if k in ((it.get("p") or {}).get(str(a)) or {})], default=None)
@@ -275,6 +290,8 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
                 continue
             lc = lambda c: f'<a href="../../pais/{sl[c]}/">{e(paises[c]["nome"])}</a>' if c in sl else e((paises.get(c) or {}).get("nome", c))
             linhas = [[lc(c), usd(v), pct(v / x["t"])] for c, v in x["top"] if v > 0]
+            if x["top"] and x["top"][0][1] > 0:
+                lider[k] = ((paises.get(x["top"][0][0]) or {}).get("nome", ""), pct(x["top"][0][1] / x["t"]), ap)
             resto = x["t"] - sum(v for _, v in x["top"])
             if x["n"] > len(x["top"]) and resto > 0:
                 linhas.append([f"Outros {x['n'] - len(x['top'])} {papel} (sem valor individual)", usd(resto), pct(resto / x["t"])])
@@ -304,7 +321,18 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
         (out / cam / "index.html").write_text(_pagina(
             titulo=f"{nome}: exportações e importações do Brasil, {ini}–{fim}",
             desc=f"{resumo} Principais destinos e origens e série anual desde {ini}. Fonte: {FONTE}.",
-            caminho=cam, raiz="../../", corpo=corpo, contar=f"/produto/{cod}", gerado=gerado), encoding="utf-8")
+            caminho=cam, raiz="../../", corpo=corpo, contar=f"/produto/{cod}", gerado=gerado, cartao=cartoes), encoding="utf-8")
+        if cartoes:
+            nums = []
+            maior = "e" if (ve or 0) >= (vi or 0) else "i"                      # o fluxo mais relevante do produto vem primeiro
+            for k in (maior, "i" if maior == "e" else "e"):
+                v, tot = (ve, br_e(fim)) if k == "e" else (vi, br_i(fim))
+                if v:
+                    nums.append((f"{'Exportações' if k == 'e' else 'Importações'} do Brasil · {fim}", usd(v), f"{pct(v / tot)} do total {'exportado' if k == 'e' else 'importado'} pelo Brasil"))
+            if lider.get(maior) and lider[maior][0]:
+                nm, parte, ano_l = lider[maior]
+                nums.insert(1, (f"Principal {'destino' if maior == 'e' else 'origem'} · {ano_l}", nm, f"{parte} das {'vendas' if maior == 'e' else 'compras'} brasileiras do produto"))
+            cartao_m.desenhar(out / cam / "cartao.png", f"Produto · {ident}", nome, nums[:3])
         urls.append(cam)
 
     if itens:

@@ -106,7 +106,7 @@ def test_site_publico_e_so_o_atlas_na_raiz(ambiente):
     import re
     conn, catalog, tmp = ambiente
     out = tmp / "site"
-    public_build.build(out, conn=conn, catalog=catalog)
+    public_build.build(out, conn=conn, catalog=catalog, cartoes=False)   # os 942 cartões têm teste próprio (test_paginas)
     html = (out / "index.html").read_text(encoding="utf-8")
     assert "Como o Brasil se conecta ao mundo" in html
     for local in re.findall(r'<script src="([^"]+)"', html):
