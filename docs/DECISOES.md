@@ -964,3 +964,30 @@ As outras perguntas ficam em "Outras perguntas".
 - O site gerado tem os mesmos arquivos de antes, menos `dados/mundo.*` e `dados/noticias.*`, e o mesmo `index.html`.
 - No Chromium sem tela, em 1440×900 e 390×844: sem erros e sem violação de CSP.
 - Uma instalação limpa com o `requirements.txt` novo passa nos testes e gera o site.
+
+### D75 · 16/11/2026 · Guia passo a passo alinhado e com a página parada por baixo
+**Problema (visto pelo dono no site):** o guia "não acompanha a página e fica desalinhado quando interage".
+
+**Causa:**
+- Com o guia aberto, a página continuava viva por baixo.
+  - No celular, rolar levava o elemento destacado para fora da tela, e o balão ficava solto.
+  - No desktop, rolar a coluna trocava a cena da história, e o globo mudava atrás do guia.
+- Clicar e arrastar o globo também passava para a página.
+- Destaque e balão andavam com animação de 0,25 s, e a rolagem até o alvo era suave, então o destaque corria atrás do elemento.
+
+**Correção:**
+- **Página parada:** enquanto o guia está aberto, a camada escura segura cliques, toques, roda do mouse e as teclas de rolagem. Clicar fora devolve o foco ao cartão, e o Tab fica dentro dele. Ao fechar, tudo volta ao normal.
+- **Destaque preso ao elemento:** a posição é recalculada a cada quadro enquanto o guia está aberto, e só mexe na tela quando algo muda (fonte que carrega, janela que muda de tamanho, globo que redimensiona). Sem animação de posição; o cartão só aparece com um esmaecer curto.
+- **Rolagem até o passo:** feita na hora, sem animação. Elemento maior que a tela é levado pelo topo.
+- **Passos:**
+  - "Leia a história" destaca a manchete, e não o bloco inteiro, que no celular era maior que a tela.
+  - No último passo, sai "Pular o guia" e os botões não quebram linha.
+  - Se o elemento de um passo sumir, o guia fecha em vez de apontar para o nada.
+  - O ▶ da linha do tempo para ao abrir o guia.
+
+**Verificado:** Chromium sem tela, em 1440×900, 1024×700 e 390×844. Logo depois de rolar, apertar PageDown, clicar fora, avançar, voltar e redimensionar (medido a 60–80 ms de cada ação):
+- o destaque coincide com o elemento, com 0 px de diferença;
+- o cartão fica dentro da tela e não cobre o destaque;
+- a página não rola e a cena da história não muda;
+- depois de fechar, a rolagem volta a funcionar;
+- sem erros.
