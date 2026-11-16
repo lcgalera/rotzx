@@ -717,3 +717,36 @@ As outras perguntas ficam em "Outras perguntas".
   - A silhueta do Brasil e a linha de fontes ficam.
 - **Nome do atlas:** "Como o Brasil se conecta ao mundo" continua só como nome no título da aba, nas meta tags e no cartão `og.png` (o teste `test_compat_nome` confere o nome).
 - **Verificado:** Chromium sem tela, em 1440×900 e 390×844, sem rolagem horizontal e sem erros.
+
+### D66 · 16/11/2026 · Páginas estáticas por país e produto, e medição de acessos
+**Pedido do dono:** as duas primeiras direções da análise do projeto: saber se o atlas é usado e fazê-lo aparecer em buscadores.
+
+**Páginas estáticas (`rotzx/mundo/paginas.py`):**
+- O estado do atlas fica depois do `#`, que buscadores e redes não leem. O build público passa a gerar HTML simples:
+  - `pais/{slug}/` para cada país ou território com comércio registrado (sem o próprio Brasil);
+  - `produto/{codigo}/` para cada produto ou grupo;
+  - os índices `pais/` e `produto/`, `sitemap.xml` e `robots.txt`.
+- Cada página tem título, descrição e `canonical` próprios, e traz:
+  - os números do último ano, com o denominador escrito;
+  - os maiores produtos ou parceiros;
+  - a série anual desde 1997;
+  - fonte e data da coleta;
+  - um botão que abre o atlas no estado correspondente.
+- Só reescreve o que já está em `historia.json` e `produtos.json`, com as mesmas regras de formato da página ("sem registro", nunca zero). Não coleta nada.
+- O slug vem do nome; repetição ganha o ISO3. O produto usa o código.
+- O atlas ganhou os links "Todos os países" e "Todos os produtos" no rodapé. Eles só existem no site publicado, não no protótipo local.
+- A imagem do cartão ainda é a mesma (`og.png`) em todas as páginas; o título e a descrição já são próprios.
+
+**Medição (`prototipos/globo/medicao.js`):**
+- GoatCounter, sem cookies e sem script de terceiros: a página manda um pedido simples com o caminho, o título, a origem e o tamanho da tela.
+- **Desligada** enquanto `ROTZX_MEDICAO.goatcounter` estiver vazio. O dono cria a conta e informa o código.
+- Respeita "não rastrear" e o Global Privacy Control, e não conta em `localhost`.
+- O caminho traz só o lugar (`/pais/CHN`, `/produto/1201`, `/comparar/CHN-USA`, `/ranking/exp`), sem ano nem métrica. O modo incorporado conta à parte (`/embed/...`).
+- Eventos: `acao/baixar-csv`, `acao/exportar-imagem`, `acao/copiar-link` e `acao/copiar-incorporacao`.
+- "Fontes e método" diz se a medição está ligada e o que ela conta.
+- O plano gratuito do GoatCounter é para uso não comercial; se o projeto passar a ter receita, é preciso rever o plano.
+
+**Verificado:**
+- pytest: 160 passaram, 2 pulados; `tests/test_paginas.py` é novo.
+- Os números das páginas estáticas conferem com o atlas (China: US$ 99,9 bi, 28,7%, 1º destino de 243; soja: US$ 43,5 bi, China com 79,3%).
+- Chromium sem tela, em 1440×900 e 390×844: sem rolagem horizontal, o botão abre o atlas no estado certo, e as telas e ações chegam à medição.

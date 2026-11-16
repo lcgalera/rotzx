@@ -514,6 +514,7 @@
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script src="medicao.js"></script>
 <script src="dados/historia.js"></script>
 <script>
 "use strict";
@@ -948,6 +949,7 @@ function render() {
   const modoCtl = !st.pais && st.vista === "fontes" ? "nenhum" : !st.pais && (st.vista === "comparar" || st.vista === "produto") ? "ano" : "todos";
   document.body.classList.toggle("ctl-ano", modoCtl === "ano"); document.body.classList.toggle("ctl-nenhum", modoCtl === "nenhum");
   atualizarMeta();
+  window.rotzxContar && rotzxContar((st.embed ? "/embed" : "") + caminhoMedicao());
   $$("[data-nav]").forEach((b) => (!st.pais && st.vista === b.dataset.nav ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
   if (!st.pais && st.vista === "fontes") $("#abrirFontes").setAttribute("aria-current", "page"); else $("#abrirFontes").removeAttribute("aria-current");
   renderControles();
@@ -1169,7 +1171,7 @@ function vistaInicio() {
         ${porta("Produtos", "Destinos e origens de cada produto", { vista: "produto", pais: null, prod: null, m: "corrente" })}
         ${porta("Comparar", "Dois parceiros lado a lado", { vista: "comparar", pais: null, prod: null, m: "corrente" })}
       </ul></section>
-    <footer class="assinatura">${brSilhueta()}<p class="contato">Autor: <a href="https://www.linkedin.com/in/lucasfgalera" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/lcgalera" target="_blank" rel="noopener">GitHub</a></p>
+    <footer class="assinatura">${brSilhueta()}<p class="contato"><a href="pais/">Todos os países</a> · <a href="produto/">Todos os produtos</a> · Autor: <a href="https://www.linkedin.com/in/lucasfgalera" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/lcgalera" target="_blank" rel="noopener">GitHub</a></p>
       <p class="meta"><span>rotzx</span><span>retrato dos dados coletado em ${quando(H.gerado_em)}, sem atualização em tempo real</span><span><button type="button" class="link" data-ir='${irJ({ vista: "fontes", pais: null, prod: null, m: "corrente" })}'>Fontes e método</button></span></p></footer>`;
 }
 // barras curtas dos 3 maiores parceiros de um produto num ano (parte no total do produto, de 0 a 100%)
@@ -1393,6 +1395,7 @@ function vistaFontes() {
       <dt>Bandeiras</dt><dd>flag-icons 7.5.0 (MIT, Panayiotis Lipiridis): bandeira atual de cada país ou território, não a do ano escolhido. Sem bandeira, um retângulo neutro.</dd>
       <dt>Mapa e globo</dt><dd>Contornos Natural Earth 1:110m (domínio público, via world-atlas); globe.gl (MIT); gráficos ECharts (Apache-2.0). Países pequenos não aparecem no mapa, mas estão na lista e na busca.</dd>
       <dt>Tipografia</dt><dd>Newsreader (Production Type) e IBM Plex Sans (IBM), ambas sob a SIL Open Font License, via Google Fonts.</dd>
+      <dt>Medição de acessos</dt><dd>${window.rotzxMedicaoLigada?.() ? "A página conta quantas vezes cada tela é aberta e quantas vezes se usa “Baixar CSV”, “Exportar imagem”, “Copiar link” e “Incorporar”, pelo GoatCounter. Não usa cookies nem identifica pessoas, e respeita o pedido “não rastrear” do navegador." : "Desligada: esta página não conta acessos."}</dd>
       <dt>Relações bilaterais — Itamaraty</dt><dd>Link para o índice oficial; o site bloqueia leitura automática, então nada dele é copiado ou resumido aqui.</dd>
     </dl></div>`;
 }
@@ -1613,6 +1616,15 @@ function tituloTela() {
   if (st.vista === "fontes") return { t: "Fontes e método", d: "De onde vêm os dados do atlas, licenças, cobertura e limites." };
   return null;
 }
+// caminho da tela para a medição: só o lugar (país, produto, comparação), sem ano nem métrica
+function caminhoMedicao() {
+  if (st.pais) return `/pais/${H.paises[st.pais].iso3}${st.prod ? `/produto/${st.prod}` : ""}`;
+  if (st.vista === "comparar") return st.a && st.b ? `/comparar/${[H.paises[st.a].iso3, H.paises[st.b].iso3].sort().join("-")}` : "/comparar";
+  if (st.vista === "produto") return st.prod ? `/produto/${st.prod}` : "/produto";
+  if (st.vista === "ranking") return `/ranking/${st.m}`;
+  return st.vista === "inicio" ? "/" : `/${st.vista}`;
+}
+const evento = (nome_) => window.rotzxContar && rotzxContar(`acao/${nome_}`, nome_, true);
 function atualizarMeta() {
   const x = tituloTela(), t = x ? `${x.t} — rotzx` : "rotzx — Como o Brasil se conecta ao mundo", d = x?.d || DESC_PADRAO;
   document.title = t;
@@ -1647,7 +1659,7 @@ function csvTexto({ cab, linhas }) {
 function exportarCSV(k, titulo) {
   const d = CSVS.get(k); if (!d) return;
   baixar(`rotzx-${slug(titulo)}-${slug(contextoAtual())}.csv`, new Blob([csvTexto(d)], { type: "text/csv;charset=utf-8" }));
-  anuncia("CSV baixado.");
+  anuncia("CSV baixado."); evento("baixar-csv");
 }
 // cartão PNG: título, contexto, o gráfico, a fonte e a assinatura do rotzx, nas cores do tema ativo (2× para telas densas)
 async function exportarPNG(el) {
@@ -1674,7 +1686,7 @@ async function exportarPNG(el) {
   c.fillText(corta(fonte ? `Fonte: ${fonte}` : "Fonte: Comex Stat (MDIC)", w - 260, c.font), pad, topo + h + 44);
   c.fillStyle = PAL.exp; c.font = "600 16px Newsreader, Georgia, serif"; c.textAlign = "right";
   c.fillText("rotzx · lcgalera.github.io/rotzx", pad + w, topo + h + 45);
-  cv.toBlob((b) => { baixar(`rotzx-${slug(titulo)}-${slug(contextoAtual())}.png`, b); anuncia("Imagem baixada."); }, "image/png");
+  cv.toBlob((b) => { baixar(`rotzx-${slug(titulo)}-${slug(contextoAtual())}.png`, b); anuncia("Imagem baixada."); evento("exportar-imagem"); }, "image/png");
 }
 // ferramentas de cada seção: imagem para cada gráfico, CSV para cada bloco com dados registrados
 function ferramentas($c) {
@@ -1703,9 +1715,9 @@ function codigoIframe() {
   const src = location.origin + location.pathname + urlDe({ ...st, embed: true });
   return `<iframe src="${src}" width="100%" height="640" style="border:0" loading="lazy" title="${esc(document.title)}"></iframe>`;
 }
-$("#copiarLink").onclick = (e) => copiar(urlCompleta(), e.currentTarget, "Link copiado");
+$("#copiarLink").onclick = (e) => { copiar(urlCompleta(), e.currentTarget, "Link copiado"); evento("copiar-link"); };
 $("#incorporar").onclick = () => { $("#codIframe").value = codigoIframe(); $("#dlgIncorporar").showModal(); $("#codIframe").select(); };
-$("#copiarIframe").onclick = (e) => copiar($("#codIframe").value, e.currentTarget, "Código copiado");
+$("#copiarIframe").onclick = (e) => { copiar($("#codIframe").value, e.currentTarget, "Código copiado"); evento("copiar-incorporacao"); };
 $("#fecharDlg").onclick = () => $("#dlgIncorporar").close();
 
 // ---------- ligações de eventos do conteúdo ----------

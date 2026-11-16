@@ -121,6 +121,8 @@ def _so_atlas(out: Path) -> None:
         (shutil.copytree if p.is_dir() else shutil.copy2)(p, out / p.name)
     (out / "globo").mkdir()
     (out / "globo" / "index.html").write_text(REDIRECIONA_GLOBO, encoding="utf-8")
+    from .mundo import paginas                     # D66: uma página estática por país e por produto (buscadores não leem o #)
+    paginas.gerar(out, out / "dados")
     (out / ".nojekyll").write_text("")  # GitHub Pages: servir arquivos como estão
 
 
