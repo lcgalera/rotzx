@@ -84,6 +84,7 @@ main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
 .kicker{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
 h1{font:500 40px/1.1 Newsreader,Georgia,serif;margin:6px 0 14px;letter-spacing:-.01em}
 h2{font:500 24px/1.2 Newsreader,Georgia,serif;margin:34px 0 8px}
+h3{font:500 19px/1.25 Newsreader,Georgia,serif;margin:26px 0 6px}
 p{margin:0 0 12px;max-width:68ch}.lead{font-size:18px}
 .fonte,.nota{font-size:13.5px;color:var(--muted)}
 .cta{display:inline-block;margin:8px 0 4px;padding:11px 18px;border-radius:3px;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:500}
@@ -148,6 +149,17 @@ def _em(serie, ano, ini):
     return serie[k] if serie and 0 <= k < len(serie) else None
 
 
+def _det(dados: Path, tipo: str, chave: str, camada: str) -> dict:
+    """Camada do detalhamento (D68), se o arquivo existir: {fluxo: {ano: {t, n, top}}}."""
+    arq = dados / "detalhe" / tipo / f"{chave}.json"
+    if not arq.exists():
+        return {}
+    try:
+        return json.loads(arq.read_text(encoding="utf-8")).get(camada) or {}
+    except ValueError:
+        return {}
+
+
 def _serie_tabela(cab: List[str], linhas: List[List[str]]) -> str:
     th = "".join(f"<th scope=\"col\">{html.escape(c)}</th>" for c in cab)
     tr = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in l) + "</tr>" for l in linhas)
@@ -201,13 +213,20 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
             s = ex - im
             kp.append(f'<div class="kpi"><span>Saldo</span><b>{"+" if s > 0 else ""}{usd(s)}</b><small>{"superávit" if s >= 0 else "déficit"} do Brasil (exportações − importações)</small></div>')
         partes = []
+        dt = _det(dados, "pais", paises[i]["iso3"], "produtos")
         for k, rot, verbo in (("e", "O que o Brasil vende", "vendas do Brasil a esse parceiro"), ("i", "O que o Brasil compra", "compras do Brasil desse parceiro")):
-            x = ((d.get("p") or {}).get(str(fim)) or {}).get(k)
+            x = (dt.get(k) or {}).get(str(fim)) or ((d.get("p") or {}).get(str(fim)) or {}).get(k)
             if not x:
                 continue
-            linhas = [[f'<a href="../../produto/{c}/">{e(nome_prod(c))}</a>' if c in P["itens"] else e(nome_prod(c)), usd(v), pct(v / x["t"])] for c, v in x["top"]]
+            lp = lambda c: f'<a href="../../produto/{c}/">{e(nome_prod(c))}</a>' if c in P["itens"] else e(nome_prod(c))
+            linhas = [[lp(c), usd(v), pct(v / x["t"])] for c, v in x["top"] if v > 0]
             partes.append(f"<h2>{rot} · {fim}</h2><p class=\"fonte\">{usd(x['t'])} em {x['n']} produtos (SH4). Abaixo, os {len(x['top'])} maiores; participação = valor do produto ÷ total das {verbo} no ano.</p>"
                           + _serie_tabela(["Produto", "Valor", "Parte do total"], linhas))
+            anos_k = sorted((int(a) for a in (dt.get(k) or {})), reverse=True)
+            if len(anos_k) > 3:
+                la = [[str(a), lp(dt[k][str(a)]["top"][0][0]), usd(dt[k][str(a)]["top"][0][1]), pct(dt[k][str(a)]["top"][0][1] / dt[k][str(a)]["t"])] for a in anos_k]
+                partes.append(f"<h3>Principal produto {'vendido' if k == 'e' else 'comprado'} em cada ano</h3><p class=\"fonte\">Parte = valor do produto ÷ total das {verbo} no ano. Ano sem registro não aparece.</p>"
+                              + _serie_tabela(["Ano", "Produto", "Valor", "Parte do total"], la))
         linhas = [[str(a), usd(_em(d.get("e"), a, ini)), usd(_em(d.get("i"), a, ini))] for a in range(fim, ini - 1, -1)]
         resumo = (f"Em {fim}, o Brasil exportou {usd(ex)} para {nome}" if ex is not None else f"Em {fim}, não há registro de exportação do Brasil para {nome}") \
             + (f" e importou {usd(im)}." if im is not None else " e não há registro de importação.")
@@ -247,18 +266,25 @@ def gerar(out: Path, dados: Path) -> Dict[str, int]:
         kp = [f'<div class="kpi"><span>Exportações do Brasil</span><b>{usd(ve)}</b><small>' + (f"{pct(ve / br_e(fim))} do total exportado pelo Brasil em {fim}" if ve else f"em {fim}") + "</small></div>",
               f'<div class="kpi"><span>Importações do Brasil</span><b>{usd(vi)}</b><small>' + (f"{pct(vi / br_i(fim))} do total importado pelo Brasil em {fim}" if vi else f"em {fim}") + "</small></div>"]
         partes = []
-        ap = max([a for a in anos_p if str(a) in (it.get("p") or {})], default=None)
+        dt = _det(dados, "prod", cod, "parceiros")
         for k, rot, papel in (("e", "Para onde o Brasil vende", "destinos"), ("i", "De onde o Brasil compra", "origens")):
-            x = ((it.get("p") or {}).get(str(ap)) or {}).get(k) if ap else None
+            anos_k = sorted((int(a) for a in (dt.get(k) or {})), reverse=True)
+            ap = anos_k[0] if anos_k else max([a for a in anos_p if k in ((it.get("p") or {}).get(str(a)) or {})], default=None)
+            x = (dt.get(k) or {}).get(str(ap)) or (((it.get("p") or {}).get(str(ap)) or {}).get(k) if ap else None)
             if not x:
                 continue
-            linhas = [[f'<a href="../../pais/{sl[c]}/">{e(paises[c]["nome"])}</a>' if c in sl else e((paises.get(c) or {}).get("nome", c)), usd(v), pct(v / x["t"])] for c, v in x["top"]]
+            lc = lambda c: f'<a href="../../pais/{sl[c]}/">{e(paises[c]["nome"])}</a>' if c in sl else e((paises.get(c) or {}).get("nome", c))
+            linhas = [[lc(c), usd(v), pct(v / x["t"])] for c, v in x["top"] if v > 0]
             resto = x["t"] - sum(v for _, v in x["top"])
             if x["n"] > len(x["top"]) and resto > 0:
                 linhas.append([f"Outros {x['n'] - len(x['top'])} {papel} (sem valor individual)", usd(resto), pct(resto / x["t"])])
             partes.append(f"<h2>{rot} · {ap}</h2><p class=\"fonte\">{usd(x['t'])} para {x['n']} {papel}. Participação = valor do parceiro ÷ total do Brasil neste produto no ano (operações com país identificado).</p>"
                           + _serie_tabela(["Parceiro", "Valor", "Parte do produto"], linhas)
                           + f'<a class="cta" href="../../#ver=produto&prod={cod}&fluxo={k}&m=prod&ano={ap}">Ver no mapa interativo →</a>')
+            if len(anos_k) > 3:
+                la = [[str(a), lc(dt[k][str(a)]["top"][0][0]), usd(dt[k][str(a)]["top"][0][1]), pct(dt[k][str(a)]["top"][0][1] / dt[k][str(a)]["t"]), str(dt[k][str(a)]["n"])] for a in anos_k]
+                partes.append(f"<h3>Principal {'destino' if k == 'e' else 'origem'} em cada ano</h3><p class=\"fonte\">Parte = valor do parceiro ÷ total do Brasil neste produto no ano. Ano sem registro não aparece.</p>"
+                              + _serie_tabela(["Ano", "Parceiro", "Valor", "Parte do produto", f"Nº de {papel}"], la))
         linhas = [[str(a), usd(_em(it.get("e"), a, ini)), usd(_em(it.get("i"), a, ini))] for a in range(fim, ini - 1, -1)]
         oficial = it.get("oficial") or C["sh4"].get(cod) or ""
         ident = "Grupo de posições SH4" if grupo else f"SH4 {cod}"

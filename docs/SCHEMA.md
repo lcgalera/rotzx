@@ -1,6 +1,6 @@
 # Formato dos arquivos de detalhamento do atlas (`rotzx.detalhe.v1`)
 
-Contrato entre o **projeto de dados** (que coleta, limpa e gera os arquivos) e a **página**
+Contrato entre **quem gera os arquivos** (hoje `rotzx detalhe-gerar`, D68; pode ser um projeto de dados à parte) e a **página**
 (`prototipos/globo/index.html`), que só os lê. Decisão: D61.
 
 ## Onde ficam
