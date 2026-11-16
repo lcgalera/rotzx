@@ -234,6 +234,9 @@ def main(argv=None):
     mc.add_argument("--atlas", default=None, help="cópia local do countries-110m.json (world-atlas), se o CDN não estiver ao alcance")
     dv = sub.add_parser("detalhe-validar", help="D61: confere os arquivos de detalhamento do atlas (docs/SCHEMA.md) antes de publicar")
     dv.add_argument("pasta", nargs="?", default=None, help="padrão: prototipos/globo/dados/detalhe")
+    dg = sub.add_parser("detalhe-gerar", help="D68: gera o detalhamento do atlas (parceiros de cada produto e produtos de cada país, ano a ano) do Comex Stat")
+    dg.add_argument("--de", type=int, default=None, help="primeiro ano (padrão: 1997)")
+    dg.add_argument("--ate", type=int, default=None, help="último ano (padrão: o último ano do retrato)")
     sub.add_parser("contexto-atualizar", help="Fase 5: baixa só as séries públicas usadas no contexto do radar (catalog/contexto_radar.json)")
     sub.add_parser("siget-historico-exportar", help="acrescenta coletas e eventos novos a historico/*.csv (nunca reescreve)")
     sub.add_parser("siget-historico-importar", help="carrega historico/*.csv num banco novo (ex.: GitHub Actions)")
@@ -376,6 +379,14 @@ def main(argv=None):
         for x in probs[:200]:
             print("✗", x)
         print(f"{len(probs)} problema(s)" if probs else "detalhamento ok: índice e arquivos no formato rotzx.detalhe.v1")
+        if probs:
+            raise SystemExit(1)
+    elif args.cmd == "detalhe-gerar":
+        from .mundo import detalhe, detalhe_coleta, historia
+        detalhe_coleta.gerar(ano_ini=args.de or historia.ANO_COMEX, ano_fim=args.ate)
+        probs = detalhe.validar_pasta()
+        for x in probs[:50]:
+            print("✗", x)
         if probs:
             raise SystemExit(1)
     elif args.cmd == "contexto-atualizar":
