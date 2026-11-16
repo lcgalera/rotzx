@@ -6,6 +6,9 @@
 <title>rotzx</title>
 <meta name="description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
 <meta name="color-scheme" content="light dark">
+<!-- D73: só carrega scripts, dados e fontes dos endereços abaixo; só manda dados para o próprio site e para a medição (GoatCounter) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://cdn.jsdelivr.net https://rotz.goatcounter.com; connect-src 'self' https://cdn.jsdelivr.net https://rotz.goatcounter.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- compartilhamento (D63): os robôs das redes não rodam JS nem leem o #, então o cartão é o mesmo para todo link -->
 <link rel="canonical" href="https://lcgalera.github.io/rotzx/">
 <meta property="og:type" content="website">
@@ -547,9 +550,9 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js" integrity="sha384-1uolMBZ25k3zJcNwCLEv49+L+m2dZudqAzsoSAJfQTzDCSBxJzrMuZ2dkp/5JKiT" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" integrity="sha384-o5uz97et3bErHvpKfD4Jz4n0JfhJDWABFuF4NP+iEEDxE1VwMWJ19QGR0lqFZnr6" crossorigin="anonymous"></script>
 <script src="medicao.js"></script>
 <script src="dados/historia.js"></script>
 <script>
@@ -903,7 +906,11 @@ function lerURL() {
   s.embed = q.get("embed") === "1";
   s.m = MET[q.get("m")] ? q.get("m") : "corrente";
   s.ano = n("ano", fim); s.base = n("base", 2000);
-  s.prod = q.get("prod") || null; s.fluxo = q.get("fluxo") === "i" ? "i" : "e";
+  // D73: só códigos no formato da base (SH4 com 4 dígitos ou grupo "g-…"); nomes como "__proto__" derrubavam a tela
+  const pr = q.get("prod");
+  s.prod = pr && /^(\d{4}|g-[a-z0-9-]{1,40})$/.test(pr) ? pr : null;
+  if (pr && !s.prod) s.aviso = `O produto "${pr.slice(0, 60)}" não está na base. Escolha outro em Produtos.`;
+  s.fluxo = q.get("fluxo") === "i" ? "i" : "e";
   s.aba = ["comercial", "produtos", "contexto"].includes(q.get("aba")) ? q.get("aba") : "comercial";
   s.vista = ["ranking", "produto", "comparar", "fontes", "lista"].includes(q.get("ver")) ? q.get("ver") : (q.get("vs") || q.get("a") ? "comparar" : s.prod ? "produto" : "inicio");
   if (!q.get("m") && s.vista === "produto" && s.prod && !s.pais) s.m = "prod";
@@ -1698,6 +1705,7 @@ function tabelaSerie(series, f = usd, a0 = ini, vazio = "sem registro", { unidad
 const DESC_PADRAO = document.querySelector('meta[name="description"]').content;
 function tituloTela() {
   const fl = st.fluxo === "e" ? "exportações" : "importações";
+  if (st.pais === BR) return { t: "O Brasil e o mundo", d: `Comércio do Brasil com o mundo desde ${ini}: exportações, importações e saldo. Comex Stat (MDIC).` };
   if (st.pais) return { t: `${nome(st.pais)} e o Brasil`, d: `Comércio do Brasil com ${nome(st.pais)} desde ${ini}: exportações, importações, produtos e contexto, ano ${st.ano}. Comex Stat (MDIC).` };
   if (st.vista === "comparar" && st.a && st.b) return { t: `${nome(st.a)} × ${nome(st.b)}`, d: `${nome(st.a)} e ${nome(st.b)} lado a lado no comércio com o Brasil, ano ${st.ano}. Comex Stat (MDIC).` };
   if (st.prod && P?.itens?.[st.prod]) return { t: `${P.itens[st.prod].nome}: ${fl} do Brasil`, d: `${st.fluxo === "e" ? "Para onde vão" : "De onde vêm"} as ${fl} brasileiras de ${P.itens[st.prod].nome.toLowerCase()}, ano ${st.ano}. Comex Stat (MDIC).` };
@@ -1827,7 +1835,9 @@ function contextoAtual() {
 // CSV para planilha em português: separador ";", vírgula decimal, UTF-8 com BOM; ausente = célula vazia (nunca zero)
 function csvTexto({ cab, linhas }) {
   const cel = (v) => { if (v == null || (typeof v === "number" && !Number.isFinite(v))) return "";
-    const t = typeof v === "number" ? String(v).replace(".", ",") : String(v); return /[;"\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+    let t = typeof v === "number" ? String(v).replace(".", ",") : String(v);
+    if (typeof v !== "number" && /^[=+\-@\t\r]/.test(t)) t = "'" + t;          // D73: evita injeção de fórmula ao abrir na planilha
+    return /[;"\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
   return "﻿" + [cab, ...linhas].map((l) => l.map(cel).join(";")).join("\r\n") + "\r\n";
 }
 function exportarCSV(k, titulo) {
@@ -2248,7 +2258,7 @@ $(".area").insertAdjacentHTML("beforeend", `<div class="carga-globo" id="cargaGl
   try {
     if (typeof Globe !== "function") throw new Error("globe.gl não carregou");
     const t = document.createElement("canvas"); if (!(t.getContext("webgl2") || t.getContext("webgl"))) throw new Error("sem WebGL");
-    const r = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json");
+    const r = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json", { integrity: "sha384-yOCJ+8ShBm8UDqtAVtAvxTDDf4gXo5edxl/YG0FmVC5OTmqVLl7utuVGBDEeZWHf" });
     if (!r.ok) throw new Error("mapa não carregou");
     iniciarGlobo(await r.json());
     $("#cargaGlobo")?.remove();

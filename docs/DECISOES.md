@@ -891,3 +891,36 @@ As outras perguntas ficam em "Outras perguntas".
 - Nenhum cartão sai da tela, e a segunda visita não abre o guia sozinha.
 - Esc fecha o guia.
 - Sem erros e sem rolagem horizontal.
+
+### D73 · 16/11/2026 · Revisão de desempenho, bugs e segurança
+**Pedido do dono:** revisar desempenho, bugs e segurança dos dados antes de divulgar o projeto.
+
+**O que foi verificado e estava bem:**
+- **Injeção pelo endereço:** 21 endereços maliciosos ou inválidos no `#` (HTML e script em `prod`, `pais`, `a`, `m`, `aba`, `ano`, `embed`…). Nada foi executado: o texto vindo da URL é sempre escapado.
+- **Repositório:** sem tokens, chaves ou e-mail pessoal versionados. As séries da Macrodados não estão no git (`data/` e `privado/` ignorados). O build público continua passando por `verificar()`.
+- **Desempenho (Chromium, servidor local):**
+  - a página carrega em menos de 1 s, e o primeiro texto aparece em cerca de 0,1 s;
+  - trocar de país leva cerca de 70 ms (95% abaixo de 110 ms);
+  - 29 anos seguidos no slider levam 0,8 s;
+  - depois de 90 trocas de tela, memória e número de nós não crescem, e os gráficos antigos são descartados.
+- **Links:** nas páginas estáticas, todos os 76 mil links internos existem.
+
+**Corrigido:**
+- `#prod=__proto__` ou `#prod=constructor` derrubavam a tela, porque o nome casava com propriedades do objeto. Agora o endereço só aceita código SH4 de 4 dígitos ou grupo `g-…`; o resto vira aviso.
+- `#pais=BRA` tinha o título "Brasil e o Brasil"; agora é "O Brasil e o mundo".
+
+**Reforçado:**
+- **Integridade dos scripts de fora (SRI):** globe.gl, topojson e ECharts são carregados com o hash sha384 do arquivo publicado no npm, e o contorno dos países (`world-atlas`) é buscado com `integrity`. Se o CDN entregar outro arquivo, o navegador recusa.
+  - O ECharts passou do cdnjs para o jsDelivr, que serve o arquivo exato do pacote npm. Os hashes foram calculados dos pacotes oficiais baixados do registro do npm.
+- **Política de conteúdo (CSP)** no atlas e nas páginas estáticas: scripts só do próprio site e do jsDelivr; dados só do próprio site, do jsDelivr e da medição (GoatCounter); fontes só do Google Fonts; sem plugins, formulários ou `<base>`. `referrer` ficou em `strict-origin-when-cross-origin`.
+- **CSV:** células de texto que começam com `=`, `+`, `-` ou `@` ganham um apóstrofo, para a planilha não as tratar como fórmula.
+- **Site publicado:** deixa de levar `dados/mundo.*` e `dados/noticias.*`, que a página não usa desde D53.
+
+**Testado depois:** sem violações da política de conteúdo e sem erros em 1440×900 e 390×844.
+- Globo, gráficos, bandeiras, PNG, tema, slider, comparação, lista sem WebGL e guia continuam funcionando.
+- A medição continua contando.
+
+**Fica para depois (não mudado):**
+- **Ações do GitHub:** estão fixadas por versão (`@v5`), não por commit; fixar por SHA protege mais, mas pede atualização manual.
+- **CSP:** ainda permite script inline (`'unsafe-inline'`), porque a página é um arquivo só.
+- **`produtos.js`:** 1,4 MB, mas cerca de 300 KB com a compressão do GitHub Pages; é carregado logo na entrada para a história da soja e poderia esperar a rolagem.
