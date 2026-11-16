@@ -710,7 +710,8 @@ function det(tipo, chave) {                      // o arquivo, se já chegou; se
   if (!detListado(tipo, chave)) return null;
   const k = `${tipo}/${chave}`;
   if (DET.arqs.has(k)) return DET.arqs.get(k);
-  if (!DET.pend.has(k)) detAsync(tipo, chave).then(() => render());
+  // na entrada, a cena da história só pinta o mapa: redesenhar tudo no meio da leitura jogava a rolagem para o topo (D69)
+  if (!DET.pend.has(k)) detAsync(tipo, chave).then(() => (!st.pais && st.vista === "inicio" ? pintarGlobo() : render()));
   return null;
 }
 const esperaDet = (tipo, chave) => detListado(tipo, chave) && !DET.arqs.has(`${tipo}/${chave}`);
@@ -900,7 +901,9 @@ addEventListener("popstate", () => { guardarRolagem(); Object.assign(st, lerURL(
 
 // posição de leitura por "lugar" (vista + país + produto + fluxo + ano + comparação): voltar a um lugar devolve a rolagem dele
 const rolagens = new Map((() => { try { return JSON.parse(sessionStorage.getItem("rotzx-rolagens") || "[]"); } catch { return []; } })());
-const chaveLugar = (s = st) => [s.pais, s.pais ? "" : s.vista, s.prod, s.fluxo, s.prod ? s.ano : "", s.a, s.b, s.pais ? s.aba : ""].join("|");
+// a entrada é um lugar só: o produto e o ano de uma cena da história não mudam o lugar nem a rolagem (D69)
+const naEntrada = (s) => !s.pais && s.vista === "inicio";
+const chaveLugar = (s = st) => (naEntrada(s) ? "inicio" : [s.pais, s.pais ? "" : s.vista, s.prod, s.fluxo, s.prod ? s.ano : "", s.a, s.b, s.pais ? s.aba : ""].join("|"));
 const emColuna = () => matchMedia("(max-width: 980px)").matches;     // celular: a página inteira rola, não a coluna
 function guardarRolagem() {
   rolagens.set(chaveLugar(), emColuna() ? scrollY : $("#conteudo").scrollTop);
@@ -913,7 +916,7 @@ const amplo = () => (st.embed && analise()) || (analise() && (st.amplo ?? (emCol
 // ---------- render geral ----------
 let lugarAnterior = null, baseAnterior = null, enquadreAnterior = null;
 // "lugar" sem o ano: dentro do mesmo lugar, trocar o ano ou a métrica anima números e gráficos em vez de redesenhar do zero
-const baseLugar = (s = st) => [s.pais, s.pais ? "" : s.vista, s.prod, s.fluxo, s.a, s.b, s.pais ? s.aba : ""].join("|");
+const baseLugar = (s = st) => (naEntrada(s) ? "inicio" : [s.pais, s.pais ? "" : s.vista, s.prod, s.fluxo, s.a, s.b, s.pais ? s.aba : ""].join("|"));
 const assinGraf = () => [baseLugar(), temaAtual(), amplo(), PAL.escuro].join("|");
 // troca o conteúdo guardando os gráficos que continuam (mesmo id e mesmo lugar) e contando os números que mudaram
 function trocarConteudo($c, html, mesmoLugar) {

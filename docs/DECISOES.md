@@ -787,3 +787,17 @@ As outras perguntas ficam em "Outras perguntas".
 - Nos anos que já estavam no site (2000, 2010 e 2025), `t` e `n` são idênticos em todos os 5.399 blocos. A única diferença é que 14 blocos listavam um item com valor arredondado para US$ 0, e os arquivos novos não listam esse item.
 - Chromium sem tela, em 1440×900 e 390×844: seis telas sem erro e sem rolagem horizontal. O aviso de "arquivo não encontrado" no console sumiu.
 - pytest, com o teste novo `tests/test_detalhe_coleta.py` (sem rede).
+
+### D69 · 16/11/2026 · Rolagem da entrada não volta mais ao topo
+**Problema (visto pelo dono no site):** na página inicial, ao rolar a história, a página pulava de volta para o topo.
+
+**Causa:**
+- A cena da soja põe o produto no estado da página sem trocar de tela.
+- Com o detalhamento ligado (D68), a cena pedia o arquivo do produto e, quando ele chegava, a página era redesenhada inteira.
+- O redesenho via "outro lugar" (o produto entrava na chave do lugar) e aplicava a rolagem guardada desse lugar, que era zero.
+
+**Correção:**
+- A entrada passa a ser um lugar só (`chaveLugar` e `baseLugar` devolvem "inicio"), qualquer que seja a cena.
+- Quando o arquivo de detalhamento chega com a pessoa na entrada, a página só repinta o mapa; não redesenha o conteúdo.
+
+**Verificado:** Chromium sem tela, em 1440×900 e 390×844: rolagem contínua em sete telas sem nenhum salto para trás; ir da entrada a um país e voltar devolve a posição; sem erros. O teste reproduzia o salto antes da correção.
