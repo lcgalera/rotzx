@@ -2,7 +2,7 @@
 // cada tela ou ação manda um pedido simples ao GoatCounter, com o caminho, o título, a origem e o tamanho da tela.
 // Desligada enquanto o código abaixo estiver vazio. Para ligar: crie o site em goatcounter.com e ponha aqui
 // o código dele (o "meusite" de meusite.goatcounter.com).
-window.ROTZX_MEDICAO = { goatcounter: "" };
+window.ROTZX_MEDICAO = { goatcounter: "rotz" };
 
 (function () {
   var ultimo = "";

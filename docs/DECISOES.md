@@ -739,7 +739,7 @@ As outras perguntas ficam em "Outras perguntas".
 
 **Medição (`prototipos/globo/medicao.js`):**
 - GoatCounter, sem cookies e sem script de terceiros: a página manda um pedido simples com o caminho, o título, a origem e o tamanho da tela.
-- **Desligada** enquanto `ROTZX_MEDICAO.goatcounter` estiver vazio. O dono cria a conta e informa o código.
+- Ligada com o código `rotz` (rotz.goatcounter.com), informado pelo dono em 16/11/2026. Com `ROTZX_MEDICAO.goatcounter` vazio, fica desligada.
 - Respeita "não rastrear" e o Global Privacy Control, e não conta em `localhost`.
 - O caminho traz só o lugar (`/pais/CHN`, `/produto/1201`, `/comparar/CHN-USA`, `/ranking/exp`), sem ano nem métrica. O modo incorporado conta à parte (`/embed/...`).
 - Eventos: `acao/baixar-csv`, `acao/exportar-imagem`, `acao/copiar-link` e `acao/copiar-incorporacao`.

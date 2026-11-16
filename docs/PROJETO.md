@@ -206,7 +206,7 @@ país definido.
   [`SCHEMA.md`](SCHEMA.md): distribuição por parceiro em mais anos, UF, via, porto (URF) e NCM. Gerado no projeto de dados à parte;
   conferido com `rotzx detalhe-validar`. Sem a pasta, a página usa só os recortes 2000, 2010 e 2025.
 - **Páginas estáticas (D66):** o build gera `pais/{slug}/` e `produto/{codigo}/`, índices, `sitemap.xml` e `robots.txt` (`rotzx/mundo/paginas.py`), para buscadores.
-- **Medição (D66):** `medicao.js`, GoatCounter sem cookies; desligada até o código ser preenchido em `ROTZX_MEDICAO.goatcounter`.
+- **Medição (D66):** `medicao.js`, GoatCounter sem cookies, código `rotz` em `ROTZX_MEDICAO.goatcounter` (vazio desliga).
 - **Compartilhamento (D63):** `og.png` 1200×630 e meta tags OpenGraph/Twitter fixas (as redes não leem o `#`); título e descrição da aba mudam por tela.
 - **Exportar e compartilhar (D62):** PNG por gráfico (título, contexto, fonte e assinatura, no tema ativo), CSV dos números brutos
   (`;`, vírgula decimal, BOM; ausente = célula vazia), "Copiar link" com o estado da URL e "Incorporar" (`<iframe>` com `embed=1`).
