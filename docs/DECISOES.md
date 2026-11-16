@@ -750,3 +750,16 @@ As outras perguntas ficam em "Outras perguntas".
 - pytest: 160 passaram, 2 pulados; `tests/test_paginas.py` é novo.
 - Os números das páginas estáticas conferem com o atlas (China: US$ 99,9 bi, 28,7%, 1º destino de 243; soja: US$ 43,5 bi, China com 79,3%).
 - Chromium sem tela, em 1440×900 e 390×844: sem rolagem horizontal, o botão abre o atlas no estado certo, e as telas e ações chegam à medição.
+
+### D67 · 16/11/2026 · Atlas ligado às páginas estáticas de país e produto
+**Pedido do dono:** interligar os países e os produtos no site principal.
+
+- **País:** o painel do país ganhou o link "Página de dados em tabela", que leva a `pais/{slug}/`.
+- **Produto:** a tela do produto ganhou "Página de dados em tabela" (`produto/{codigo}/`) e "Lista de todos os produtos".
+- **Ranking:** ganhou "Lista de todos os países e territórios".
+- **Volta:** as páginas estáticas já levavam ao atlas no estado certo e se ligavam entre si (país ↔ produto).
+- **Endereços:** o atlas calcula o slug com a mesma regra de `rotzx/mundo/paginas.py` (`PAG_PAIS`). Se a regra mudar num lugar, tem de mudar no outro.
+- **Modo incorporado:** os links não aparecem.
+- **Protótipo local:** os links só funcionam no site publicado, porque as páginas são geradas no build.
+- **Correção de número:** são 247 páginas de país (a D66 e o PR falavam em 243, que é o total de destinos com exportação em 2025).
+- **Verificado:** Chromium sem tela, em 1440×900 e 390×844, sobre o site construído: os 247 slugs do atlas batem com as 247 pastas geradas, sem erro e sem rolagem horizontal.
