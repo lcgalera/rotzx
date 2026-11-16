@@ -823,3 +823,41 @@ As outras perguntas ficam em "Outras perguntas".
 **Limite:** o link do atlas com `#` (por exemplo `#pais=CHN`) continua mostrando o cartão geral, porque as redes não leem o `#`. O cartão próprio aparece ao compartilhar a página estática (`/pais/china/`).
 
 **Verificado:** os 942 cartões foram gerados; conferi uma amostra com título curto, título de duas linhas, país com um fluxo só e grupo de produtos. pytest tem o teste novo do cartão.
+
+### D71 · 16/11/2026 · Correções de interface e contexto diplomático na comparação
+**Pedido do dono:** quatro bugs e três melhorias vistos no site.
+
+**Bugs:**
+1. **Tema:**
+   - O botão alternava entre automático, claro e escuro. Com o sistema em modo claro, o primeiro clique (automático → claro) trocava o ícone e não mudava a tela.
+   - Agora o botão alterna entre claro e escuro a partir do tema que está na tela. O ícone mostra o tema atual e o rótulo diz para qual vai.
+   - "Automático" vale só até o primeiro clique.
+   - A meta `color-scheme` passou de `dark` para `light dark`.
+2. **KPIs ao trocar o ano:**
+   - Os cartões contavam do valor antigo ao novo (≈0,45 s). Enquanto isso, mostravam números que não eram do ano escolhido e ficavam fora de sincronia com a lista.
+   - A contagem agora só acontece durante o ▶; trocar o ano mostra o valor final na hora.
+3. **Botão "vazio":**
+   - Era o botão de fechar do painel do país. O caractere ✕ falta em algumas fontes do sistema.
+   - Virou um ícone desenhado em SVG, com `title` e `aria-label`.
+4. **Métricas no modo ampliado:** em telas largas (≥ 1181 px), a barra fica numa linha só ("Conflitos" não quebra mais). Em telas menores, continua podendo quebrar.
+
+**Melhorias:**
+5. **Parceiros com a lista à esquerda** (escolhida ou por falta de WebGL):
+   - A coluna do mapa repetia o ranking. Nesse caso a análise abre ampliada.
+   - O aviso "o globo 3D não abriu" vai para a barra de avisos.
+   - "Mostrar mapa" devolve a coluna.
+6. **Comparar:** nova seção "Diplomacia, conflitos e economia", com os dois parceiros lado a lado e CSV próprio:
+   - **Votos na ONU:** concordância com o Brasil no ano e primeiro ano da série de cada país (a China, por exemplo, desde 1971).
+   - **OMC:** disputas com o Brasil desde 1995, com quem abriu; a nota sobre a UE aparece quando se aplica.
+   - **UCDP/PRIO:** situação no ano (no território, como lado principal, com tropas de apoio) e anos com registro desde 1946.
+   - **Banco Mundial:** PIB, crescimento, inflação e população, com o ano de cada dado.
+   - **Gráfico:** a concordância na ONU dos dois parceiros, com a mediana dos países.
+   - Nada vira nota de risco ou de "melhor/pior".
+7. **Fontes e método:** links para os portais oficiais (Comex Stat, Harvard Dataverse, UCDP, OMC, Banco Mundial, Itamaraty) e para as ferramentas citadas. Abrem em nova aba, com `rel="noopener noreferrer"`.
+
+**Verificado:** Chromium sem tela, em 1440×900 e 390×844, sem erros e sem rolagem horizontal.
+- O tema alterna nas seis telas (Início, Parceiros, Produtos, Comparar, Fontes, país), inclusive nas cores dos gráficos.
+- Na Alemanha, com o slider em 2025, 2011, 2019 e 2025, os cartões batem com os dados 30 ms depois de cada troca.
+- O ranking abre sem a lista duplicada, sem WebGL e com a lista escolhida.
+- Os links diretos voltam ao mesmo estado (14 de 14 casos).
+- CSV, PNG e código de incorporar funcionam na comparação nova.
