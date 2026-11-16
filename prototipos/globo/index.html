@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>rotzx — Como o Brasil se conecta ao mundo</title>
 <meta name="description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="light dark">
 <!-- compartilhamento (D63): os robôs das redes não rodam JS nem leem o #, então o cartão é o mesmo para todo link -->
 <link rel="canonical" href="https://lcgalera.github.io/rotzx/">
 <meta property="og:type" content="website">
@@ -59,6 +59,7 @@
   button, input, select { font: inherit; color: inherit; }
   a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  dl.fontes a { color: var(--accent-ink); }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .kicker { font: 600 11.5px/1.3 var(--sans); letter-spacing: .09em; text-transform: uppercase; color: var(--accent-ink); }
   .num, td, .val, .v, output { font-variant-numeric: tabular-nums lining-nums; }
@@ -145,6 +146,7 @@
   .metricas button { border: 1px solid transparent; background: transparent; padding: 5px 8px; border-radius: 3px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; }
   .metricas button:hover { background: var(--hover); color: var(--ink); }
   .metricas button[aria-pressed="true"] { background: var(--sel-bg); color: var(--ink); border-color: var(--rule-2); font-weight: 600; }
+  @media (min-width: 1181px) { .slot-ctl .metricas { flex-wrap: nowrap; white-space: nowrap; } .slot-ctl .ctl { grid-template-columns: max-content minmax(220px, 380px); justify-content: space-between; } }
   .metricas .sep { color: var(--muted); font-size: 12px; margin: 0 2px 0 6px; padding-left: 8px; border-left: 1px solid var(--rule); }
   .anos-chips, .chips { display: flex; gap: 0; flex-wrap: wrap; }
   .anos-chips button, .chips button { padding: 5px 12px; border: 1px solid var(--rule-2); background: transparent; cursor: pointer; font-size: 13.5px; color: var(--ink-2); margin: 0 -1px -1px 0; }
@@ -253,6 +255,7 @@
   .tag { font: 600 10.5px/1.7 var(--sans); letter-spacing: .07em; text-transform: uppercase; padding: 0 6px; border: 1px solid var(--rule-2); border-radius: 2px; color: var(--muted); vertical-align: middle; }
   .fechar { position: absolute; top: 24px; right: 32px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--rule-2); background: transparent; cursor: pointer; color: var(--ink-2); font-size: 15px; }
   .fechar:hover { color: var(--ink); border-color: var(--ink-2); }
+  .fechar { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
   .abas { display: flex; gap: 28px; padding: 0 40px; border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 4; background: var(--bg); }
   .abas button { border: 0; background: transparent; padding: 14px 0 12px; cursor: pointer; color: var(--ink-2); font: 500 17px/1.2 var(--serif); border-bottom: 2px solid transparent; margin-bottom: -1px; }
   .abas button:hover { color: var(--ink); }
@@ -548,16 +551,20 @@ function lerPaleta() {
              neg: escuro ? ["#4A302A", "#F2AC98"] : ["#F0D9D0", "#86331F"], onu: escuro ? ["#2A3540", "#AFD0E4"] : ["#DDE5EA", "#284A60"] },
     guerra: escuro ? "#E58C75" : "#93402F", conflito: escuro ? "#9C5E4B" : "#DDA592" };
 }
-const TEMAS = ["auto", "light", "dark"], ROT_TEMA = { auto: "automático", light: "claro", dark: "escuro" };
+// D71: o botão alterna entre claro e escuro. Antes passava por "automático", que no sistema claro não mudava nada na tela.
+const ROT_TEMA = { light: "claro", dark: "escuro" };
+const temaEfetivo = () => document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 function temaAtual() { try { return localStorage.getItem("rotzx-tema") || "auto"; } catch { return "auto"; } }
 function aplicarTema(t) {
   if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
   try { if (t === "auto") localStorage.removeItem("rotzx-tema"); else localStorage.setItem("rotzx-tema", t); } catch { /* só nesta visita */ }
-  const b = $("#tema"), I = { auto: '<path d="M12 3a9 9 0 1 0 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+  const b = $("#tema"), I = {
     light: '<circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
     dark: '<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>' };
-  b.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">${I[t]}</svg>`;
-  b.setAttribute("aria-label", `Tema ${ROT_TEMA[t]}. Trocar o tema`); b.title = `Tema ${ROT_TEMA[t]} (clique para trocar)`;
+  const ef = temaEfetivo(), outro = ef === "dark" ? "light" : "dark";
+  b.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">${I[ef]}</svg>`;
+  b.setAttribute("aria-label", `Tema ${ROT_TEMA[ef]}${t === "auto" ? " (do sistema)" : ""}. Mudar para o tema ${ROT_TEMA[outro]}`);
+  b.title = `Tema ${ROT_TEMA[ef]}${t === "auto" ? " (do sistema)" : ""}. Clique para o tema ${ROT_TEMA[outro]}`;
   lerPaleta();
 }
 aplicarTema(temaAtual());
@@ -911,7 +918,9 @@ function guardarRolagem() {
 }
 const analise = () => !!st.pais || st.vista !== "inicio";
 // no celular, a análise já abre com o mapa recolhido; a comparação também, porque precisa de largura para os dois lados (D49)
-const amplo = () => (st.embed && analise()) || (analise() && (st.amplo ?? (emColuna() || (!st.pais && st.vista === "comparar"))));
+// D71: em Parceiros com a lista à esquerda (escolha ou falta de WebGL), a coluna do mapa repetiria o ranking: some por padrão
+const listaRepete = () => !st.pais && st.vista === "ranking" && document.body.classList.contains("modo-lista");
+const amplo = () => (st.embed && analise()) || (analise() && (st.amplo ?? (emColuna() || (!st.pais && st.vista === "comparar") || listaRepete())));
 
 // ---------- render geral ----------
 let lugarAnterior = null, baseAnterior = null, enquadreAnterior = null;
@@ -932,7 +941,8 @@ function trocarConteudo($c, html, mesmoLugar) {
       v.dataset.sig = sig; el.replaceWith(v);
     } else el.dataset.sig = sig;
   });
-  if (!reduzir) $$("[data-k]", $c).forEach((el) => { const de = nums.get(el.dataset.k), para = +el.dataset.v; if (de != null && Number.isFinite(de) && de !== para) contar(el, de, para, FMT[el.dataset.f] || usd); });
+  // D71: trocar o ano mostra o valor novo na hora (a contagem passava por valores antigos); ela fica só durante o ▶
+  if (!reduzir && tocando) $$("[data-k]", $c).forEach((el) => { const de = nums.get(el.dataset.k), para = +el.dataset.v; if (de != null && Number.isFinite(de) && de !== para) contar(el, de, para, FMT[el.dataset.f] || usd); });
 }
 const FMT = { usd, pct, usdS: (v) => (v >= 0 ? "+" : "") + usd(v) };
 const nk = (k, v, f = "usd") => (v == null ? "" : ` data-k="${k}" data-v="${v}" data-f="${f}"`);
@@ -975,7 +985,7 @@ function render() {
   $("#barra").hidden = !analise();
   $("#trilha").innerHTML = trilha(); ligarConteudo($("#trilha"));
   $("#alternarMapa").textContent = amplo() ? "Mostrar mapa" : "Ampliar análise"; $("#alternarMapa").setAttribute("aria-pressed", amplo());
-  $("#avisos").innerHTML = avisoAno() + (st.aviso && !(st.vista === "comparar" && !st.pais) ? `<p class="aviso-geral" role="status">${esc(st.aviso)}</p>` : "");
+  $("#avisos").innerHTML = (semGlobo && amplo() && !st.embed ? `<p class="aviso-geral" role="status">O globo 3D não abriu neste navegador. ${listaRepete() ? "O ranking abaixo mostra a mesma métrica e o mesmo ano." : "A lista de países fica na coluna do mapa."}</p>` : "") + avisoAno() + (st.aviso && !(st.vista === "comparar" && !st.pais) ? `<p class="aviso-geral" role="status">${esc(st.aviso)}</p>` : "");
   renderControles();
   const lugar = chaveLugar(), y = lugar === lugarAnterior ? null : (rolagens.get(lugar) ?? 0);
   if (y != null) {
@@ -1380,7 +1390,49 @@ function vistaComparar() {
       <div class="duas"><div>${cabCol(a)}${prods(a, "i")}</div><div>${cabCol(b)}${prods(b, "i")}</div></div></div>
     <div class="sec"><h3>Participação na corrente de comércio do Brasil, ${ini}–${fim}</h3>${fonteC("% da corrente total do Brasil · mesmo eixo para os dois")}
       <div class="grafico" id="gCmp" role="img" aria-label="${esc(`Participação de ${nome(a)} e ${nome(b)} na corrente de comércio do Brasil de ${ini} a ${fim}`)}"></div>
-      ${tabelaSerie([[nome(a), Array.from({ length: fim - ini + 1 }, (_, k) => trocas(a, ini + k)?.pt ?? null)], [nome(b), Array.from({ length: fim - ini + 1 }, (_, k) => trocas(b, ini + k)?.pt ?? null)]], pct)}</div>`;
+      ${tabelaSerie([[nome(a), Array.from({ length: fim - ini + 1 }, (_, k) => trocas(a, ini + k)?.pt ?? null)], [nome(b), Array.from({ length: fim - ini + 1 }, (_, k) => trocas(b, ini + k)?.pt ?? null)]], pct)}</div>
+    ${contextoComparado(a, b, ano)}`;
+}
+// D71: diplomacia, conflitos e economia lado a lado. Só medidas com fonte; nada vira nota de risco nem "melhor/pior".
+function contextoComparado(a, b, ano) {
+  const aO = Math.min(ano, H.onu.fim), aK = Math.min(ano, H.conflitos.fim);
+  const onu = (id) => { const u = H.onu.paises[id]; if (!u) return null; const y = anoUlt(u, H.onu.inicio, aO); return y == null ? null : { y, v: em(u, y, H.onu.inicio), desde: H.onu.inicio + u.findIndex((x) => x != null) }; };
+  const omc = (id) => { const w = H.omc[id]; if (!w) return { n: 0 }; const ab = w.casos.filter((x) => x.brasil_abriu).length; return { n: w.casos.length, ab, contra: w.casos.length - ab, ue: w.via_ue }; };
+  const conf = (id) => { const k = H.conflitos.paises[id] || {}; return { ano: k[String(aK)] || null, anos: Object.keys(k).length }; };
+  const eco = (id, ind) => (H.economia[id] || []).find((x) => x.id === ind) || null;
+  const O = { [a]: onu(a), [b]: onu(b) }, W = { [a]: omc(a), [b]: omc(b) }, K = { [a]: conf(a), [b]: conf(b) };
+  const pm = (id) => `<span class="pais-m"><span class="ponto"></span>${esc(nome(id))}</span>`;
+  const lin = (rot, f) => `<tr><th scope="row">${rot}</th><td class="ser-a">${pm(a)}<span>${f(a)}</span></td><td class="ser-b">${pm(b)}<span>${f(b)}</span></td></tr>`;
+  const cab = `<thead><tr><th scope="col"><span class="sr">Medida</span></th><th scope="col" class="ser-a"><span class="ponto"></span>${bandeira(a)} ${esc(nome(a))}</th><th scope="col" class="ser-b"><span class="ponto"></span>${bandeira(b)} ${esc(nome(b))}</th></tr></thead>`;
+  const tOnu = (id) => { const o = O[id]; return o ? `${Math.round(o.v * 100)} de 100${o.y !== aO ? ` <small>(${o.y})</small>` : ""}` : terr(id) ? "não vota (território)" : "sem votação"; };
+  const tConf = (id) => { const x = K[id].ano; if (!x) return "nenhum registro"; const p = [x.t >= 2 ? "guerra no território" : x.t ? "conflito no território" : ""]; const cf = (n) => `${n} conflito${n > 1 ? "s" : ""}`; if (x.l) p.push(`lado principal em ${cf(x.l)}`); if (x.a) p.push(`tropas de apoio em ${cf(x.a)}`); return p.filter(Boolean).join("; "); };
+  const tW = (id) => { const w = W[id]; return w.n ? `${w.n}${w.ue ? " <small>(pela UE)</small>" : ""}` : "nenhuma"; };
+  const tWd = (id) => { const w = W[id]; return w.n ? `${w.ab} aberta${w.ab === 1 ? "" : "s"} pelo Brasil · ${w.contra} contra o Brasil` : "—"; };
+  const IND = [["NY.GDP.MKTP.CD", "PIB"], ["NY.GDP.MKTP.KD.ZG", "Crescimento do PIB"], ["FP.CPI.TOTL.ZG", "Inflação (preços ao consumidor)"], ["SP.POP.TOTL", "População"]];
+  const tEco = (id, ind) => { const x = eco(id, ind); return x ? `${fmtEco(x)} <small>(${esc(x.ano)})</small>` : "sem dado"; };
+  const kcsv = regCsv(["medida", nome(a), nome(b)], [
+    [`concordancia_onu_${aO}`, O[a] && O[a].y === aO ? O[a].v : null, O[b] && O[b].y === aO ? O[b].v : null],
+    ["disputas_omc_desde_1995", W[a].n, W[b].n], ["disputas_omc_abertas_pelo_brasil", W[a].n ? W[a].ab : null, W[b].n ? W[b].ab : null],
+    [`conflito_no_territorio_${aK}`, K[a].ano ? K[a].ano.t || 0 : null, K[b].ano ? K[b].ano.t || 0 : null],
+    [`anos_com_registro_ucdp_${H.conflitos.inicio}_${H.conflitos.fim}`, K[a].anos, K[b].anos],
+    ...IND.map(([ind, rot]) => [`${rot} (ano ${eco(a, ind)?.ano ?? "—"} / ${eco(b, ind)?.ano ?? "—"})`, eco(a, ind)?.valor ?? null, eco(b, ind)?.valor ?? null])],
+    { unidade: "ver a medida; ONU de 0 a 1; conflito: 1 = conflito, 2 = guerra", fonte: "Voeten et al. (Harvard Dataverse); OMC; UCDP/PRIO; Banco Mundial" });
+  const temOnu = O[a] || O[b];
+  return `<div class="sec" data-csv="${kcsv}"><h3>Diplomacia, conflitos e economia · ${ano}</h3>
+      <p class="nota">Contexto da relação, lado a lado. Nenhum destes indicadores mede o comércio, e nenhum vira nota de risco.</p>
+      <table class="comp cmp">${cab}<tbody>
+        ${lin(`Concordância com o Brasil na ONU · ${aO}`, tOnu)}
+        ${lin("Série de votos na ONU desde", (id) => (O[id] ? String(O[id].desde) : "—"))}
+        ${lin("Disputas com o Brasil na OMC, desde 1995", tW)}${lin("Quem abriu", tWd)}
+        ${lin(`Conflito armado · ${aK}`, tConf)}
+        ${lin(`Anos com algum registro de conflito, ${H.conflitos.inicio}–${H.conflitos.fim}`, (id) => String(K[id].anos))}
+        ${IND.map(([ind, rot]) => lin(rot, (id) => tEco(id, ind))).join("")}
+      </tbody></table>
+      ${fonteC(`Votos na ONU: Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0), ${H.onu.inicio}–${H.onu.fim} · OMC: lista oficial de disputas · Conflitos: UCDP/PRIO (CC BY 4.0) · Economia: Banco Mundial (CC BY 4.0), valor mais recente de cada indicador, com o ano entre parênteses`)}
+      ${sobreDado(`Concordância: voto igual = 1, abstenção de um dos dois = 0,5; muda com a pauta do ano e não equivale a aliança. A série de cada país começa no primeiro ano em que ele votou na Assembleia Geral (a China, por exemplo, só a partir de 1971). ${W[a].ue || W[b].ue ? "Na OMC, países da União Europeia aparecem pelas disputas da UE. " : ""}"Tropas de apoio" inclui missões multinacionais, como as de paz da ONU. Ano sem dado aparece como "sem votação", "sem dado" ou "nenhum registro", nunca como zero.`)}</div>
+    ${temOnu ? `<div class="sec"><h3>Concordância com o Brasil nos votos da ONU, ${H.onu.inicio}–${H.onu.fim}</h3>${fonteC("Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0) · 0 a 100 · mesmo eixo para os dois")}
+      <div class="grafico" id="gOnuCmp" role="img" aria-label="${esc(`Concordância de ${nome(a)} e ${nome(b)} com o Brasil nos votos da ONU, ${H.onu.inicio}–${H.onu.fim}`)}"></div>
+      ${tabelaSerie([[nome(a), H.onu.paises[a] || Array(H.onu.fim - H.onu.inicio + 1).fill(null)], [nome(b), H.onu.paises[b] || Array(H.onu.fim - H.onu.inicio + 1).fill(null)], ["Mediana dos países", H.onu.mediana]], (v) => `${Math.round(v * 100)} de 100`, H.onu.inicio, "sem votação", { unidade: "concordância (0 a 1)", fonte: "Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0)" })}</div>` : ""}`;
 }
 
 // ---------- fontes e método ----------
@@ -1388,22 +1440,22 @@ function vistaFontes() {
   return `<div class="sec"><div class="kicker">Fontes e método</div><h2>De onde vêm os números</h2>
     <p class="lead">Retrato coletado em ${quando(H.gerado_em)}, sem atualização automática. Cada bloco da página diz a fonte e o ano da observação.</p></div>
     <div class="sec"><dl class="fontes">
-      <dt>Comércio exterior — Comex Stat (MDIC)</dt><dd>Exportações e importações do Brasil por país, ${ini}–${fim}, em US$ FOB correntes (sem correção pela inflação: alta em valor não prova alta em volume). Ano sem registro aparece como "sem registro", nunca como zero. Os totais do Brasil incluem operações sem país definido (provisão de navios e aeronaves, por exemplo).</dd>
+      <dt>Comércio exterior — Comex Stat (MDIC)</dt><dd><a href="https://comexstat.mdic.gov.br" target="_blank" rel="noopener noreferrer">comexstat.mdic.gov.br ↗</a>. Exportações e importações do Brasil por país, ${ini}–${fim}, em US$ FOB correntes (sem correção pela inflação: alta em valor não prova alta em volume). Ano sem registro aparece como "sem registro", nunca como zero. Os totais do Brasil incluem operações sem país definido (provisão de navios e aeronaves, por exemplo).</dd>
       <dt>Produtos — Comex Stat, SH4</dt><dd>Composição completa por país e produto em ${anosProd.join(", ")} (o total bilateral, denominador das participações, é exato). No painel de cada país aparecem os 10 maiores produtos; no explorador, os 12 maiores parceiros de cada produto, mais "outros". Séries anuais do Brasil por produto de ${ini} a ${fim}. Nomes curtos revisados; o nome oficial e o código ficam disponíveis. ${NOTA_SH} No explorador, os parceiros fora dos 12 maiores de cada produto aparecem somados em "Outros": sem valor individual, o que não significa ausência de comércio. As participações por parceiro usam o total com país identificado; a série anual do Brasil pode ser maior, porque inclui operações sem país definido (como provisões para navios e aeronaves).</dd>
       <dt>Detalhamento sob demanda (UF, via, porto, NCM e mais anos)</dt><dd>${DET.indice
         ? `Arquivo de ${esc(String(DET.indice.gerado_em || "").slice(0, 10))} (${esc(DET.indice.fonte || "Comex Stat (MDIC)")}): ${Object.keys(DET.indice.prod || {}).length} produtos e ${Object.keys(DET.indice.pais || {}).length} países com detalhamento. Cada arquivo é carregado só quando a página precisa dele.`
         : "Ainda não publicado neste retrato: a página mostra a distribuição por parceiro em " + juntarE(anosProd.map(String)) + " e não tem recortes por UF, via, porto ou NCM."}</dd>
       <dt>Participação e concentração</dt><dd><b>Destinos:</b> exportações para o país ÷ exportações totais do Brasil. <b>Origens:</b> importações do país ÷ importações totais. <b>Composição bilateral:</b> produto ÷ total trocado com aquele país. <b>Fornecedores de um produto:</b> importações do produto vindas do país ÷ importações totais do produto. Mudanças de participação em pontos percentuais (p.p.). Participação alta indica concentração, não vulnerabilidade: para isso seriam precisos substituibilidade, criticidade e oferta alternativa, que esta base não mede. Por isso não há nota de risco.</dd>
-      <dt>Votos na ONU — Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0)</dt><dd>Concordância com o Brasil nas votações nominais da Assembleia Geral, ${H.onu.inicio}–${H.onu.fim} (voto igual = 1; abstenção de um dos dois = 0,5). Muda com a pauta do ano e não equivale a aliança.</dd>
-      <dt>Conflitos armados — UCDP/PRIO (CC BY 4.0)</dt><dd>${H.conflitos.inicio}–${H.conflitos.fim}: conflitos com um governo de um dos lados e 25+ mortes em combate no ano. Separados: no território do país, como lado principal e com tropas de apoio (inclui missões multinacionais, como as de paz da ONU). Não é pontuação de risco comercial. Países que não existem mais aparecem nas fronteiras de hoje.</dd>
-      <dt>Disputas na OMC — lista oficial da OMC</dt><dd>Disputas com o Brasil desde 1995. Países da União Europeia aparecem pelas disputas da UE. Uma disputa não resume a relação bilateral.</dd>
-      <dt>Indicadores econômicos — Banco Mundial (CC BY 4.0)</dt><dd>Valor mais recente de cada indicador, com o ano da observação e a data de atualização da fonte.</dd>
+      <dt>Votos na ONU — Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0)</dt><dd><a href="https://doi.org/10.7910/DVN/LEJUQZ" target="_blank" rel="noopener noreferrer">United Nations General Assembly Voting Data ↗</a>. Concordância com o Brasil nas votações nominais da Assembleia Geral, ${H.onu.inicio}–${H.onu.fim} (voto igual = 1; abstenção de um dos dois = 0,5). Muda com a pauta do ano e não equivale a aliança.</dd>
+      <dt>Conflitos armados — UCDP/PRIO (CC BY 4.0)</dt><dd><a href="https://ucdp.uu.se/downloads/" target="_blank" rel="noopener noreferrer">UCDP/PRIO Armed Conflict Dataset ↗</a>. ${H.conflitos.inicio}–${H.conflitos.fim}: conflitos com um governo de um dos lados e 25+ mortes em combate no ano. Separados: no território do país, como lado principal e com tropas de apoio (inclui missões multinacionais, como as de paz da ONU). Não é pontuação de risco comercial. Países que não existem mais aparecem nas fronteiras de hoje.</dd>
+      <dt>Disputas na OMC — lista oficial da OMC</dt><dd><a href="https://www.wto.org/english/tratop_e/dispu_e/dispu_by_country_e.htm" target="_blank" rel="noopener noreferrer">Disputas por país, OMC ↗</a>. Disputas com o Brasil desde 1995. Países da União Europeia aparecem pelas disputas da UE. Uma disputa não resume a relação bilateral.</dd>
+      <dt>Indicadores econômicos — Banco Mundial (CC BY 4.0)</dt><dd><a href="https://data.worldbank.org" target="_blank" rel="noopener noreferrer">World Development Indicators ↗</a>. Valor mais recente de cada indicador, com o ano da observação e a data de atualização da fonte.</dd>
       <dt>Países e territórios</dt><dd>Tabela própria (<code>catalog/paises_mundo.csv</code>) que liga os códigos do Comex Stat, da ONU e da UCDP ao ISO 3166; ${IDS.length} países e territórios (territórios marcados como tal). Dubai soma nos Emirados Árabes Unidos e "Inglaterra" no Reino Unido, como no Comex.</dd>
-      <dt>Bandeiras</dt><dd>flag-icons 7.5.0 (MIT, Panayiotis Lipiridis): bandeira atual de cada país ou território, não a do ano escolhido. Sem bandeira, um retângulo neutro.</dd>
-      <dt>Mapa e globo</dt><dd>Contornos Natural Earth 1:110m (domínio público, via world-atlas); globe.gl (MIT); gráficos ECharts (Apache-2.0). Países pequenos não aparecem no mapa, mas estão na lista e na busca.</dd>
-      <dt>Tipografia</dt><dd>Newsreader (Production Type) e IBM Plex Sans (IBM), ambas sob a SIL Open Font License, via Google Fonts.</dd>
-      <dt>Medição de acessos</dt><dd>${window.rotzxMedicaoLigada?.() ? "A página conta quantas vezes cada tela é aberta e quantas vezes se usa “Baixar CSV”, “Exportar imagem”, “Copiar link” e “Incorporar”, pelo GoatCounter. Não usa cookies nem identifica pessoas, e respeita o pedido “não rastrear” do navegador." : "Desligada: esta página não conta acessos."}</dd>
-      <dt>Relações bilaterais — Itamaraty</dt><dd>Link para o índice oficial; o site bloqueia leitura automática, então nada dele é copiado ou resumido aqui.</dd>
+      <dt>Bandeiras</dt><dd><a href="https://github.com/lipis/flag-icons" target="_blank" rel="noopener noreferrer">flag-icons ↗</a> 7.5.0 (MIT, Panayiotis Lipiridis): bandeira atual de cada país ou território, não a do ano escolhido. Sem bandeira, um retângulo neutro.</dd>
+      <dt>Mapa e globo</dt><dd>Contornos <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener noreferrer">Natural Earth ↗</a> 1:110m (domínio público, via <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener noreferrer">world-atlas ↗</a>); <a href="https://github.com/vasturiano/globe.gl" target="_blank" rel="noopener noreferrer">globe.gl ↗</a> (MIT); gráficos <a href="https://echarts.apache.org" target="_blank" rel="noopener noreferrer">ECharts ↗</a> (Apache-2.0). Países pequenos não aparecem no mapa, mas estão na lista e na busca.</dd>
+      <dt>Tipografia</dt><dd><a href="https://fonts.google.com/specimen/Newsreader" target="_blank" rel="noopener noreferrer">Newsreader ↗</a> (Production Type) e <a href="https://fonts.google.com/specimen/IBM+Plex+Sans" target="_blank" rel="noopener noreferrer">IBM Plex Sans ↗</a> (IBM), ambas sob a SIL Open Font License, via Google Fonts.</dd>
+      <dt>Medição de acessos</dt><dd>${window.rotzxMedicaoLigada?.() ? "A página conta quantas vezes cada tela é aberta e quantas vezes se usa “Baixar CSV”, “Exportar imagem”, “Copiar link” e “Incorporar”, pelo <a href='https://www.goatcounter.com' target='_blank' rel='noopener noreferrer'>GoatCounter ↗</a>. Não usa cookies nem identifica pessoas, e respeita o pedido “não rastrear” do navegador." : "Desligada: esta página não conta acessos."}</dd>
+      <dt>Relações bilaterais — Itamaraty</dt><dd><a href="https://www.gov.br/mre/pt-br/assuntos/relacoes-bilaterais/todos-os-paises" target="_blank" rel="noopener noreferrer">Índice oficial de relações bilaterais ↗</a>; o site bloqueia leitura automática, então nada dele é copiado ou resumido aqui.</dd>
     </dl></div>`;
 }
 
@@ -1433,7 +1485,7 @@ function painelPais(id) {
   if (id !== BR && st.prod) return painelProdutoPais(id);      // chegou por um produto: a abertura segue a pergunta do produto
   const a = Math.min(st.ano, fim), t = trocas(id, a), terr = ehTerritorio(id);
   // um só caminho de volta no painel: o ✕ (e a trilha no alto); a posição aparece uma vez, nos números (D54)
-  const cab = `<div class="pais-cab"><button class="fechar" type="button" data-fechar aria-label="Fechar e voltar à visão do mundo">✕</button>
+  const cab = `<div class="pais-cab"><button class="fechar" type="button" data-fechar aria-label="Fechar e voltar à visão do mundo" title="Fechar e voltar à visão do mundo"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       <div class="kicker">${id === BR ? "Ponto de referência da análise" : "Relação comercial com o Brasil"} · ${a}${st.ano > fim ? ` (comércio só até ${fim})` : ""}<span class="sr">. A bandeira é a atual, não a do ano.</span></div>
       <h2>${bandeira(id, { grande: true })}<span>${esc(nome(id))}</span>${terr ? '<span class="tag">território</span>' : ""}</h2>
       ${id !== BR && !st.prod ? abertura(id, a, t) : ""}
@@ -1457,7 +1509,7 @@ function abertura(id, a, t) {
 // NAQUELE produto e fluxo; o ranking geral da corrente fica na relação completa. Só nos anos com distribuição por parceiro.
 function painelProdutoPais(id) {
   const terr = ehTerritorio(id), nm = esc(nome(id));
-  const topo = (miolo) => `<div class="pais-cab foco-prod"><button class="fechar" type="button" data-fechar aria-label="Fechar e voltar à visão do mundo">✕</button>
+  const topo = (miolo) => `<div class="pais-cab foco-prod"><button class="fechar" type="button" data-fechar aria-label="Fechar e voltar à visão do mundo" title="Fechar e voltar à visão do mundo"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       <div class="kicker">Produto em foco</div>
       <h2>${bandeira(id, { grande: true })}<span>${nm}</span>${terr ? '<span class="tag">território</span>' : ""}</h2>${miolo}</div>`;
   if (!P) return topo(esperaProdutos("Carregando os dados do produto"));
@@ -1851,6 +1903,7 @@ function modo(m) {
   document.body.classList.toggle("modo-lista", m === "lista");
   $$(".modos button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.modo === m));
   renderLista();
+  if (!st.pais && st.vista === "ranking") render();
 }
 $$(".modos button").forEach((b) => (b.onclick = () => modo(b.dataset.modo)));
 // a entrada pode ter deixado um produto de cena no estado: sair dela para outra seção começa limpo
@@ -1860,8 +1913,8 @@ $("#alternarMapa").onclick = () => { ir({ amplo: !amplo() }, { push: false }); r
 const NAV = { inicio: { vista: "inicio", m: "corrente" }, ranking: { vista: "ranking", m: "corrente" }, produto: { vista: "produto", m: "corrente" }, comparar: { vista: "comparar", m: "corrente" } };
 $$("[data-nav]").forEach((b) => (b.onclick = () => ir({ ...NAV[b.dataset.nav], pais: null, prod: null })));
 function retingir() { lerPaleta(); tingir(); pintarGlobo(); assinCtl = ""; renderControles(); renderLista(); desenharGraficos(true); }
-$("#tema").onclick = () => { aplicarTema(TEMAS[(TEMAS.indexOf(temaAtual()) + 1) % TEMAS.length]); retingir(); };
-matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", retingir);
+$("#tema").onclick = () => { aplicarTema(temaEfetivo() === "dark" ? "light" : "dark"); retingir(); };
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { if (temaAtual() === "auto") { aplicarTema("auto"); retingir(); } });
 addEventListener("keydown", (e) => { if (e.key === "Escape" && st.pais && !e.target.closest(".ac")) ir({ pais: null }); });
 
 // ---------- gráficos (ECharts) ----------
@@ -1957,6 +2010,14 @@ function desenharGraficos(forcar = false) {
       series: [linha(nome(a), C.paises[a]?.e || [], PAL.exp, { curto: curto(a), marcaL: marca() }), linha(nome(b), C.paises[b]?.e || [], PAL.imp, { curto: curto(b) })] });
     novo("#gCmp", { tooltip: dica(pct), legend: leg([nome(a), nome(b)]), xAxis: eixoX(ini, fim), yAxis: eixoY(pctEixo),
       series: [linha(nome(a), part(a), PAL.exp, { curto: curto(a), marcaL: marca() }), linha(nome(b), part(b), PAL.imp, { curto: curto(b) })] });
+    if ($("#gOnuCmp")) {                                    // D71: votos na ONU dos dois parceiros, com a mediana dos países
+      const vaz = Array(H.onu.fim - H.onu.inicio + 1).fill(null);
+      novo("#gOnuCmp", { tooltip: dica((v) => `${Math.round(v * 100)} de 100`), legend: leg([nome(a), nome(b), "Mediana dos países"]),
+        xAxis: eixoX(H.onu.inicio, H.onu.fim), yAxis: { ...eixoY((v) => Math.round(v * 100)), min: 0, max: 1 },
+        series: [linha(nome(a), H.onu.paises[a] || vaz, PAL.exp, { curto: curto(a), larg: 1.6, marcaL: marca(false, H.onu.inicio, H.onu.fim) }),
+          linha(nome(b), H.onu.paises[b] || vaz, PAL.imp, { curto: curto(b), larg: 1.6 }),
+          { ...linha("Mediana dos países", H.onu.mediana, PAL.muted, { curto: "Mediana", larg: 1.2 }), symbol: "none", lineStyle: { type: "dotted", color: PAL.muted, width: 1.2 } }] });
+    }
   }
   if (!id && st.vista === "inicio") {                         // entrada: as duas explorações com dado visível
     const ch = Array.from({ length: fim - ini + 1 }, (_, j) => trocas("156", ini + j)?.pt ?? null);
