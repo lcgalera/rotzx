@@ -27,10 +27,10 @@ def test_gera_no_formato_e_passa_no_validador(tmp_path):
     assert r == {"prod": 3, "pais": 2, "anos": [2024, 2025]}
     assert detalhe.validar_pasta(d / "detalhe") == []
     soja = json.loads((d / "detalhe" / "prod" / "1201.json").read_text())
-    assert soja["parceiros"]["e"]["2025"] == {"t": 100, "n": 2, "top": [["156", 90], ["032", 10]]}   # o Brasil não entra como parceiro
+    assert soja["parceiros"]["e"]["2025"] == {"t": 101, "n": 3, "top": [["156", 90], ["032", 10], ["076", 1]]}   # mesma regra do retrato: o total inclui tudo
     assert "i" not in soja["parceiros"]                               # sem dado = sem bloco, nunca zero
     chn = json.loads((d / "detalhe" / "pais" / "CHN.json").read_text())
-    assert chn["produtos"]["e"]["2024"] == {"t": 100, "n": 2, "top": [["1201", 80], ["2601", 20]]}  # 0,2 arredonda para 0 e sai
+    assert chn["produtos"]["e"]["2024"] == {"t": 100, "n": 3, "top": [["1201", 80], ["2601", 20]]}  # 0,2 conta em n e em t, mas não aparece no topo
     ind = json.loads((d / "detalhe" / "indice.json").read_text())
     assert ind["prod"]["8517"]["anos_parceiros"] == [2025] and ind["pais"]["ARG"]["anos_produtos"] == [2024, 2025]
     assert not (d / "detalhe" / "pais" / "BRA.json").exists()

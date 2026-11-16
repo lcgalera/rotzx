@@ -63,12 +63,12 @@ def pares_do_ano(ano: int, k: str, fluxo: str, ponte: Dict[str, str], cache: Opt
 
 
 def _bloco(soma: Dict[str, float], top: int) -> Optional[dict]:
-    """{t, n, top} só com valores que continuam positivos depois de arredondar; sem dado = sem bloco (nunca zero)."""
-    vals = {c: round(v) for c, v in soma.items() if round(v) > 0}
-    if not vals:
+    """{t, n, top} com a mesma regra do retrato (historia.py): t = soma de tudo, n = quantos itens a fonte registra.
+    Sem valor positivo no topo = sem bloco (ano sem dado nunca vira zero)."""
+    maiores = [[c, round(v)] for c, v in sorted(soma.items(), key=lambda kv: -kv[1])[:top] if round(v) > 0]
+    if not maiores:
         return None
-    maiores = sorted(vals.items(), key=lambda kv: -kv[1])[:top]
-    return {"t": sum(vals.values()), "n": len(vals), "top": [[c, v] for c, v in maiores]}
+    return {"t": round(sum(soma.values())), "n": len(soma), "top": maiores}
 
 
 def gerar(saida: Path = detalhe.PASTA, dados: Optional[Path] = None, ano_ini: int = historia.ANO_COMEX, ano_fim: Optional[int] = None,
@@ -93,10 +93,10 @@ def gerar(saida: Path = detalhe.PASTA, dados: Optional[Path] = None, ano_ini: in
             por_iso = pares(ano, k, fluxo)
             por_produto: Dict[str, Dict[str, float]] = {}
             for iso, d in por_iso.items():
-                if iso not in iso3 or iso == "076":
+                if iso not in iso3:
                     continue
                 b = _bloco(d, historia.TOP_PRODUTOS)
-                if b:
+                if b and iso != "076":                 # o Brasil não tem página de parceiro, mas conta no total do produto, como no retrato
                     pais.setdefault(iso, {}).setdefault(k, {})[str(ano)] = b
                 for c, v in d.items():
                     alvos = ([c] if c in itens else []) + [g for g, cods in grupos.items() if c in cods]

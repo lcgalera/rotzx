@@ -763,3 +763,25 @@ As outras perguntas ficam em "Outras perguntas".
 - **Protótipo local:** os links só funcionam no site publicado, porque as páginas são geradas no build.
 - **Correção de número:** são 247 páginas de país (a D66 e o PR falavam em 243, que é o total de destinos com exportação em 2025).
 - **Verificado:** Chromium sem tela, em 1440×900 e 390×844, sobre o site construído: os 247 slugs do atlas batem com as 247 pastas geradas, sem erro e sem rolagem horizontal.
+
+### D68 · 16/11/2026 · Detalhamento ligado: parceiros de cada produto e produtos de cada país, ano a ano
+**Pedido do dono:** seguir com os próximos passos da análise; este é o de ligar o detalhamento que a página já sabia ler (D61).
+
+**Gerador (`rotzx/mundo/detalhe_coleta.py`, comando `rotzx detalhe-gerar`):**
+- Uma consulta ao Comex Stat por ano e fluxo (todos os pares país × SH4), de 1997 a 2025: 58 consultas, com o intervalo de sempre.
+- O resumo de cada consulta fica em `data/fontes/mundo/detalhe/` (fora do git), então uma coleta interrompida continua de onde parou.
+- Quando a API recusa (403 ou 5xx), espera e tenta de novo, até seis vezes. Na primeira coleta, a API recusou três consultas e todas passaram na nova tentativa.
+- Usa as mesmas regras do retrato (`historia.py`): mesma ponte de nomes de país, mesmos grupos de produto, `t` = soma de tudo, `n` = itens que a fonte registra, 12 parceiros por produto e 10 produtos por país.
+- O D61 previa gerar esses arquivos num projeto de dados à parte. Como o coletor do Comex Stat já mora neste repositório, o gerador ficou aqui, e `docs/SCHEMA.md` continua sendo o contrato.
+
+**Resultado (`prototipos/globo/dados/detalhe/`, 13 MB):**
+- 695 arquivos de produto (camada `parceiros`) e 247 de país (camada `produtos`), mais o índice (180 KB, lido ao abrir a página).
+- No atlas, a linha do tempo passa a andar ano a ano no explorador de produtos, no produto dentro do país, na aba de produtos do país e na comparação.
+- País com comércio esporádico continua mostrando só os anos com registro, com o aviso de que não é série anual.
+- UF, via, porto e NCM pedem outras consultas e ficam para depois.
+
+**Verificado:**
+- `rotzx detalhe-validar`: sem problemas.
+- Nos anos que já estavam no site (2000, 2010 e 2025), `t` e `n` são idênticos em todos os 5.399 blocos. A única diferença é que 14 blocos listavam um item com valor arredondado para US$ 0, e os arquivos novos não listam esse item.
+- Chromium sem tela, em 1440×900 e 390×844: seis telas sem erro e sem rolagem horizontal. O aviso de "arquivo não encontrado" no console sumiu.
+- pytest, com o teste novo `tests/test_detalhe_coleta.py` (sem rede).
