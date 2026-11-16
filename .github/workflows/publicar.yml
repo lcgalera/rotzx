@@ -1,0 +1,53 @@
+# Publica o site do rotzx no GitHub Pages: testa, gera site/ (atlas, páginas por país e produto, cartões) e envia.
+# Roda só quando alguém dispara pela aba Actions (o dono decide quando publicar).
+name: Publicar
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04   # fixo: o ubuntu-latest (26.04) não tem mais Python 3.9 (D58)
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.9"
+          cache: pip
+
+      - name: Dependências
+        run: pip install -r requirements.txt
+
+      - name: Testes
+        run: python -m pytest -q
+
+      - name: Conferir o detalhamento
+        run: python -m rotzx detalhe-validar
+
+      - name: Site público
+        run: python -m rotzx publicar
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  site:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5

@@ -93,3 +93,10 @@ def alinhamento(iso3: List[str], pasta: Path, meta: Optional[dict] = None) -> di
     a = arquivos(meta)
     conc = concordancias(_baixar(a["concordancia"], pasta), cow_para_iso3(_baixar(a["ideal"], pasta)))
     return {**resumir(conc, iso3), "versao_dados": a["versao"], "publicado": a["publicado"]}
+
+
+def baixar(pasta: Path) -> Dict[str, Path]:
+    """Guarda em `pasta` a tabela de concordância e a de pontos ideais (COW → ISO3) da versão mais recente do conjunto."""
+    with _abrir(API, 60) as r:
+        a = arquivos(json.load(r))
+    return {"concordancia": _baixar(a["concordancia"], pasta), "ideal": _baixar(a["ideal"], pasta)}

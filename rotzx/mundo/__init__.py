@@ -1,8 +1,13 @@
-"""O mundo visto do Brasil (D38): dados por país para o globo em prototipos/globo/.
+"""Dados do atlas: o comércio do Brasil com cada país e território e o contexto de cada relação.
 
-  paises.py        países do protótipo e seus códigos em cada fonte
-  comex.py         Comex Stat (MDIC): exportações e importações brasileiras por país e produto
-  bancomundial.py  Banco Mundial: indicadores econômicos por país (licença CC BY 4.0)
-  gdelt.py         GDELT: manchetes recentes em português (título, veículo e link; o texto fica no site do veículo)
-  build.py         monta os JSON que o globo lê
+  codigos.py         tabela de países (ISO 3166 × Comex Stat × ONU × UCDP) em catalog/paises_mundo.csv
+  comex.py           Comex Stat (MDIC): exportações e importações por país e produto
+  onu.py, omc.py     votos na Assembleia Geral (Harvard Dataverse) e disputas na OMC
+  conflitos.py       UCDP/PRIO: conflitos armados
+  bancomundial.py    Banco Mundial: PIB, crescimento, inflação e população
+  produtos_nomes.py  nomes curtos e grupos de produtos
+  historia.py        monta historia.json|js e produtos.json|js (o retrato que a página lê)
+  detalhe*.py        detalhamento sob demanda (docs/SCHEMA.md): gerador e validador
+  paginas.py         páginas estáticas por país e produto (para buscadores)
+  cartao.py          cartão de compartilhamento de cada página
 """

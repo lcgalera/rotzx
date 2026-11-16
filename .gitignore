@@ -5,10 +5,9 @@ __pycache__/
 *.pyc
 .env
 
-# gerado localmente (banco, arquivos brutos, importações, backtests; site público é publicado pelo Actions)
+# gerado localmente: respostas guardadas das fontes (data/) e o site público (site/, publicado pelo Actions)
 data/
 site/
 
-# USO PESSOAL (Macrodados): nunca no repositório público (D13, D23)
+# nada de uso pessoal no repositório
 privado/
-docs/DIARIO.md

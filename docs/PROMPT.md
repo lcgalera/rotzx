@@ -1,75 +1,46 @@
 # Prompt para continuar o rotzx com um assistente de IA
 
 Copie o bloco abaixo como primeira mensagem de uma conversa nova (Claude Code ou outro assistente com acesso ao repositório).
-Ele resume o projeto, as regras e o estado em 09/11/2026; a documentação completa está em [`PROJETO.md`](PROJETO.md).
+Ele resume o projeto, as regras e o estado em 16/11/2026; a documentação completa está em [`PROJETO.md`](PROJETO.md).
 
 ---
 
 ```text
-Você vai trabalhar no rotzx (repositório lcgalera/rotzx, site https://lcgalera.github.io/rotzx/, que desde a D53 é só o atlas).
+Você vai trabalhar no rotzx (repositório lcgalera/rotzx, site https://lcgalera.github.io/rotzx/).
 Escreva e responda em português do Brasil. O nome do produto é "rotzx", sempre em minúsculas.
 
 ## O que é
-Projeto pessoal de inteligência econômica com dados abertos e rastreáveis, com três frentes (só a terceira é publicada):
-1. Radar econômico e setorial: séries do BCB, IBGE e Focus; previsões do IPCA e da indústria de máquinas e
-   materiais elétricos (IBGE 3.27) registradas antes de os dados saírem, com placar (registro/*.csv no git, só acréscimos;
-   interface local com rotzx servir).
-2. Radar de oportunidades em transmissão de energia (B2B): projetos do SIGET/ANEEL com evidência por regra (R1–R5),
-   score explicado, histórico semanal (historico/*.csv), leilões e contexto econômico.
-3. Atlas "Como o Brasil se conecta ao mundo" (https://lcgalera.github.io/rotzx/, o site público inteiro desde a D53): de quem o Brasil depende para vender e
-   comprar, e como isso mudou desde 1997 — parceiros, produtos (SH4), concentração e comparação, com o contexto diplomático
-   (ONU, OMC, conflitos) em segundo plano. É a frente em foco; as notícias estão pausadas.
+Atlas do comércio exterior brasileiro: com quem o Brasil compra e vende, o quê, e como isso mudou desde 1997.
+Todos os países e territórios, produtos (SH4), concentração e comparação, com o contexto de cada relação (votos na ONU,
+disputas na OMC, conflitos armados, ficha econômica do Banco Mundial). Só dados abertos.
 
 ## Leia antes de mudar qualquer coisa
-- docs/PROJETO.md (visão geral, fontes, arquitetura, esquemas dos dados do globo, automação, limitações)
-- docs/DECISOES.md (D1–D73: cada escolha e o motivo; registre uma decisão nova para cada mudança relevante)
-- README.md e prototipos/globo/LEIAME.md
+- docs/PROJETO.md (visão geral, fontes, arquitetura, dados, comandos, publicação, limitações)
+- docs/DECISOES.md (D1–D74: cada escolha e o motivo; registre uma decisão nova para cada mudança relevante)
+- docs/SCHEMA.md (formato do detalhamento) e README.md
 
 ## Regras que não podem ser quebradas
 1. Só dado real, com fonte e data. Nunca invente número, nem em exemplo de interface. Fixture de teste usa o formato
    real da fonte com valores marcados como inventados.
-2. Interpretação nunca passa por fato. Frases geradas de números só descrevem; interpretação aparece marcada.
-   Nada de nota de relação "boa" ou "ruim" entre países: mostre sinais medidos, cada um com a fonte.
-3. Mantenha a proveniência: arquivo bruto + SHA-256, vintages, fonte e licença de cada dado.
-4. Previsões: especificação fixa antes do backtest; o registro só recebe acréscimos (registro-verificar).
-5. Séries da Macrodados são de uso pessoal: nunca no git, no site ou em automação. Não automatize área logada de ninguém.
-6. Notícias: só título, veículo, data e link. Manchete só entra num país se o título o cita, com acento e palavra inteira;
-   evite termos ambíguos (ex.: "peru", "sírio", "libanês").
-7. O que for automático (categorias, assuntos, países citados) pode errar e a página precisa avisar.
-8. Comunicação sem exagero: frases de comparação dizem a direção; associação não é causalidade.
-9. Créditos e licenças das fontes sempre visíveis na página (ex.: CC BY 4.0 da UCDP e do Banco Mundial).
+2. Interpretação nunca passa por fato. Nada de nota "boa/ruim" ou de risco entre países; só medidas, cada uma com a fonte.
+3. Participação sempre com o denominador dito; dado ausente é "sem registro", nunca zero; mudança de participação em p.p.
+4. Créditos e licenças das fontes sempre visíveis na página.
+5. Comunicação sem exagero: frases de comparação dizem a direção; associação não é causalidade.
 
 ## Como trabalhar
-- Python 3.9, dependências fixas em requirements.txt; .venv/bin/python -m rotzx <comando>; testes: .venv/bin/python -m pytest -q
-  (148 passam e 1 é pulado em 09/11/2026). Rode os testes antes de cada commit.
-- Interface sem build: HTML/JS com bibliotecas por CDN com versão exata (globe.gl@2.46.2, topojson-client@3.1.0,
-  world-atlas@2.0.2, ECharts 5.5.0; fontes Newsreader e IBM Plex Sans). O globo é uma página só: prototipos/globo/index.html,
-  com tema claro principal e escuro opcional, cores por tokens CSS (D49).
-- Teste a interface num navegador sem tela (Playwright/Chromium com WebGL por software) em desktop e celular
-  (1440×900 e 390×844), sem erros de página e sem rolagem horizontal.
-- Dados do atlas: rotzx mundo-atualizar --historico (retrato de todos os países) e rotzx mundo-codigos (tabela de países).
-  Coletores em rotzx/mundo/.
-  Cada fonte que falha vai para "falhas" e não derruba as outras nem apaga dados bons.
-- Automação: .github/workflows/globo.yml (só à mão: retrato histórico; agendamentos pausados),
-  rotina-mensal.yml (publica o site; dias 12 e 20, ou à mão), radar-siget.yml (segundas). O site só muda quando a
-  rotina mensal roda: ela publica o atlas que está na main (rotzx publicar; --completo gera o site antigo).
-- Git: trabalhe numa branch, commits em português com mensagem clara (o quê e por quê). Não reescreva histórico
-  de branch compartilhada. PR, merge e publicação só quando o dono pedir.
-- Antes de usar uma fonte nova: confira licença e termos, se ela permite acesso automatizado e se o ambiente alcança o
-  domínio; documente na tabela de fontes (docs/PROJETO.md) e numa decisão nova.
+- Python 3.9, dependências fixas em requirements.txt (pytest, pycountry, Pillow); .venv/bin/python -m rotzx <comando>;
+  testes: .venv/bin/python -m pytest -q antes de cada commit.
+- A página é prototipos/globo/index.html, sem build: bibliotecas por CDN com versão exata e SRI (globe.gl 2.46.2,
+  topojson-client 3.1.0, ECharts 5.5.0, world-atlas 2.0.2, flag-icons 7.5.0), política de conteúdo (CSP), tema claro e escuro por tokens.
+- Teste a interface no Chromium sem tela (Playwright) em 1440×900 e 390×844: sem erros de página, sem violação de CSP,
+  sem rolagem horizontal, com e sem WebGL.
+- Dados: rotzx mundo-atualizar (retrato), rotzx detalhe-gerar (detalhamento ano a ano), rotzx mundo-codigos (tabela de países).
+  Cada fonte que falha vai para "falhas" e não apaga dados bons.
+- Publicação: workflow "Publicar" (publicar.yml, à mão) gera o site e envia ao GitHub Pages; "Dados" (dados.yml, à mão)
+  atualiza os dados e faz commit.
+- Git: trabalhe numa branch, commits em português (o quê e por quê). PR, merge e publicação só quando o dono pedir.
+- Fonte nova: confira licença, termos e se o ambiente alcança o domínio; documente na tabela de fontes e numa decisão nova.
 - Escreva para pessoas comuns: frases curtas, sem jargão; números no formato brasileiro (US$ 1,2 bi; 28,7%).
-
-## Estado e próximos passos (09/11/2026)
-- O site público é só o atlas, na raiz (D53); /globo/ redireciona levando país, ano e filtros. Logo e ícone em D52.
-- Atlas (D47–D54): entrada em forma de história que conduz o globo; controle único de métrica e ano (linha do tempo com ▶);
-  painel do país em três partes com os números uma vez só; explorar por produto com o recorte dos 12 maiores explicado;
-  comparar dois parceiros; estado na URL; lista funcional sem WebGL; tema claro e escuro. Dados:
-  prototipos/globo/dados/historia.json e produtos.json (rotzx mundo-atualizar --historico), catalog/paises_mundo.csv (rotzx mundo-codigos).
-- Limitações: composição por produto só em 2000, 2010 e 2025; explorador com os 12 maiores parceiros por produto ("Outros" sem valor
-  individual); valores em dólares correntes; fronteiras atuais para países extintos.
-- Próximos passos possíveis: mais anos de composição por produto (a consulta do Comex é uma por ano e fluxo); séries em valores
-  reais ou volume (kg) para separar preço de quantidade; mapa 2D leve como alternativa visual ao globo.
-- Radar: setorial_v2; primeiras avaliações do IPCA (nov/2026) e da indústria (dez/2026).
 
 Comece lendo os arquivos indicados, confirme em poucas linhas o que entendeu e proponha o próximo passo antes de codar.
 ```
@@ -78,6 +49,6 @@ Comece lendo os arquivos indicados, confirme em poucas linhas o que entendeu e p
 
 ## Como usar
 
-- **Continuar o projeto:** cole o bloco como está e, logo depois, diga o que quer (ex.: "vamos fazer o 'Por que importa para o Brasil'").
+- **Continuar o projeto:** cole o bloco como está e, logo depois, diga o que quer.
 - **Tarefa pontual:** cole o bloco e troque o último parágrafo pelo pedido.
-- **Atualize este arquivo** quando o estado mudar (nova frente, nova fonte, nova regra), junto com `PROJETO.md` e `DECISOES.md`.
+- **Atualize este arquivo** quando o estado mudar, junto com `PROJETO.md` e `DECISOES.md`.

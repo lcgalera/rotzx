@@ -1,120 +1,56 @@
-"""O build público não pode carregar nada de série de uso pessoal (Macrodados)."""
-import json
+"""Build do site público (`rotzx publicar`): o atlas na raiz, páginas estáticas e nada além disso."""
+import re
 
-import numpy as np
-import pandas as pd
 import pytest
 
-from rotzx import payloads, public_build, storage
-from rotzx.catalog import SeriesMeta
-from rotzx.providers import FetchResult
+from rotzx import public_build
 
 
-def _meta(sid, uso, **extra):
-    return SeriesMeta(id=sid, nome=f"Série {sid} para teste", modulo="radar_setorial", tema="industria",
-                      instituicao="X", provedor="arquivo" if uso != "publico" else "bcb_sgs", codigo="1",
-                      unidade="índice", periodicidade="mensal", geografia="Brasil", licenca="L", uso=uso, extra=extra)
+@pytest.fixture(scope="module")
+def site(tmp_path_factory):
+    out = tmp_path_factory.mktemp("pub") / "site"
+    meta = public_build.build(out, cartoes=False)            # os cartões têm teste próprio (test_paginas)
+    return out, meta
 
 
-@pytest.fixture
-def ambiente(tmp_path):
-    conn = storage.connect(tmp_path / "t.sqlite")
-    idx = pd.date_range("2010-01-01", periods=120, freq="MS")
-    rng = np.random.default_rng(1)
-    catalog = {
-        "serie_publica": _meta("serie_publica", "publico"),
-        "md_xpto_pessoal": _meta("md_xpto_pessoal", "pessoal", codigo_md="zz9999", coluna_valor="XPTO - Faturamento (R$ M)"),
-    }
-    for sid in catalog:
-        vals = 100 + np.cumsum(rng.normal(0, 1, len(idx))).round(4)
-        storage.save_fetch(conn, catalog[sid], FetchResult(b"x", "csv", "u", pd.DataFrame({"date": idx, "value": vals})),
-                           raw_dir=tmp_path / "raw")
-    return conn, catalog, tmp_path
-
-
-def test_public_build_has_no_trace_of_personal_series(ambiente):
-    conn, catalog, tmp = ambiente
-    out = tmp / "site"
-    meta = public_build.build(out, conn=conn, catalog=catalog, completo=True)  # a própria build roda verificar()
-    assert meta["series"] == 1
-    tudo = "".join(p.read_text(errors="ignore") for p in out.rglob("*") if p.suffix in (".json", ".html"))
-    for proibido in ("md_xpto_pessoal", "zz9999", "XPTO - Faturamento", "Série md_xpto_pessoal"):
-        assert proibido not in tudo
-    assert "serie_publica" in tudo
-    cat_pub = json.loads((out / "data" / "catalogo.json").read_text())
-    assert [s["id"] for s in cat_pub] == ["serie_publica"]
-    import sqlite3
-    db = sqlite3.connect(out / "data" / "rotzx_publico.sqlite")
-    assert db.execute("SELECT COUNT(*) FROM observations WHERE series_id = 'md_xpto_pessoal'").fetchone()[0] == 0
-    assert db.execute("SELECT COUNT(*) FROM observations WHERE series_id = 'serie_publica'").fetchone()[0] == 120
-
-
-def test_verifier_catches_disguised_personal_values(ambiente):
-    conn, catalog, tmp = ambiente
-    out = tmp / "site"
-    public_build.build(out, conn=conn, catalog=catalog, completo=True)
-    # valores da série pessoal copiados sob outro nome: tem de ser pego pela comparação de sequências
-    vazado = payloads.series(conn, catalog, "md_xpto_pessoal", "nivel")["dados"]
-    (out / "data" / "series" / "disfarce.json").write_text(json.dumps({"dados": vazado}))
-    with pytest.raises(public_build.VazamentoPublico):
-        public_build.verificar(out, catalog, conn)
-
-
-def test_verifier_catches_personal_code_in_text(ambiente):
-    conn, catalog, tmp = ambiente
-    out = tmp / "site"
-    public_build.build(out, conn=conn, catalog=catalog, completo=True)
-    (out / "data" / "nota.json").write_text(json.dumps({"obs": "fonte zz9999"}))
-    with pytest.raises(public_build.VazamentoPublico):
-        public_build.verificar(out, catalog, conn)
-
-
-def test_build_refuses_to_wipe_unrelated_folder(tmp_path, ambiente):
-    conn, catalog, _ = ambiente
-    alheia = tmp_path / "minha_pasta"
-    alheia.mkdir()
-    (alheia / "importante.txt").write_text("não apagar")
-    with pytest.raises(RuntimeError):
-        public_build.build(alheia, conn=conn, catalog=catalog)
-    assert (alheia / "importante.txt").exists()
-
-
-def test_public_build_ships_every_script_the_page_loads(ambiente):
-    import re
-    conn, catalog, tmp = ambiente
-    out = tmp / "site"
-    public_build.build(out, conn=conn, catalog=catalog, completo=True)
-    html = (out / "index.html").read_text()
-    locais = [s.split("?")[0] for s in re.findall(r'<script src="([^"]+)"', html) if not s.startswith("http")]
-    assert "texto.js" in locais and "app.js" in locais
-    assert locais.index("texto.js") < locais.index("app.js")  # app.js usa window.Texto
-    for nome in locais:
-        assert (out / nome).exists(), nome
-
-
-def test_site_completo_leva_o_globo_com_os_dados(ambiente):
-    conn, catalog, tmp = ambiente
-    out = tmp / "site"
-    public_build.build(out, conn=conn, catalog=catalog, completo=True)
-    assert (out / "globo" / "index.html").exists() and (out / "globo" / "dados" / "mundo.js").exists()
-    assert not (out / "globo" / "LEIAME.md").exists()
-    assert 'href="globo/"' in (out / "index.html").read_text(encoding="utf-8")  # link no menu do site
-
-
-def test_site_publico_e_so_o_atlas_na_raiz(ambiente):
-    """D53: o site público é o atlas na raiz; /globo/ redireciona levando o hash; nada dos radares é publicado."""
-    import re
-    conn, catalog, tmp = ambiente
-    out = tmp / "site"
-    public_build.build(out, conn=conn, catalog=catalog, cartoes=False)   # os 942 cartões têm teste próprio (test_paginas)
+def test_atlas_na_raiz_com_tudo_o_que_a_pagina_carrega(site):
+    out, meta = site
     html = (out / "index.html").read_text(encoding="utf-8")
-    assert "Como o Brasil se conecta ao mundo" in html
+    assert "Como o Brasil se conecta ao mundo" in html                # nome do atlas no cartão de compartilhamento
     for local in re.findall(r'<script src="([^"]+)"', html):
         if not local.startswith("http"):
             assert (out / local.split("?")[0]).exists(), local
-    for arq in ("dados/historia.js", "dados/produtos.js", "icone.svg", "icone-180.png", ".nojekyll"):
+    for arq in ("dados/historia.js", "dados/produtos.js", "dados/detalhe/indice.json", "icone.svg", "icone-180.png", "og.png", "medicao.js",
+                "sitemap.xml", "robots.txt", ".nojekyll", "pais/china/index.html", "produto/1201/index.html"):
         assert (out / arq).exists(), arq
+    assert meta["paginas"]["paises"] > 200 and meta["paginas"]["produtos"] > 600
+
+
+def test_nada_de_trabalho_nem_de_versoes_antigas(site):
+    out, _ = site
     assert not (out / "LEIAME.md").exists()
-    assert not (out / "app.js").exists() and not (out / "data").exists()
+    for velho in ("dados/mundo.js", "dados/noticias.js", "app.js", "data"):
+        assert not (out / velho).exists(), velho
+
+
+def test_globo_antigo_redireciona_levando_o_hash(site):
+    out, _ = site
     redir = (out / "globo" / "index.html").read_text(encoding="utf-8")
     assert 'location.replace("../" + location.hash)' in redir and 'href="../"' in redir
+
+
+def test_scripts_de_fora_com_integridade(site):
+    out, _ = site
+    html = (out / "index.html").read_text(encoding="utf-8")
+    externos = re.findall(r'<script src="(https://[^"]+)"([^>]*)>', html)
+    assert externos and all('integrity="sha384-' in attrs and 'crossorigin="anonymous"' in attrs for _, attrs in externos)
+    assert 'http-equiv="Content-Security-Policy"' in html
+
+
+def test_build_nao_apaga_pasta_alheia(tmp_path):
+    alheia = tmp_path / "meus-arquivos"
+    alheia.mkdir()
+    (alheia / "importante.txt").write_text("não apague")
+    with pytest.raises(RuntimeError):
+        public_build.build(alheia, cartoes=False)
+    assert (alheia / "importante.txt").exists()
