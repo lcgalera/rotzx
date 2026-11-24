@@ -56,3 +56,11 @@ def test_molde_tem_tema_do_atlas():
     h = paginas._pagina(titulo="t", desc="d", caminho="pais/", raiz="../", corpo="<p>x</p>", contar="/pais", gerado="06/11/2026")
     assert h.index("rotzx-tema") < h.index("<style>") and 'id="tema"' in h
     assert "Retrato dos dados coletado em 06/11/2026" in h
+
+
+def test_logo_do_atlas_no_cabecalho(tmp_path):
+    """D79: o build grava logo.svg a partir do logo do atlas, e o cabeçalho das páginas estáticas o usa como máscara."""
+    svg = paginas.logo_svg(GLOBO / "index.html")
+    assert svg and svg.startswith("<svg xmlns=") and "currentColor" not in svg
+    h = paginas._pagina(titulo="t", desc="d", caminho="pais/x/", raiz="../../", corpo="", contar="/x", gerado="06/11/2026")
+    assert "--logo:url(../../logo.svg)" in h and '<a href="../../pais/" aria-current="page">' in h

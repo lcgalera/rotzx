@@ -180,3 +180,27 @@ def pdf(html_txt: str, destino: Path) -> Path:
         subprocess.run([exe, "--headless", "--no-sandbox", "--disable-gpu", "--no-pdf-header-footer", "--allow-file-access-from-files",
                         f"--print-to-pdf={destino}", fonte.as_uri()], check=True, capture_output=True, timeout=180)
     return destino
+
+
+def miniaturas(pdf_arq: Path, paginas: Sequence[int], largura: int = 480, log=print) -> List[Path]:
+    """Miniaturas WebP de páginas do PDF (D79), para a prévia na página /pro/: `estudo-p{n}.webp` ao lado do PDF.
+
+    Usa o pdftoppm (poppler); sem ele, avisa e mantém as miniaturas que já existem.
+    """
+    exe = shutil.which("pdftoppm")
+    if not exe:
+        log("  pdftoppm não encontrado: miniaturas mantidas como estão")
+        return []
+    from PIL import Image
+    out = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for n in paginas:
+            base = Path(tmp) / f"p{n}"
+            subprocess.run([exe, "-png", "-r", "110", "-f", str(n), "-l", str(n), "-singlefile", str(pdf_arq), str(base)],
+                           check=True, capture_output=True, timeout=120)
+            img = Image.open(f"{base}.png").convert("RGB")
+            img = img.resize((largura, round(img.height * largura / img.width)), Image.LANCZOS)
+            dest = pdf_arq.with_name(f"{pdf_arq.stem.split('-')[0]}-p{n}.webp")
+            img.save(dest, "WEBP", quality=80, method=6)
+            out.append(dest)
+    return out

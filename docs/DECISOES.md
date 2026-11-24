@@ -1065,3 +1065,44 @@ As outras perguntas ficam em "Outras perguntas".
 - **Continuidade de tema:** atlas → `/pro/`, `/pro/privacidade/` e `/pais/` mantêm o tema; o botão alterna e o atlas segue a nova escolha.
 - **Tamanhos:** 1440×900 e 390×844 sem rolagem horizontal e sem violação de CSP.
 - **Links:** formulário, PDF (200, nova aba), privacidade e volta ao atlas.
+
+### D79 · 24/11/2026 · Acabamento editorial e microinterações na página rotzx Pro
+**Pedido do dono:**
+- estética editorial moderna, limpa, tipográfica e com respiro;
+- animações elegantes, sem pesar nem exagerar;
+- copy, links e tema iguais.
+
+**Cabeçalho (todas as páginas estáticas, porque o molde é um só):**
+- **Logo:** o logo completo do atlas (ícone + texto) volta ao cabeçalho. O build extrai o SVG do `index.html` do atlas para `logo.svg` (uma fonte só) e as páginas o usam como máscara CSS em `currentColor`: a cor segue o tema, com um arquivo só em cache (inline em 940 páginas seriam cerca de 14 MB).
+- **Navegação:**
+  - sem sublinhado, com hover em pílula;
+  - item da seção atual com `aria-current="page"` e traço animado em `--accent`;
+  - no celular, uma linha com rolagem horizontal que abre já mostrando o item ativo.
+
+**Página `/pro/` e privacidade:**
+- **Superfícies:** cards com elevação tonal (`--card` sobre `--bg`), borda quase invisível, raio de 14px e sombra só no destaque e no hover.
+- **Respiro e tipografia:** respiro de 72–120px entre seções; h1 até 60px; linhas de 58–62ch.
+- **Planos:**
+  - os selos viram metadado em caixa alta acima do título, sem cara de botão;
+  - "Ponto de partida" fica sobre a borda do card;
+  - a nota sobre o Incorporar sai do card Sob medida para um callout abaixo da grade, com a mesma copy;
+  - os três cards ficam equilibrados.
+- **Prévia real do estudo:**
+  - em vez da folha abstrata, a capa e a página dos maiores fornecedores do PDF real, em leque;
+  - são miniaturas WebP com cerca de 30 KB no total, geradas por `rotzx pro-amostra` com `pdftoppm`;
+  - selo "PDF · 9 páginas", com o número conferido no teste contra o PDF.
+- **Privacidade:** em cartão de leitura de 68ch.
+
+**Movimento (CSS e um `IntersectionObserver` de cerca de 0,6 KB, só na página Pro):**
+- **Hero:** entrada escalonada com fade e subida de 12px, a cada 75ms; os recortes do card acendem em sequência e reagem ao hover com uma dica (`title`); o card brilha na borda.
+- **Revelação ao rolar:** uma vez só, apenas nos blocos abaixo da dobra (sem flash e sem CLS).
+- **Como funciona:** a linha dos passos cresce da esquerda para a direita (de cima para baixo no celular) e os círculos 01–04 se preenchem em sequência.
+- **Microinterações:** setas dos CTAs deslizam; cards de plano sobem 4px; "Ponto de partida" pulsa 3 vezes e para.
+- **Sem animação quando não deve:** com `prefers-reduced-motion: reduce`, nada se move; sem JS, tudo aparece.
+
+**Conferência (Chromium sem tela):**
+- **Tamanhos e temas:** 1440×900, 390×844 e 375×812, nos temas claro e escuro, sem erros, sem violação de CSP e sem rolagem horizontal durante as animações.
+- **CLS:** 0,000–0,005 na página Pro. A privacidade no celular fica em 0,024, que vem da troca de fonte do Google Fonts (`display=swap`): isso já acontecia nas páginas de país (0,02), não vem das animações e fica abaixo do limite "bom" de 0,1.
+- **Movimento reduzido:** nenhum elemento escondido ou deslocado; sem JS, tudo visível.
+- **Tema:** contínuo, do atlas escuro a `/pro/` e à privacidade.
+- **Links:** formulário, PDF em nova aba, miniaturas, logo e privacidade respondem 200.

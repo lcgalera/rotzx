@@ -18,6 +18,7 @@ from .relatorio import e
 SH4 = produtos_nomes.GRUPOS["g-fertilizantes"]["sh4"]          # 3101 a 3105, o mesmo grupo do atlas
 FLUXO = "importacao"
 ANOS = [2024, 2025, 2026]
+MINIATURAS = (1, 4)                                                   # capa e a página dos maiores fornecedores (gráfico)
 DESTINO = historia.SAIDA.parent / "pro" / "estudo-fertilizantes.pdf"
 MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
 
@@ -194,4 +195,5 @@ def gerar(destino: Path = DESTINO, log=print) -> dict:
     d = calcular(log=log)
     R.pdf(html(d), destino)
     log(f"estudo-amostra: {destino}")
+    R.miniaturas(destino, MINIATURAS, log=log)                         # D79: prévia real na página /pro/
     return d

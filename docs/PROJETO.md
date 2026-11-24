@@ -1,7 +1,7 @@
 # rotzx — visão do projeto
 
-Estado em 16/11/2026 (v1.0.0; decisões até D78). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
-código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D78).
+Estado em 16/11/2026 (v1.0.0; decisões até D79). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D79).
 Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é
@@ -32,7 +32,7 @@ prototipos/globo/          o site: index.html (a página inteira), medicao.js, o
   dados/historia.js|json   retrato por país (comércio, ONU, conflitos, OMC, economia)
   dados/produtos.js|json   explorador por produto (séries e maiores parceiros)
   dados/detalhe/           detalhamento ano a ano, buscado sob demanda (formato em docs/SCHEMA.md)
-  pro/                     estudo-amostra do rotzx Pro em PDF (a página /pro/ é gerada no build)
+  pro/                     estudo-amostra do rotzx Pro em PDF e miniaturas (a página /pro/ e o logo.svg são gerados no build)
 rotzx/                     código Python: coleta, retrato, detalhamento, páginas estáticas e build
   mundo/                   fontes (comex, onu, omc, conflitos, bancomundial), tabela de países, retrato,
                            detalhamento, páginas estáticas e cartões (com as fontes tipográficas em mundo/fontes/)
@@ -137,7 +137,7 @@ Participação alta indica concentração, não vulnerabilidade. Os totais do Br
 | `detalhe-gerar [--de A] [--ate A]` | refaz `dados/detalhe/` (58 consultas ao Comex Stat, com cache em `data/fontes/mundo/detalhe/`) |
 | `detalhe-validar [pasta]` | confere o detalhamento contra o formato (sai com erro se houver problema) |
 | `mundo-codigos` | regera `catalog/paises_mundo.csv` |
-| `pro-amostra` | refaz o estudo-amostra do rotzx Pro (`prototipos/globo/pro/estudo-fertilizantes.pdf`; consultas mensais ao Comex Stat com cache em `data/fontes/pro/`; precisa do Chromium) |
+| `pro-amostra` | refaz o estudo-amostra do rotzx Pro (`prototipos/globo/pro/estudo-fertilizantes.pdf`; consultas mensais ao Comex Stat com cache em `data/fontes/pro/`; precisa do Chromium) e as miniaturas da prévia (`estudo-p1.webp`, `estudo-p4.webp`; precisa do `pdftoppm`) |
 | `publicar [--sem-cartoes]` | gera `site/` (atlas, páginas estáticas, cartões, sitemap) |
 
 Para ver a página localmente: `cd prototipos/globo && python3 -m http.server 8000` e abrir http://localhost:8000.
