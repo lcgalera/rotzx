@@ -8,7 +8,7 @@ import html
 from pathlib import Path
 from typing import Callable, List
 
-FORMULARIO = ""                                                     # link do Google Forms do briefing (preenchido pelo dono)
+FORMULARIO = "https://docs.google.com/forms/d/e/1FAIpQLScjz5rhGd8X_tY7Xmy04O2P9NqgBCd5dU8L-s_cuMtGcxPPMg/viewform"  # link do Google Forms do briefing (preenchido pelo dono)
 LINKEDIN = "https://www.linkedin.com/in/lucasfgalera"
 e = html.escape
 

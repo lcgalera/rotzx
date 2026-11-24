@@ -246,7 +246,8 @@ Configurações: não coletar e-mail automaticamente (a pergunta 3 já pede), n�
 ## Situação da Fase 0 (D77)
 - Página `/pro/` e política de privacidade `/pro/privacidade/`: prontas, geradas no build por `rotzx/pro/pagina.py`.
 - Estudo-amostra de fertilizantes: `prototipos/globo/pro/estudo-fertilizantes.pdf`, gerado por `rotzx pro-amostra`. O bloco "Leitura do analista" é rascunho e precisa da revisão do dono.
-- Falta: link do formulário e revisão do PDF pelo dono; só então publicar.
+- Formulário criado pelo dono (24/11/2026); o botão "Enviar meu pedido" aponta para o link público. O link de edição fica só com o dono.
+- Falta: revisão do PDF pelo dono; só então publicar.
 
 ## Primeiro passo depois da aprovação
 **Fase 0:** a página "rotzx Pro" com o formulário de briefing e o estudo-amostra em PDF. Antes, o spike da API mensal (meses, kg, UF), que define o que os estudos conseguem mostrar. A formalização com contador corre em paralelo, com o dono.
