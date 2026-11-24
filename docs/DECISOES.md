@@ -1033,3 +1033,35 @@ As outras perguntas ficam em "Outras perguntas".
 **Conferência:** a soma mensal de 2025 por fornecedor bate com o total anual do grupo publicado no atlas (teste em `tests/test_pro.py`). Chromium sem tela em 1440×900 e 390×844: `/pro/`, `/pro/privacidade/` e o atlas sem erros e sem violação de CSP, sem rolagem horizontal.
 
 **Publicação:** só depois do link do formulário e da revisão do PDF pelo dono.
+
+### D78 · 24/11/2026 · Página rotzx Pro refeita e tema contínuo nas páginas estáticas
+**Pedido do dono:** a página `/pro/` abria sempre no tema do sistema, sem botão, quebrando a continuidade com o atlas. O visual era texto corrido, o público parecia só empresa e o rodapé herdado ("sem atualização em tempo real") contradizia o acompanhamento mensal.
+
+**Tema (todas as páginas estáticas, porque o molde é um só):**
+- `_pagina` usa os mesmos tokens e seletores do atlas (`data-theme` + `prefers-color-scheme`);
+- lê a escolha `rotzx-tema` num script no `<head>`, antes do CSS, sem flash;
+- ganha o botão de tema do atlas, com a mesma lógica: alterna claro ↔ escuro e grava a escolha; no celular fica na linha da marca;
+- a CSP não muda.
+
+**Página `/pro/` (CSS próprio, só nela):**
+- hero em duas colunas, com o card "O que o Pro abre além do atlas gratuito" (NCM 8 dígitos, UF, porto/aeroporto e via, mês a mês com kg, preço médio US$/t, preço × volume; tudo conferido na API em D76);
+- público explícito: pessoas físicas, MEIs, pequenos negócios e autônomos (pesquisadores, jornalistas, consultores), produtores e cooperativas, empresas e entidades;
+- três planos em cards com badge de entrega, com o Diagnóstico destacado como ponto de partida;
+- passos numerados 01–04;
+- card de prévia do estudo-amostra, que abre o PDF em nova aba;
+- faixa final com o pedido.
+
+**Copy:**
+- empresa e cargo são opcionais no formulário;
+- escopo, prazo e valor chegam por e-mail em até 2 dias úteis, antes de qualquer compromisso;
+- escopos enxutos para perguntas pontuais;
+- licença do atlas × Incorporar: a licença traz a marca do cliente no lugar da do rotzx e recortes do setor ou estado; os créditos das fontes continuam visíveis.
+
+**Rodapé das páginas Pro:** a data fixa se refere ao retrato público do atlas gratuito; os estudos usam a base mensal mais recente publicada pelo MDIC no Comex Stat.
+
+**Privacidade:** empresa e cargo opcionais; vale para pessoa física; link de volta ao Pro.
+
+**Conferência:** Chromium sem tela, sistema claro e escuro × escolha clara e escura, sem flash.
+- **Continuidade de tema:** atlas → `/pro/`, `/pro/privacidade/` e `/pais/` mantêm o tema; o botão alterna e o atlas segue a nova escolha.
+- **Tamanhos:** 1440×900 e 390×844 sem rolagem horizontal e sem violação de CSP.
+- **Links:** formulário, PDF (200, nova aba), privacidade e volta ao atlas.

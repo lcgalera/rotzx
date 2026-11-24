@@ -74,3 +74,21 @@ def test_pagina_pro_gerada(tmp_path):
     assert (pagina.FORMULARIO or pagina.LINKEDIN) in pro
     assert "estudo-fertilizantes.pdf" in pro and "não é recomendação" in pro
     assert "privacidade/" in pro and "LGPD" in priv
+
+
+def test_pagina_pro_tema_planos_e_rodape(tmp_path):
+    """D78: mesmo tema do atlas (sem flash, com botão), 3 planos, card do PDF em nova aba, público amplo e rodapé próprio."""
+    from rotzx.mundo import paginas
+    from rotzx.pro import pagina
+    pagina.gerar(tmp_path, paginas._pagina, "24/11/2026")
+    pro = (tmp_path / "pro" / "index.html").read_text(encoding="utf-8")
+    priv = (tmp_path / "pro" / "privacidade" / "index.html").read_text(encoding="utf-8")
+    for h in (pro, priv):
+        assert h.index('localStorage.getItem("rotzx-tema")') < h.index("<style>")   # tema antes do CSS: sem flash
+        assert 'id="tema"' in h and ':root[data-theme="dark"]' in h
+        assert "retrato público do atlas gratuito" in h and "sem atualização em tempo real" not in h
+    for nome in ("Diagnóstico", "Acompanhamento", "Sob medida", "Ponto de partida", "Incorporar"):
+        assert nome in pro
+    assert 'href="estudo-fertilizantes.pdf" target="_blank"' in pro
+    assert "pessoa física" in pro and "MEIs" in pro and "opcionais" in pro
+    assert "opcionais" in priv and 'href="../"' in priv

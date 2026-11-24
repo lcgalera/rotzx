@@ -71,15 +71,36 @@ def slugs_paises(paises: Dict[str, dict], ids: List[str]) -> Dict[str, str]:
     return out
 
 
+# D78: o mesmo tema do atlas (chave rotzx-tema): o script do <head> evita o flash; o do fim liga o botão.
+TEMA_CEDO = ('<script>try { const t = localStorage.getItem("rotzx-tema"); if (t === "light" || t === "dark") '
+             'document.documentElement.dataset.theme = t; } catch (e) { /* sem armazenamento: tema do sistema */ }</script>')
+TEMA_BOTAO = """<script>(() => {
+const b = document.getElementById("tema"), R = document.documentElement, N = { light: "claro", dark: "escuro" }, I = {
+  light: '<circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  dark: '<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>' };
+const mm = matchMedia("(prefers-color-scheme: dark)"), ef = () => R.dataset.theme || (mm.matches ? "dark" : "light");
+const escolhido = () => { try { return !!localStorage.getItem("rotzx-tema"); } catch (e) { return !!R.dataset.theme; } };
+function pintar() { const a = ef(), o = a === "dark" ? "light" : "dark", sis = escolhido() ? "" : " (do sistema)";
+  b.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">${I[a]}</svg>`;
+  b.setAttribute("aria-label", `Tema ${N[a]}${sis}. Mudar para o tema ${N[o]}`); b.title = `Tema ${N[a]}${sis}. Clique para o tema ${N[o]}`; }
+b.onclick = () => { const t = ef() === "dark" ? "light" : "dark"; R.dataset.theme = t;
+  try { localStorage.setItem("rotzx-tema", t); } catch (e) { /* só nesta visita */ } pintar(); };
+mm.addEventListener && mm.addEventListener("change", () => { if (!escolhido()) pintar(); });
+pintar(); })();</script>"""
+
 ESTILO = """
-:root{--bg:#F3F0E8;--surface:#FAF8F3;--ink:#222721;--ink-2:#464C45;--muted:#676B62;--rule:#D8D4C9;--rule-2:#BDB8AB;--accent:#385344;--ochre:#A16D2F}
-@media (prefers-color-scheme:dark){:root{--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--ochre:#D7A465}}
+:root{--bg:#F3F0E8;--surface:#FAF8F3;--ink:#222721;--ink-2:#464C45;--muted:#676B62;--rule:#D8D4C9;--rule-2:#BDB8AB;--accent:#385344;--accent-ink:#2C4436;--ochre:#A16D2F;--on-accent:#FAF8F3;--sel-bg:#E3E9E1;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--accent-ink:#A9D0B8;--ochre:#D7A465;--on-accent:#151916;--sel-bg:#26302A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--accent-ink:#A9D0B8;--ochre:#D7A465;--on-accent:#151916;--sel-bg:#26302A;color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 a{color:var(--accent);text-underline-offset:3px}
 header{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--ink)}
 header .marca{font:600 26px/1 Newsreader,Georgia,serif;color:var(--accent);text-decoration:none;letter-spacing:-.01em}
 header nav{display:flex;gap:16px;font-size:14.5px;flex-wrap:wrap}
+.tema{display:inline-grid;place-items:center;width:36px;height:36px;margin-left:auto;border:1px solid var(--rule-2);border-radius:50%;background:transparent;cursor:pointer;color:var(--ink-2);flex:none}
+.tema:hover{color:var(--ink);border-color:var(--ink-2)}
+@media (max-width:640px){header{position:relative;padding-right:64px}.tema{position:absolute;top:10px;right:16px}}
 main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
 .kicker{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
 h1{font:500 40px/1.1 Newsreader,Georgia,serif;margin:6px 0 14px;letter-spacing:-.01em}
@@ -87,7 +108,7 @@ h2{font:500 24px/1.2 Newsreader,Georgia,serif;margin:34px 0 8px}
 h3{font:500 19px/1.25 Newsreader,Georgia,serif;margin:26px 0 6px}
 p{margin:0 0 12px;max-width:68ch}.lead{font-size:18px}
 .fonte,.nota{font-size:13.5px;color:var(--muted)}
-.cta{display:inline-block;margin:8px 0 4px;padding:11px 18px;border-radius:3px;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:500}
+.cta{display:inline-block;margin:8px 0 4px;padding:11px 18px;border-radius:3px;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:500}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:18px 0}
 .kpi{padding:12px 14px 12px 0}.kpi span{display:block;font-size:13px;color:var(--ink-2)}
 .kpi b{display:block;font:500 25px/1.2 Newsreader,Georgia,serif}.kpi small{font-size:13px;color:var(--ink-2)}
@@ -101,7 +122,8 @@ footer{max-width:860px;margin:0 auto;padding:18px 20px 40px;border-top:1px solid
 """
 
 
-def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, contar: str, gerado: str, cartao: bool = False) -> str:
+def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, contar: str, gerado: str, cartao: bool = False,
+            estilo_extra: str = "", rodape: Optional[str] = None, classe: str = "") -> str:
     e = html.escape
     url = BASE + caminho
     img = url + "cartao.png" if cartao else BASE + "og.png"     # D70: cartão próprio de cada país e produto
@@ -129,21 +151,23 @@ def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, cont
 <meta name="twitter:title" content="{e(titulo)} — rotzx">
 <meta name="twitter:description" content="{e(desc)}">
 <meta name="twitter:image" content="{img}">
+{TEMA_CEDO}
 <link rel="icon" href="{raiz}icone.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
-<style>{ESTILO}</style>
+<style>{ESTILO}{estilo_extra}</style>
 </head>
 <body>
 <header><a class="marca" href="{raiz}">rotzx</a>
-<nav aria-label="Seções"><a href="{raiz}">Atlas interativo</a><a href="{raiz}pais/">Países e territórios</a><a href="{raiz}produto/">Produtos</a><a href="{raiz}pro/">rotzx Pro</a></nav></header>
-<main>
+<nav aria-label="Seções"><a href="{raiz}">Atlas interativo</a><a href="{raiz}pais/">Países e territórios</a><a href="{raiz}produto/">Produtos</a><a href="{raiz}pro/">rotzx Pro</a></nav>
+<button class="tema" id="tema" type="button" aria-label="Mudar o tema">◐</button></header>
+<main{(' class="' + classe + '"') if classe else ""}>
 {corpo}
 </main>
-<footer><p>Fonte: {FONTE}, dados abertos. Valores em US$ FOB correntes, sem correção pela inflação: alta em valor não prova alta em volume.
-Retrato dos dados coletado em {e(gerado)}, sem atualização em tempo real. Ano sem valor aparece como “sem registro”, nunca como zero.</p>
+<footer><p>{rodape if rodape is not None else f'Fonte: {FONTE}, dados abertos. Valores em US$ FOB correntes, sem correção pela inflação: alta em valor não prova alta em volume. Retrato dos dados coletado em {e(gerado)}, sem atualização em tempo real. Ano sem valor aparece como “sem registro”, nunca como zero.'}</p>
 <p><a href="{raiz}#ver=fontes">Fontes e método</a> · Autor: <a href="https://www.linkedin.com/in/lucasfgalera" rel="noopener">LinkedIn</a> · <a href="https://github.com/lcgalera" rel="noopener">GitHub</a></p></footer>
+{TEMA_BOTAO}
 <script src="{raiz}medicao.js"></script>
 <script>window.rotzxContar && rotzxContar({json.dumps(contar)});</script>
 </body>
