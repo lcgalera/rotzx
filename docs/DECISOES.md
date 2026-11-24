@@ -991,3 +991,31 @@ As outras perguntas ficam em "Outras perguntas".
 - a página não rola e a cena da história não muda;
 - depois de fechar, a rolagem volta a funcionar;
 - sem erros.
+
+### D76 · 24/11/2026 · rotzx Pro: plano do serviço pago e teste da API mensal
+**Pedido do dono:** planejar a parte paga do projeto, para empresas e produtores.
+
+**Decisões do dono:**
+- o serviço se chama **rotzx Pro**, sem slogan;
+- o tema de cada trabalho vem da demanda do cliente: cada contratação é um estudo com análise focada no que ele pediu;
+- o começo é simples, com entrega por e-mail e cobrança por plataforma pronta;
+- a formalização (CNPJ) é etapa do plano.
+
+**Plano:** em [`docs/PRO.md`](PRO.md). Resumo:
+- **Serviços:** diagnóstico (avulso), acompanhamento mensal do mesmo recorte (assinatura) e sob medida.
+- **Kit automático:** monta dados, tabelas e gráficos de cada recorte; o trabalho manual é a análise.
+- **Fases:** 0 valida, com página, briefing, estudo-amostra e conversas; 1 constrói o kit, em repositório privado; 2 cria área do cliente e alertas; 3 traz API e licenças.
+- **Fora do repositório público:** dados de clientes, briefings e o código do Pro.
+
+**Teste da API (spike), 24/11/2026:** com `monthDetail` e `metricKG` ligados e filtro por SH4, a API do Comex Stat devolve mês e kg líquido. O detalhe pode ser por:
+- país (`noPaispt`);
+- UF (`noUf`);
+- via (`noVia`);
+- unidade da Receita, isto é, porto ou aeroporto (`noUrf`);
+- NCM de 8 dígitos (`coNcm`, `noNcmpt`).
+
+**Âncora:** a soma dos 12 meses de 2025 da soja (SH4 1201) para a China é US$ 34.505.104.723, igual ao total anual publicado no atlas; o total do produto com país identificado também bate (US$ 43.535.950.700).
+
+**Cobertura:** 2026 já tem dado de janeiro a outubro.
+
+**Ainda não muda nada no site público.**
