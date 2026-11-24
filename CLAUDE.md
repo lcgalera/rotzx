@@ -18,7 +18,7 @@ mudou desde 1997, com o contexto de cada relação (ONU, OMC, conflitos, Banco M
 - Código Python: `rotzx/mundo/` (coleta, retrato, detalhamento, páginas estáticas, cartões) e `rotzx/public_build.py`.
 - Tabela de países: `catalog/paises_mundo.csv`.
 
-Antes de mudar algo relevante, leia `docs/PROJETO.md` (visão completa) e `docs/DECISOES.md` (D1–D75).
+Antes de mudar algo relevante, leia `docs/PROJETO.md` (visão completa) e `docs/DECISOES.md` (D1–D77).
 Toda mudança relevante ganha uma decisão nova em `docs/DECISOES.md`.
 
 ## Regras que não podem ser quebradas
