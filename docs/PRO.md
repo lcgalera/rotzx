@@ -221,7 +221,7 @@ Código em **repositório privado** `rotzx-pro` (briefings e dados de clientes n
 - **Registro:** cada passo gera uma decisão em `docs/DECISOES.md` (D76 em diante).
 
 ## Briefing (Google Forms)
-O dono cria o formulário na conta Google dele; a planilha de respostas fica lá, nunca no repositório. Até o link existir, o botão da página `/pro/` aponta para o LinkedIn (`FORMULARIO` em `rotzx/pro/pagina.py`).
+O dono cria o formulário na conta Google dele rodando [`briefing_forms.gs`](briefing_forms.gs) no Apps Script (script.google.com); a planilha de respostas fica lá, nunca no repositório. Até o link existir, o botão da página `/pro/` aponta para o LinkedIn (`FORMULARIO` em `rotzx/pro/pagina.py`).
 
 **Título:** "rotzx Pro: conte a sua pergunta". **Descrição:** "Conte o que você quer entender. Eu respondo por e-mail com o escopo, o prazo e o valor antes de começar. Análise de dados públicos; não é recomendação de investimento ou de negócio."
 
