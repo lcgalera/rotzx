@@ -1106,3 +1106,53 @@ As outras perguntas ficam em "Outras perguntas".
 - **Movimento reduzido:** nenhum elemento escondido ou deslocado; sem JS, tudo visível.
 - **Tema:** contínuo, do atlas escuro a `/pro/` e à privacidade.
 - **Links:** formulário, PDF em nova aba, miniaturas, logo e privacidade respondem 200.
+
+### D80 · 24/11/2026 · Estudo-amostra v2: de descritivo a decisório, e destaque do Pro no atlas
+**Pedido do dono:**
+- o estudo de fertilizantes descrevia, mas não ajudava a decidir; deve mostrar por que alguém pagaria pelo Pro;
+- no atlas, o "Pro" precisa de mais destaque que uma palavra solta.
+
+**Correções:**
+- **Concentração:** a tabela de concentração tem jan–out/2025, o mesmo par citado no resumo (55,9% → 49,1%). Um teste garante que o número do resumo está na tabela.
+- **Via aérea:** jan–out/2026 tem US$ 320 mi (623 mil t) declarados como via aérea, contra US$ 1,4 mi em todo o ano de 2025.
+  - 92% desse valor foi desembaraçado em unidades da Receita de portos marítimos, em lotes de milhares de toneladas, e cresce mês a mês.
+  - É tratado como provável erro de registro: o dado fica como a fonte publica, com nota e evidência, e as análises de porto e frete usam a unidade da Receita.
+- **Acentos:** URF e via ganham acento por um dicionário explícito (`rotzx/pro/nomes.py`); o que estiver fora dele não é chutado.
+- **NCM:** nome curto legível nas tabelas e texto oficial completo no apêndice; o "…" sumiu.
+
+**Método:**
+- **Volume × preço × mix:** a variação de valor é decomposta em volume, preço (dentro de cada NCM) e mix (composição), no total e por fornecedor. A soma é exata (`indicadores.decompor`, com `assert` e teste). Item novo entra só no mix; valor sem peso fica numa parcela à parte.
+- **Resultado:** o preço médio subiu 12,6%, dos quais +13,9 p.p. vieram do preço e −1,3 p.p. do mix. A alta é de preço; o mix puxou para baixo, sobretudo pela China.
+
+**Seções novas:**
+- preço por produto e origem;
+- referência internacional pelo Pink Sheet do Banco Mundial (CC BY 4.0), com o KCl comparado em CIF contra o CFR Brasil e os outros produtos em FOB;
+- dependência por NCM com HHI;
+- calendário com volume mensal e acumulado por ano;
+- frete por tonelada por origem e por porto, com frete, seguro e CIF da API do Comex Stat;
+- contexto de fornecimento: Ormuz, China, cotas da Rússia, tarifa da UE, só com fonte datada e confirmada em mais de uma publicação, marcado como contexto e não causa;
+- leitura por perfil;
+- 3 sinais para o próximo mês, com limiar;
+- o que o diagnóstico inclui.
+
+**Coleta:** três consultas cruzadas por ano (país × NCM, URF × via, UF), com mês, kg, frete, seguro e CIF. Os totais das três são iguais em cada ano.
+
+**Rede:** `thedocs.worldbank.org` foi liberado na rede do ambiente para o Pink Sheet. Os sites de notícia do contexto não são alcançáveis daqui; os itens foram confirmados pelos resultados de busca e têm os links citados.
+
+**Entregáveis:**
+- `estudo-fertilizantes.pdf` (12 páginas);
+- `estudo-fertilizantes.xlsx` (13 abas, com fonte e data em cada uma);
+- miniaturas da capa e da página 3;
+- a página /pro/ atualizada (seções, páginas e link da planilha);
+- `openpyxl` fixado em `requirements.txt`.
+
+**Atlas:** o link do Pro vira uma pílula com ícone e etiqueta "PRO" e um brilho que passa uma vez (sem movimento com `prefers-reduced-motion`). No celular aparecem só o ícone e a etiqueta, e "Fontes e método" vira "Fontes" (o nome completo fica no `aria-label`), para o cabeçalho caber numa linha.
+
+**Conferência:**
+- testes de âncoras e totais cruzados;
+- decomposição;
+- nomes;
+- rigor do HTML;
+- planilha;
+- revisão visual das 12 páginas renderizadas;
+- Chromium em 1440×900 e 390×844 no atlas e na /pro/, sem erros e sem violação de CSP.

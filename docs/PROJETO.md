@@ -1,7 +1,7 @@
 # rotzx — visão do projeto
 
-Estado em 16/11/2026 (v1.0.0; decisões até D79). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
-código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D79).
+Estado em 16/11/2026 (v1.0.0; decisões até D80). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D80).
 Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é
@@ -36,7 +36,8 @@ prototipos/globo/          o site: index.html (a página inteira), medicao.js, o
 rotzx/                     código Python: coleta, retrato, detalhamento, páginas estáticas e build
   mundo/                   fontes (comex, onu, omc, conflitos, bancomundial), tabela de países, retrato,
                            detalhamento, páginas estáticas e cartões (com as fontes tipográficas em mundo/fontes/)
-  pro/                     rotzx Pro: coleta mensal (cache em data/fontes/pro/), indicadores, relatório em PDF,
+  pro/                     rotzx Pro: coleta mensal e cruzada (cache em data/fontes/pro/), indicadores (volume × preço × mix, HHI),
+                           Pink Sheet (referencia.py), nomes legíveis (nomes.py), planilha (planilha.py), relatório em PDF,
                            estudo-amostra e página /pro/ (plano em docs/PRO.md)
   public_build.py          gera site/ para o GitHub Pages
   cli.py                   python -m rotzx <comando>
@@ -54,11 +55,12 @@ uma.
 
 | Fonte | Usada em | Licença / termos | Observações |
 |---|---|---|---|
-| [Comex Stat (MDIC)](https://comexstat.mdic.gov.br) | comércio por país e produto (SH4), 1997–2025 | dados abertos | só o formato `GET /general?filter=` funciona; ~12 s entre consultas |
+| [Comex Stat (MDIC)](https://comexstat.mdic.gov.br) | comércio por país e produto (SH4), 1997–2025; no rotzx Pro, mês, NCM, UF, porto, via, frete, seguro e CIF | dados abertos | só o formato `GET /general?filter=` funciona; ~12 s entre consultas; frete, seguro e CIF só na importação |
 | [Votos na Assembleia Geral da ONU](https://doi.org/10.7910/DVN/LEJUQZ) (Voeten, Strezhnev e Bailey, Harvard Dataverse) | concordância com o Brasil, 1946– | CC0 | índice de Lijphart; muda com a pauta do ano |
 | [Disputas na OMC](https://www.wto.org/english/tratop_e/dispu_e/dispu_by_country_e.htm) | disputas com o Brasil desde 1995 | site oficial | países da UE aparecem pela UE |
 | [UCDP/PRIO Armed Conflict Dataset](https://ucdp.uu.se/downloads/) | conflitos armados, 1946– | CC BY 4.0 | 25+ mortes em combate no ano; conta tropas de missões multinacionais |
 | [Banco Mundial (WDI)](https://data.worldbank.org) | PIB, crescimento, inflação, população | CC BY 4.0 | valor mais recente de cada indicador |
+| [Banco Mundial, Pink Sheet](https://www.worldbank.org/en/research/commodity-markets) (CMO-Historical-Data-Monthly.xlsx) | cotações mensais de ureia, DAP, TSP e cloreto de potássio (estudo-amostra do rotzx Pro) | CC BY 4.0 | arquivo em thedocs.worldbank.org (domínio liberado na rede do ambiente em 24/11/2026); fica em `data/fontes/bancomundial/`, fora do git; o link muda a cada ano |
 | ISO 3166 (pycountry / iso-codes) | tabela de países | LGPL (dados ISO) | só para gerar `catalog/paises_mundo.csv` |
 | Natural Earth 1:110m (via `world-atlas@2.0.2`) | contornos | domínio público (pacote ISC) | ids = ISO 3166 numérico |
 | globe.gl 2.46.2, topojson-client 3.1.0, ECharts 5.5.0 | globo e gráficos | MIT, ISC, Apache-2.0 | jsDelivr, com SRI |
@@ -137,7 +139,7 @@ Participação alta indica concentração, não vulnerabilidade. Os totais do Br
 | `detalhe-gerar [--de A] [--ate A]` | refaz `dados/detalhe/` (58 consultas ao Comex Stat, com cache em `data/fontes/mundo/detalhe/`) |
 | `detalhe-validar [pasta]` | confere o detalhamento contra o formato (sai com erro se houver problema) |
 | `mundo-codigos` | regera `catalog/paises_mundo.csv` |
-| `pro-amostra` | refaz o estudo-amostra do rotzx Pro (`prototipos/globo/pro/estudo-fertilizantes.pdf`; consultas mensais ao Comex Stat com cache em `data/fontes/pro/`; precisa do Chromium) e as miniaturas da prévia (`estudo-p1.webp`, `estudo-p4.webp`; precisa do `pdftoppm`) |
+| `pro-amostra` | refaz o estudo-amostra do rotzx Pro (`prototipos/globo/pro/estudo-fertilizantes.pdf`; consultas mensais ao Comex Stat com cache em `data/fontes/pro/`; precisa do Chromium) a planilha com as tabelas (`estudo-fertilizantes.xlsx`, openpyxl) e as miniaturas da prévia (`estudo-p1.webp`, `estudo-p3.webp`; precisa do `pdftoppm`); baixa o Pink Sheet se faltar |
 | `publicar [--sem-cartoes]` | gera `site/` (atlas, páginas estáticas, cartões, sitemap) |
 
 Para ver a página localmente: `cd prototipos/globo && python3 -m http.server 8000` e abrir http://localhost:8000.

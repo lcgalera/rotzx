@@ -249,5 +249,22 @@ Configurações: não coletar e-mail automaticamente (a pergunta 3 já pede), n�
 - Formulário criado pelo dono (24/11/2026); o botão "Enviar meu pedido" aponta para o link público. O link de edição fica só com o dono.
 - Publicada em 24/11/2026 (D77). Página refeita em D78: tema contínuo com o atlas, hero com o que o Pro abre além do atlas, planos em cards, passos numerados, card do estudo-amostra e público ampliado (pessoas físicas, MEIs, autônomos).
 
+## Estudo-amostra v2 (D80)
+O estudo de fertilizantes passou de descritivo a decisório. São 12 páginas:
+- capa com 3 números;
+- resumo, leitura e 3 sinais para o próximo mês;
+- volume × preço × mix;
+- preço por produto e origem;
+- referência do Banco Mundial;
+- dependência por produto (HHI);
+- calendário de compra;
+- portos, estados e frete;
+- contexto de fornecimento com fonte;
+- leitura por perfil;
+- o que o diagnóstico inclui;
+- fontes e método.
+
+Junto do PDF vai a planilha com as tabelas de cada seção (`estudo-fertilizantes.xlsx`). Esse é o formato de referência para os diagnósticos.
+
 ## Primeiro passo depois da aprovação
 **Fase 0:** a página "rotzx Pro" com o formulário de briefing e o estudo-amostra em PDF. Antes, o spike da API mensal (meses, kg, UF), que define o que os estudos conseguem mostrar. A formalização com contador corre em paralelo, com o dono.
