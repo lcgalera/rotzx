@@ -10,7 +10,7 @@ from typing import Callable, List
 
 FORMULARIO = "https://docs.google.com/forms/d/e/1FAIpQLScjz5rhGd8X_tY7Xmy04O2P9NqgBCd5dU8L-s_cuMtGcxPPMg/viewform"  # link do Google Forms do briefing (preenchido pelo dono)
 LINKEDIN = "https://www.linkedin.com/in/lucasfgalera"
-PAGINAS_AMOSTRA = 9                                                  # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
+PAGINAS_AMOSTRA = 12                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
 e = html.escape
 
 PERGUNTAS = [
@@ -122,6 +122,7 @@ ul.perg li{margin:0;max-width:none;padding:18px 22px;background:var(--card);bord
 .amostra h3{margin:10px 0 10px;font-size:clamp(24px,2.4vw,30px);line-height:1.15;letter-spacing:-.01em}
 .amostra .meta{font-size:13px;letter-spacing:.02em;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:16px}
 .amostra ul{display:flex;flex-wrap:wrap;gap:8px 20px;padding:0;margin:0 0 22px;list-style:none;font-size:15px}
+.amostra .planilha{display:inline-block;margin:10px 0 0 16px;font-size:14.5px}
 .amostra ul li{margin:0}.amostra ul li::before{content:"✓ ";color:var(--accent)}
 /* faixa e cuidados */
 .faixa{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;margin-top:clamp(72px,9vw,120px);padding:clamp(28px,4vw,44px) clamp(24px,4vw,48px);border-radius:var(--raio);background:var(--card);border:1px solid var(--borda)}
@@ -240,15 +241,17 @@ ou estado. Os créditos das fontes (MDIC, ONU e as demais) continuam sempre vis�
 
 <section class="bloco"><h2>Veja um exemplo</h2>
 <div class="cartao amostra" data-revelar>
-<div class="previa"><img class="tras" src="estudo-p4.webp" width="480" height="680" loading="lazy" decoding="async"
-alt="Página do estudo com o gráfico dos maiores fornecedores de fertilizantes ao Brasil">
+<div class="previa"><img class="tras" src="estudo-p3.webp" width="480" height="680" loading="lazy" decoding="async"
+alt="Página do estudo que divide a variação do valor importado em volume, preço e mix">
 <img class="frente" src="estudo-p1.webp" width="480" height="680" loading="lazy" decoding="async" alt="Capa do estudo-amostra de fertilizantes">
 <span class="selo">PDF · {PAGINAS_AMOSTRA} páginas</span></div>
 <div><div class="kicker">Estudo-amostra com dados reais</div>
 <h3>De quem o Brasil compra fertilizantes, e o que mudou em 2026</h3>
 <div class="meta">SH4 3101 a 3105 · importação · 2024 a out/2026 · {PAGINAS_AMOSTRA} páginas</div>
-<ul><li>De onde vem</li><li>Preço × volume</li><li>Concentração dos fornecedores</li><li>Portos e estados</li><li>Mês a mês</li></ul>
-<a class="cta sec" href="estudo-fertilizantes.pdf" target="_blank" rel="noopener">Abrir o estudo (PDF) <span class="seta" aria-hidden="true">↗</span></a></div>
+<ul><li>Volume × preço × mix</li><li>Preço por produto e origem</li><li>Referência do Banco Mundial</li><li>Dependência por produto</li>
+<li>Calendário de compra</li><li>Portos e frete</li><li>Contexto de fornecimento</li><li>Leitura por perfil</li></ul>
+<a class="cta sec" href="estudo-fertilizantes.pdf" target="_blank" rel="noopener">Abrir o estudo (PDF) <span class="seta" aria-hidden="true">↗</span></a>
+<a class="planilha" href="estudo-fertilizantes.xlsx" download>Baixar as tabelas (.xlsx)</a></div>
 </div></section>
 
 <div class="faixa" data-revelar><p>Tem uma pergunta sobre comércio exterior?</p><a class="cta" href="{pedido}" rel="noopener">{rot} {seta}</a></div>

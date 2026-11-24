@@ -86,10 +86,11 @@ def barras(itens: Sequence[Tuple[str, float, str]], largura: int = 640, cor: str
     return f'<svg class="graf" viewBox="0 0 {largura} {alt}" width="100%" role="img">{"".join(linhas)}</svg>'
 
 
-def linhas_mensais(series: List[Tuple[str, List[Optional[float]], str]], rotulos: List[str], fmt, largura: int = 640, altura: int = 210) -> str:
+def linhas_mensais(series: List[Tuple[str, List[Optional[float]], str]], rotulos: List[str], fmt, largura: int = 640, altura: int = 210, todos: bool = False) -> str:
     """Linhas mês a mês; ponto ausente = lacuna (sem registro, nunca zero)."""
     esq, dir_, top, base = 64, 30, 12, 34
-    vals = [v for _, s, _ in series for v in s if v is not None]
+    vals = [v for _, s, *_ in series for v in s if v is not None]
+    mn = min(vals) if vals else 0
     mx = teto(max(vals) if vals else 1)
     n = len(rotulos)
     X = lambda i: esq + (largura - esq - dir_) * (i / max(1, n - 1))
@@ -101,9 +102,10 @@ def linhas_mensais(series: List[Tuple[str, List[Optional[float]], str]], rotulos
         g.append(f'<line x1="{esq}" x2="{largura - dir_}" y1="{y:.1f}" y2="{y:.1f}" stroke="{REGRA}" stroke-dasharray="2 3"/>'
                  f'<text x="{esq - 6}" y="{y + 4:.1f}" class="eixo" text-anchor="end">{e(fmt(v))}</text>')
     for i, r in enumerate(rotulos):
-        if r.endswith("/01") or i == n - 1:
+        if todos or r.endswith("/01") or i == n - 1:
             g.append(f'<text x="{X(i):.1f}" y="{altura - 12}" class="eixo" text-anchor="middle">{e(r)}</text>')
-    for nome, s, cor in series:
+    for nome, s, cor, *tr in series:
+        trac = ' stroke-dasharray="5 4"' if tr and tr[0] else ""
         trechos, atual = [], []
         for i, v in enumerate(s):
             if v is None:
@@ -115,14 +117,51 @@ def linhas_mensais(series: List[Tuple[str, List[Optional[float]], str]], rotulos
         if atual:
             trechos.append(atual)
         for t in trechos:
-            g.append(f'<polyline points="{" ".join(t)}" fill="none" stroke="{cor}" stroke-width="2"/>')
-    leg = "".join(f'<tspan fill="{c}">■</tspan> {e(nm)}   ' for nm, _, c in series)
+            if len(t) == 1:                                            # mês isolado: ponto, para não sumir
+                x, y = t[0].split(",")
+                g.append(f'<circle cx="{x}" cy="{y}" r="2.2" fill="{cor}"/>')
+            g.append(f'<polyline points="{" ".join(t)}" fill="none" stroke="{cor}" stroke-width="{1.6 if trac else 2}"{trac}/>')
+    leg = "".join(f'<tspan fill="{c}">{"╌" if tr and tr[0] else "■"}</tspan> {e(nm)}   ' for nm, _, c, *tr in series)
     return (f'<svg class="graf" viewBox="0 0 {largura} {altura + 18}" width="100%" role="img">{"".join(g)}'
             f'<text x="{esq}" y="{altura + 12}" class="eixo">{leg}</text></svg>')
 
 
+CORES_ANO = {2024: "#B9B3A3", 2025: OCRE, 2026: VERDE}
+
+
+def linhas_ano(por_ano, fmt, largura: int = 640, altura: int = 190, titulo_eixo: str = "") -> str:
+    """Uma linha por ano, de jan a dez ({ano: {mês: valor}}); mês sem registro = lacuna (nunca zero)."""
+    rot = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
+    series = [(str(a), [m.get(i) for i in range(1, 13)], CORES_ANO.get(a, TINTA2)) for a, m in sorted(por_ano.items())]
+    return linhas_mensais(series, rot, fmt, largura, altura, todos=True)
+
+
+def cascata(passos, fmt, largura: int = 640, altura: int = 210) -> str:
+    """Barras em cascata: [(rótulo, valor, tipo)], tipo 'total' (barra cheia desde zero) ou 'delta' (sobe/desce a partir do acumulado)."""
+    esq, top, base = 10, 18, 40
+    acum, barras_ = 0.0, []
+    for rot, v, tipo in passos:
+        if tipo == "total":
+            barras_.append((rot, 0.0, v, v, tipo)); acum = v
+        else:
+            barras_.append((rot, acum, acum + v, v, tipo)); acum += v
+    hi = max(max(a, b) for _, a, b, _, _ in barras_)
+    lo = min(0.0, min(min(a, b) for _, a, b, _, _ in barras_))
+    Y = lambda v: top + (altura - top - base) * (1 - (v - lo) / ((hi - lo) or 1))
+    n = len(barras_); w = (largura - esq * 2) / n
+    g = [f'<line x1="{esq}" x2="{largura - esq}" y1="{Y(0):.1f}" y2="{Y(0):.1f}" stroke="{REGRA}"/>']
+    for i, (rot, a, b, v, tipo) in enumerate(barras_):
+        x = esq + i * w + w * 0.18
+        cor = VERDE if tipo == "total" else (OCRE if v >= 0 else NEG)
+        y0, y1 = sorted((Y(a), Y(b)))
+        g.append(f'<rect x="{x:.1f}" y="{y0:.1f}" width="{w * 0.64:.1f}" height="{max(1.2, y1 - y0):.1f}" fill="{cor}"/>')
+        g.append(f'<text x="{x + w * 0.32:.1f}" y="{y0 - 5:.1f}" class="val" text-anchor="middle">{e(fmt(v, tipo))}</text>')
+        g.append(f'<text x="{x + w * 0.32:.1f}" y="{altura - 22}" class="rot" text-anchor="middle">{e(rot)}</text>')
+    return f'<svg class="graf" viewBox="0 0 {largura} {altura}" width="100%" role="img">{"".join(g)}</svg>'
+
+
 # ---------- página ----------
-def documento(titulo: str, corpo: str) -> str:
+def documento(titulo: str, corpo: str, css_extra: str = "") -> str:
     f = FONTES.as_uri()
     return f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>{e(titulo)}</title><style>
 @font-face{{font-family:"Newsreader";src:url("{f}/Newsreader-wght.ttf");font-weight:200 800}}
@@ -154,6 +193,7 @@ thead th{{border-bottom:1px solid {TINTA};font-weight:600}}
 .leitura .kicker{{color:{OCRE}}}
 .graf .rot{{font:9pt "IBM Plex Sans";fill:{TINTA}}}.graf .val{{font:9pt "IBM Plex Sans";fill:{TINTA2}}}.graf .eixo{{font:8pt "IBM Plex Sans";fill:{APOIO}}}
 .aviso{{font-size:8.5pt;color:{APOIO};border-top:1px solid {REGRA};padding-top:6pt}}
+{css_extra}
 </style></head><body>{corpo}</body></html>"""
 
 

@@ -2,3 +2,4 @@
 pytest==8.4.2
 pycountry==24.6.1   # só para gerar catalog/paises_mundo.csv (rotzx mundo-codigos)
 Pillow==11.3.0      # cartões de compartilhamento das páginas estáticas
+openpyxl==3.1.5   # planilha do estudo-amostra do rotzx Pro (rotzx pro-amostra)
