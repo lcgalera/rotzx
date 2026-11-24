@@ -28,7 +28,7 @@ O atlas grátis é a vitrine e prova a qualidade. O Pro é o serviço.
 |---|---|---|
 | **Diagnóstico** | estudo sobre a pergunta do cliente (ex.: "para onde exportar meu café", "quanto dependo da China para este insumo", "como meu estado se compara no meu produto"): relatório de 8 a 15 páginas, planilha e conversa de apresentação opcional | avulso |
 | **Acompanhamento** | o mesmo recorte do diagnóstico atualizado todo mês: o que mudou, preço × volume, mercados que entraram e saíram | assinatura |
-| **Sob medida** | estudos maiores, vários produtos ou setores, apoio a apresentação ou pedido de financiamento; licença de incorporação do atlas para portais e entidades | projeto |
+| **Sob medida** | estudos maiores, vários produtos ou setores, apoio a apresentação ou pedido de financiamento; licença do atlas para portais e entidades, com a marca do cliente no lugar da do rotzx e recortes do setor ou estado (diferente do Incorporar grátis, que mostra o atlas público com a marca rotzx); créditos das fontes sempre visíveis | projeto |
 
 Os preços saem das conversas da Fase 0, não de chute. O site mostra "a partir de" só depois de validados.
 
@@ -243,11 +243,11 @@ O dono cria o formulário na conta Google dele rodando [`briefing_forms.gs`](bri
 
 Configurações: não coletar e-mail automaticamente (a pergunta 3 já pede), não exigir login, mostrar mensagem de confirmação "Recebido. Respondo por e-mail em até 2 dias úteis."
 
-## Situação da Fase 0 (D77)
+## Situação da Fase 0 (D77, D78)
 - Página `/pro/` e política de privacidade `/pro/privacidade/`: prontas, geradas no build por `rotzx/pro/pagina.py`.
 - Estudo-amostra de fertilizantes: `prototipos/globo/pro/estudo-fertilizantes.pdf`, gerado por `rotzx pro-amostra`. O bloco "Leitura do analista" é rascunho e precisa da revisão do dono.
 - Formulário criado pelo dono (24/11/2026); o botão "Enviar meu pedido" aponta para o link público. O link de edição fica só com o dono.
-- Falta: revisão do PDF pelo dono; só então publicar.
+- Publicada em 24/11/2026 (D77). Página refeita em D78: tema contínuo com o atlas, hero com o que o Pro abre além do atlas, planos em cards, passos numerados, card do estudo-amostra e público ampliado (pessoas físicas, MEIs, autônomos).
 
 ## Primeiro passo depois da aprovação
 **Fase 0:** a página "rotzx Pro" com o formulário de briefing e o estudo-amostra em PDF. Antes, o spike da API mensal (meses, kg, UF), que define o que os estudos conseguem mostrar. A formalização com contador corre em paralelo, com o dono.

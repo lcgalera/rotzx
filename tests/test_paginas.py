@@ -49,3 +49,10 @@ def test_cartao_de_compartilhamento(tmp_path):
     assert img.size == (1200, 630) and (tmp_path / "c.png").stat().st_size < 80_000
     for f in ("Newsreader-wght.ttf", "IBMPlexSans-Regular.ttf", "LICENCA-Newsreader.txt", "LICENCA-IBMPlexSans.txt", "cartao-base.png"):
         assert (cartao.PASTA / f).exists()                              # fontes e licenças acompanham o código
+
+
+def test_molde_tem_tema_do_atlas():
+    """D78: as páginas estáticas leem a escolha de tema do atlas (rotzx-tema) e têm o botão de tema; o rodapé padrão continua."""
+    h = paginas._pagina(titulo="t", desc="d", caminho="pais/", raiz="../", corpo="<p>x</p>", contar="/pais", gerado="06/11/2026")
+    assert h.index("rotzx-tema") < h.index("<style>") and 'id="tema"' in h
+    assert "Retrato dos dados coletado em 06/11/2026" in h
