@@ -223,7 +223,7 @@ def pdf(html_txt: str, destino: Path) -> Path:
 
 
 def miniaturas(pdf_arq: Path, paginas: Sequence[int], largura: int = 480, log=print) -> List[Path]:
-    """Miniaturas WebP de páginas do PDF (D79), para a prévia na página /pro/: `estudo-p{n}.webp` ao lado do PDF.
+    """Miniaturas WebP de páginas do PDF (D79), para a prévia na página /pro/: `<nome do PDF>-p{n}.webp` ao lado do PDF (D81).
 
     Usa o pdftoppm (poppler); sem ele, avisa e mantém as miniaturas que já existem.
     """
@@ -240,7 +240,7 @@ def miniaturas(pdf_arq: Path, paginas: Sequence[int], largura: int = 480, log=pr
                            check=True, capture_output=True, timeout=120)
             img = Image.open(f"{base}.png").convert("RGB")
             img = img.resize((largura, round(img.height * largura / img.width)), Image.LANCZOS)
-            dest = pdf_arq.with_name(f"{pdf_arq.stem.split('-')[0]}-p{n}.webp")
+            dest = pdf_arq.with_name(f"{pdf_arq.stem}-p{n}.webp")
             img.save(dest, "WEBP", quality=80, method=6)
             out.append(dest)
     return out

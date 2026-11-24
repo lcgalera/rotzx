@@ -10,7 +10,7 @@ from typing import Callable, List
 
 FORMULARIO = "https://docs.google.com/forms/d/e/1FAIpQLScjz5rhGd8X_tY7Xmy04O2P9NqgBCd5dU8L-s_cuMtGcxPPMg/viewform"  # link do Google Forms do briefing (preenchido pelo dono)
 LINKEDIN = "https://www.linkedin.com/in/lucasfgalera"
-PAGINAS_AMOSTRA = 12                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
+PAGINAS_AMOSTRA = {"fertilizantes": 12, "cafe": 11}  # páginas de cada estudo (conferido no teste contra o PDF)                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
 e = html.escape
 
 PERGUNTAS = [
@@ -31,14 +31,48 @@ RECORTES = [
 ]
 PLANOS = [
     ("Diagnóstico", "PDF + planilha + conversa opcional", True,
-     ["Um estudo sobre a sua pergunta", "Cada número com a fonte e a data", "Análise separada dos fatos",
-      "Escopo enxuto para perguntas pontuais"]),
+     ["Tudo o que está nas amostras, no recorte do seu pedido", "Cada número com a fonte e a data", "Análise separada dos fatos",
+      "Do escopo enxuto ao estudo completo"]),
     ("Acompanhamento", "Entrega mensal", False,
      ["O mesmo recorte a cada nova base mensal do Comex Stat", "O que mudou: preço, volume e participação",
       "Mercados e fornecedores que entraram e saíram"]),
     ("Sob medida", "Escopo customizado", False,
      ["Vários produtos, setores ou estados num estudo só", "Licença do atlas para o seu site, com a sua marca e recortes do seu setor ou estado"]),
 ]
+# D81: os estudos-amostra mostrados na página (um de importação, um de exportação)
+AMOSTRAS = [
+    {"slug": "cafe", "fluxo": "Exportação", "titulo": "Para onde o Brasil vende café, e o que mudou em 2026",
+     "meta": "SH4 0901 e café solúvel · exportação · 2024 a out/2026",
+     "itens": ["Volume × preço × mix", "Preço por produto e destino", "Arábica e robusta (Banco Mundial)", "Dependência por destino",
+               "Calendário de embarque", "Estados e portos", "Contexto de mercado", "Leitura por perfil"],
+     "alt_tras": "Página do estudo de café que divide a variação do valor exportado em volume, preço e mix",
+     "alt_frente": "Capa do estudo-amostra de café"},
+    {"slug": "fertilizantes", "fluxo": "Importação", "titulo": "De quem o Brasil compra fertilizantes, e o que mudou em 2026",
+     "meta": "SH4 3101 a 3105 · importação · 2024 a out/2026",
+     "itens": ["Volume × preço × mix", "Preço por produto e origem", "Referência do Banco Mundial", "Dependência por produto",
+               "Calendário de compra", "Portos e frete", "Contexto de fornecimento", "Leitura por perfil"],
+     "alt_tras": "Página do estudo de fertilizantes que divide a variação do valor importado em volume, preço e mix",
+     "alt_frente": "Capa do estudo-amostra de fertilizantes"},
+]
+# D81: "Quem faz". Rascunho com lacunas [entre colchetes] para o dono completar; enquanto houver lacuna, o bloco não aparece.
+QUEM_FAZ = {
+    "nome": "[Seu nome completo]",
+    "linha": "[Uma linha sobre o que você faz hoje: área e função]",
+    "bio": [
+        "[Formação: curso e instituição.]",
+        "[Experiência com comércio exterior, agro ou dados: onde e por quanto tempo.]",
+        "Criou o rotzx, um atlas público do comércio exterior brasileiro em que cada número tem fonte e data, [motivo, com as suas palavras].",
+        "No Pro, cada estudo segue o mesmo método do atlas: dados oficiais conferidos entre si, fatos separados da interpretação e uma "
+        "planilha com tudo o que está no relatório.",
+    ],
+}
+
+
+def quem_faz_pronto() -> bool:
+    texto = " ".join([QUEM_FAZ["nome"], QUEM_FAZ["linha"], *QUEM_FAZ["bio"]])
+    return "[" not in texto and "]" not in texto
+
+
 PASSOS = [
     "Você conta a sua pergunta, os produtos, os países e o estado que interessam.",
     "Você recebe por e-mail o escopo, o prazo e o valor, em até 2 dias úteis.",
@@ -63,16 +97,28 @@ footer{max-width:1120px;padding-inline:24px}
 .hero h1{font-size:clamp(38px,5.2vw,60px);line-height:1.04;letter-spacing:-.022em;margin:14px 0 20px}
 .hero .lead{font-size:clamp(17px,1.5vw,19.5px);line-height:1.55;color:var(--ink-2);max-width:58ch}
 .miuda{font-size:13.5px;color:var(--muted);margin-top:16px;max-width:52ch}
-.resumo h3{margin:0 0 16px;font-size:21px}
-.resumo .linha{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;padding:16px 0 4px;border-top:1px solid var(--borda)}
-.resumo .rot{font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:5px}
-.resumo .rot.pro-r{color:var(--accent)}
-.resumo .base{font-size:15px;color:var(--ink-2)}
+/* D81: o card do Pro é a peça premium da página: fundo verde profundo nos dois temas, recortes que acendem em sequência */
+.resumo{position:relative;overflow:hidden;isolation:isolate;border-radius:20px;padding:28px 30px 24px;color:#EEF1E8;
+  background:radial-gradient(120% 80% at 100% 0%,#3D5E4B 0%,transparent 60%),linear-gradient(155deg,#2A4436 0%,#1C2E24 60%,#15231B 100%);
+  box-shadow:0 1px 0 rgb(255 255 255/.06) inset,0 30px 60px -34px rgb(16 32 22/.75);border:1px solid rgb(169 208 184/.18);transition:transform .35s,box-shadow .35s}
+.resumo::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.35;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgb(255 255 255/.05) 0 1px,transparent 1px 44px),repeating-linear-gradient(0deg,rgb(255 255 255/.04) 0 1px,transparent 1px 44px);
+  -webkit-mask:radial-gradient(90% 90% at 100% 0%,#000,transparent 70%);mask:radial-gradient(90% 90% at 100% 0%,#000,transparent 70%)}
+.resumo .topo{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tag-pro{font:700 11px/1 "IBM Plex Sans",sans-serif;letter-spacing:.16em;padding:5px 9px 5px 10px;border-radius:999px;background:#D7A465;color:#1D2A21}
+.resumo .sobre{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgb(238 241 232/.62)}
+.resumo h3{margin:0 0 14px;font:500 30px/1.1 Newsreader,Georgia,serif;letter-spacing:-.01em;color:#F7F5EE}
+.resumo .linha{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;padding:16px 0 6px;border-top:1px solid rgb(255 255 255/.1)}
+.resumo .rot{font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgb(238 241 232/.55);padding-top:6px}
+.resumo .rot.pro-r{color:#D7A465}
+.resumo .gratis .base{font-size:15px;color:rgb(238 241 232/.7)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.chips li{margin:0;font-size:13.5px;line-height:1.2;padding:7px 12px;border-radius:999px;background:var(--sel-bg);color:var(--accent-ink);border:1px solid transparent;cursor:default;transition:transform .2s,border-color .2s,background-color .2s}
-.chips li:hover{border-color:var(--accent);transform:translateY(-2px)}
-.resumo{transition:box-shadow .3s,border-color .3s}
-.resumo:hover{border-color:var(--brilho);box-shadow:0 0 0 4px var(--brilho),var(--sombra)}
+.chips li{position:relative;margin:0;font-size:13.5px;line-height:1.2;padding:8px 12px 8px 24px;border-radius:999px;background:rgb(255 255 255/.07);
+  color:#F3F0E8;border:1px solid rgb(255 255 255/.14);cursor:default;transition:transform .2s,border-color .2s,background-color .2s,box-shadow .2s}
+.chips li::before{content:"";position:absolute;left:11px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#D7A465;box-shadow:0 0 0 3px rgb(215 164 101/.18)}
+.chips li:hover{border-color:#D7A465;background:rgb(215 164 101/.14);transform:translateY(-2px);box-shadow:0 8px 18px -10px rgb(0 0 0/.6)}
+.rodape-card{margin:16px 0 0;padding-top:14px;border-top:1px solid rgb(255 255 255/.1);font-size:13px;color:rgb(238 241 232/.62);max-width:none}
+.resumo:hover{box-shadow:0 1px 0 rgb(255 255 255/.06) inset,0 0 0 1px rgb(215 164 101/.35),0 36px 70px -34px rgb(16 32 22/.85)}
 /* CTAs */
 .pro .cta,.leitura .cta{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 22px;margin:6px 0 0;font-weight:500;transition:background-color .2s,box-shadow .2s,transform .2s}
 .pro .cta:hover{box-shadow:0 8px 20px -10px var(--accent);transform:translateY(-1px)}
@@ -112,17 +158,22 @@ ul.perg li{margin:0;max-width:none;padding:18px 22px;background:var(--card);bord
 .passos li:hover{color:var(--ink)}
 .passos li:hover .num{transform:scale(1.08);box-shadow:0 0 0 6px var(--brilho)}
 /* estudo-amostra */
-.amostra{display:grid;grid-template-columns:240px minmax(0,1fr);gap:clamp(28px,4vw,56px);align-items:center;padding:32px clamp(24px,4vw,48px)}
-.previa{position:relative;width:200px;height:283px;margin:6px 0 6px 10px}
-.previa img{position:absolute;inset:0;width:200px;height:auto;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.12),0 14px 30px -14px rgb(0 0 0/.45);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.previa .tras{transform:rotate(7deg) translate(36px,2px)}
+.amostras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.amostra{display:grid;grid-template-columns:170px minmax(0,1fr);gap:26px;align-items:start;padding:28px 26px}
+.amostra .fluxo{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);background:var(--sel-bg);padding:4px 9px;border-radius:999px}
+.previa{position:relative;width:140px;height:198px;margin:6px 0 6px 6px}
+.previa img{position:absolute;inset:0;width:140px;height:auto;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.12),0 14px 30px -14px rgb(0 0 0/.45);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.previa .tras{transform:rotate(7deg) translate(26px,2px)}
 .previa .selo{position:absolute;left:-10px;bottom:16px;z-index:2;background:var(--ochre);color:#fff;font-size:11px;font-weight:600;letter-spacing:.08em;padding:4px 9px;border-radius:999px}
-.amostra:hover .tras{transform:rotate(11deg) translate(52px,-4px)}
+.amostra:hover .tras{transform:rotate(11deg) translate(38px,-4px)}
 .amostra:hover .frente{transform:rotate(-2deg) translateY(-4px)}
-.amostra h3{margin:10px 0 10px;font-size:clamp(24px,2.4vw,30px);line-height:1.15;letter-spacing:-.01em}
+.amostra h3{margin:12px 0 8px;font-size:clamp(21px,1.9vw,24px);line-height:1.15;letter-spacing:-.01em}
 .amostra .meta{font-size:13px;letter-spacing:.02em;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:16px}
-.amostra ul{display:flex;flex-wrap:wrap;gap:8px 20px;padding:0;margin:0 0 22px;list-style:none;font-size:15px}
-.amostra .planilha{display:inline-block;margin:10px 0 0 16px;font-size:14.5px}
+.amostra ul{display:grid;gap:5px;padding:0;margin:0 0 18px;list-style:none;font-size:14px}
+.amostra .planilha{display:inline-block;margin:12px 0 0 14px;font-size:14px}
+.pessoa{display:grid;grid-template-columns:72px minmax(0,1fr);gap:22px;align-items:start;max-width:820px}
+.pessoa .inicial{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:var(--pro-bg);color:var(--pro-ink);font:500 32px/1 Newsreader,Georgia,serif}
+.pessoa h3{margin:2px 0 2px;font-size:24px}.pessoa .linha-quem{color:var(--muted);font-size:14.5px;margin-bottom:12px}
 .amostra ul li{margin:0}.amostra ul li::before{content:"✓ ";color:var(--accent)}
 /* faixa e cuidados */
 .faixa{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;margin-top:clamp(72px,9vw,120px);padding:clamp(28px,4vw,44px) clamp(24px,4vw,48px);border-radius:var(--raio);background:var(--card);border:1px solid var(--borda)}
@@ -135,7 +186,7 @@ ul.perg li{margin:0;max-width:none;padding:18px 22px;background:var(--card);bord
 .volta{text-decoration:none;font-weight:500}
 /* movimento: só para quem não pediu menos movimento */
 @keyframes sobe{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes acende{0%,100%{background:var(--sel-bg)}40%{background:var(--brilho)}}
+@keyframes acende{0%,100%{background:rgb(255 255 255/.07);border-color:rgb(255 255 255/.14)}40%{background:rgb(215 164 101/.28);border-color:#D7A465}}
 @keyframes pulso{0%{box-shadow:0 0 0 0 var(--brilho)}70%,100%{box-shadow:0 0 0 7px transparent}}
 @media (prefers-reduced-motion:no-preference){
   .hero>div>*,.hero>aside{animation:sobe .6s cubic-bezier(.2,.7,.2,1) both}
@@ -161,8 +212,10 @@ ul.perg li{margin:0;max-width:none;padding:18px 22px;background:var(--card);bord
 }
 @media (prefers-reduced-motion:reduce){
   .chips li:hover,.pro .cta:hover,.cta:hover .seta,.volta:hover .seta,.cta.sec:hover .seta,.passos li:hover .num,.amostra:hover .tras,.amostra:hover .frente{transform:none}
-  .amostra:hover .tras{transform:rotate(7deg) translate(36px,2px)}
+  .amostra:hover .tras{transform:rotate(7deg) translate(26px,2px)}
 }
+@media (max-width:1100px){.amostras{grid-template-columns:minmax(0,1fr)}}
+.hero .selo-pro.grande{margin-bottom:6px}
 @media (max-width:880px){
   .hero{grid-template-columns:minmax(0,1fr)}
   ul.perg{grid-template-columns:minmax(0,1fr)}
@@ -170,6 +223,7 @@ ul.perg li{margin:0;max-width:none;padding:18px 22px;background:var(--card);bord
   .passos{grid-template-columns:minmax(0,1fr);gap:22px}
   .passos::before{left:26px;right:auto;top:26px;bottom:26px;width:2px;height:auto;transform-origin:top;transform:scaleY(var(--linha))}
   .passos li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:16px;align-items:center}.passos .num{margin:0}
+  .amostras{grid-template-columns:minmax(0,1fr)}
   .amostra{grid-template-columns:minmax(0,1fr);justify-items:start}
 }
 @media (max-width:480px){main.pro{padding:0 16px 32px}.cartao{padding:22px 20px}.faixa{padding:24px 20px}.previa{width:170px;height:241px}.previa img{width:170px}}
@@ -204,17 +258,39 @@ def corpo_pro() -> str:
         for nome, badge, dest, itens in PLANOS)
     passos = "".join(f'<li><span class="num">{i:02d}</span><span>{e(p)}</span></li>' for i, p in enumerate(PASSOS, 1))
     seta = '<span class="seta" aria-hidden="true">→</span>'
+    amostras = "".join(f"""<article class="cartao amostra">
+<div class="previa"><img class="tras" src="estudo-{a['slug']}-p3.webp" width="480" height="680" loading="lazy" decoding="async" alt="{e(a['alt_tras'])}">
+<img class="frente" src="estudo-{a['slug']}-p1.webp" width="480" height="680" loading="lazy" decoding="async" alt="{e(a['alt_frente'])}">
+<span class="selo">PDF · {PAGINAS_AMOSTRA[a['slug']]} páginas</span></div>
+<div class="txt"><span class="fluxo">{e(a['fluxo'])}</span>
+<h3>{e(a['titulo'])}</h3>
+<div class="meta">{e(a['meta'])} · {PAGINAS_AMOSTRA[a['slug']]} páginas</div>
+<ul>{''.join(f'<li>{e(i)}</li>' for i in a['itens'])}</ul>
+<a class="cta sec" href="estudo-{a['slug']}.pdf" target="_blank" rel="noopener">Abrir o estudo (PDF) <span class="seta" aria-hidden="true">↗</span></a>
+<a class="planilha" href="estudo-{a['slug']}.xlsx" download>Baixar as tabelas (.xlsx)</a></div></article>""" for a in AMOSTRAS)
+    quem = ""
+    if quem_faz_pronto():
+        q = QUEM_FAZ
+        quem = f"""<section class="bloco quem-faz" data-revelar><h2>Quem faz</h2>
+<div class="cartao pessoa"><span class="inicial" aria-hidden="true">{e(q['nome'][:1])}</span>
+<div><h3>{e(q['nome'])}</h3><p class="linha-quem">{e(q['linha'])}</p>{''.join(f'<p>{e(b)}</p>' for b in q['bio'])}
+<a href="{LINKEDIN}" rel="noopener">LinkedIn <span class="seta" aria-hidden="true">↗</span></a></div></div></section>
+
+"""
     return f"""<section class="hero">
-<div><div class="kicker">rotzx Pro</div>
+<div><span class="selo-pro grande" role="img" aria-label="rotzx Pro"><span class="x"></span><span class="wm"></span><span class="tag">PRO</span></span>
 <h1>Análise sob demanda do comércio exterior</h1>
 <p class="lead">Do pequeno negócio e da pessoa física à empresa importadora: você traz a pergunta; o rotzx Pro responde com dados
 públicos e oficiais, cruzados, conferidos e explicados.</p>
 <a class="cta" href="{pedido}" rel="noopener">{rot} {seta}</a>
 <p class="miuda">Pedido individual? Empresa e cargo são opcionais no formulário. Você recebe por e-mail o escopo, o prazo e o valor
 antes de qualquer compromisso.</p></div>
-<aside class="cartao resumo" aria-label="O que o Pro abre além do atlas gratuito"><h3>O que o Pro abre além do atlas gratuito</h3>
-<div class="linha"><span class="rot">Atlas</span><span class="base">Ano a ano, por país e produto (SH4), grátis.</span></div>
-<div class="linha"><span class="rot pro-r">Pro</span><ul class="chips">{chips}</ul></div></aside>
+<aside class="resumo" aria-label="O que o Pro abre além do atlas gratuito">
+<div class="topo"><span class="tag-pro">PRO</span><span class="sobre">além do atlas gratuito</span></div>
+<h3>O que o Pro abre</h3>
+<div class="linha gratis"><span class="rot">Atlas</span><span class="base">Ano a ano, por país e produto (SH4). Grátis.</span></div>
+<div class="linha"><span class="rot pro-r">Pro</span><ul class="chips">{chips}</ul></div>
+<p class="rodape-card">Cada número com fonte e data, e uma planilha com todas as tabelas.</p></aside>
 </section>
 
 <section class="bloco"><h2>Para quem</h2>
@@ -230,7 +306,9 @@ antes de qualquer compromisso.</p></div>
 <ul class="perg" data-revelar="grupo">{''.join(f'<li>{e(q)}</li>' for q in PERGUNTAS)}</ul></section>
 
 <section class="bloco"><h2>O que você pode contratar</h2>
-<p class="sub">Sem tabela fixa: o valor depende do tamanho do pedido e vem junto com o escopo, antes de começar.</p>
+<p class="sub">O diagnóstico parte de tudo o que está nas amostras e vai além: as seções, os produtos, os países e os estados são escolhidos a
+partir do seu pedido, para a sua empresa ou a sua pergunta. Sem tabela fixa: o valor depende do tamanho do pedido e vem junto com o escopo,
+antes de começar.</p>
 <div class="planos" data-revelar="grupo">{planos}</div>
 <div class="aviso" data-revelar><span class="i" aria-hidden="true">i</span><p>Diferente do <b>Incorporar</b> do atlas, que é grátis e mostra
 o atlas público como está, com a marca rotzx: a licença traz uma versão com a sua marca no lugar da do rotzx e recortes do seu setor
@@ -239,20 +317,9 @@ ou estado. Os créditos das fontes (MDIC, ONU e as demais) continuam sempre vis�
 <section class="bloco"><h2>Como funciona</h2>
 <ol class="passos" data-revelar>{passos}</ol></section>
 
-<section class="bloco"><h2>Veja um exemplo</h2>
-<div class="cartao amostra" data-revelar>
-<div class="previa"><img class="tras" src="estudo-p3.webp" width="480" height="680" loading="lazy" decoding="async"
-alt="Página do estudo que divide a variação do valor importado em volume, preço e mix">
-<img class="frente" src="estudo-p1.webp" width="480" height="680" loading="lazy" decoding="async" alt="Capa do estudo-amostra de fertilizantes">
-<span class="selo">PDF · {PAGINAS_AMOSTRA} páginas</span></div>
-<div><div class="kicker">Estudo-amostra com dados reais</div>
-<h3>De quem o Brasil compra fertilizantes, e o que mudou em 2026</h3>
-<div class="meta">SH4 3101 a 3105 · importação · 2024 a out/2026 · {PAGINAS_AMOSTRA} páginas</div>
-<ul><li>Volume × preço × mix</li><li>Preço por produto e origem</li><li>Referência do Banco Mundial</li><li>Dependência por produto</li>
-<li>Calendário de compra</li><li>Portos e frete</li><li>Contexto de fornecimento</li><li>Leitura por perfil</li></ul>
-<a class="cta sec" href="estudo-fertilizantes.pdf" target="_blank" rel="noopener">Abrir o estudo (PDF) <span class="seta" aria-hidden="true">↗</span></a>
-<a class="planilha" href="estudo-fertilizantes.xlsx" download>Baixar as tabelas (.xlsx)</a></div>
-</div></section>
+{quem}<section class="bloco"><h2>Veja exemplos</h2>
+<p class="sub">Dois estudos-amostra com dados reais, um de cada lado do comércio. O diagnóstico usa o mesmo formato, no recorte do seu pedido.</p>
+<div class="amostras" data-revelar="grupo">{amostras}</div></section>
 
 <div class="faixa" data-revelar><p>Tem uma pergunta sobre comércio exterior?</p><a class="cta" href="{pedido}" rel="noopener">{rot} {seta}</a></div>
 

@@ -3,6 +3,7 @@ import json
 
 import pytest
 
+from rotzx.mundo import historia
 from rotzx.pro import indicadores as ind
 
 # FIXTURE DE TESTE: valores inventados
@@ -104,13 +105,30 @@ def test_pagina_pro_acabamento_d79(tmp_path):
     for frase in ("Análise sob demanda do comércio exterior", "Pedido individual? Empresa e cargo são opcionais", "Ponto de partida",
                   "Diferente do <b>Incorporar</b>", "Perguntas pontuais cabem em escopos enxutos", "Tem uma pergunta sobre comércio exterior?"):
         assert frase in pro, frase
-    assert '<a href="../pro/" aria-current="page">rotzx Pro</a>' in pro and 'aria-current="page">rotzx Pro</a>' in priv
-    for n in amostra.MINIATURAS:
-        assert (amostra.DESTINO.parent / f"estudo-p{n}.webp").exists()
-        assert f'src="estudo-p{n}.webp" width="480" height="680"' in pro
+    # D81: o Pro na navegação é o selo com o logo e a etiqueta PRO, ativo nas páginas do Pro
+    assert '<a class="selo-pro" href="../pro/" aria-label="rotzx Pro" aria-current="page">' in pro and 'aria-label="rotzx Pro" aria-current="page"' in priv
     assert "IntersectionObserver" in pro and "prefers-reduced-motion:reduce" in pro and "prefers-reduced-motion: reduce" in pro
+
+
+def test_pagina_pro_amostras_e_quem_faz(tmp_path):
+    """D81: dois estudos-amostra, cada um com miniaturas, PDF, planilha e o número real de páginas; "Quem faz" só sem lacunas."""
     import re
-    assert pagina.PAGINAS_AMOSTRA == len(re.findall(rb"/Type\s*/Page[^s]", amostra.DESTINO.read_bytes()))   # "9 páginas" é o real
+    from rotzx.mundo import paginas
+    from rotzx.pro import estudo, pagina
+    from rotzx.pro.amostras import ESTUDOS
+    pagina.gerar(tmp_path, paginas._pagina, "24/11/2026")
+    pro = (tmp_path / "pro" / "index.html").read_text(encoding="utf-8")
+    for a in pagina.AMOSTRAS:
+        cfg = ESTUDOS[a["slug"]]
+        for n in cfg.miniaturas:
+            assert (estudo.PASTA / f"estudo-{a['slug']}-p{n}.webp").exists()
+            assert f'src="estudo-{a["slug"]}-p{n}.webp" width="480" height="680"' in pro
+        assert f'href="estudo-{a["slug"]}.pdf" target="_blank"' in pro and f'href="estudo-{a["slug"]}.xlsx"' in pro
+        assert pagina.PAGINAS_AMOSTRA[a["slug"]] == len(re.findall(rb"/Type\s*/Page[^s]", cfg.destino.read_bytes()))
+    assert ("quem-faz" in pro) == pagina.quem_faz_pronto()
+    for v in [pagina.QUEM_FAZ["nome"], pagina.QUEM_FAZ["linha"], *pagina.QUEM_FAZ["bio"]]:
+        if "[" in v:
+            assert v not in pro                                      # lacuna nunca chega à página
 
 
 # ---------- D80: estudo-amostra v2 ----------
@@ -186,3 +204,43 @@ def test_planilha_do_estudo():
         pytest.skip("planilha ainda não gerada")
     abas = openpyxl.load_workbook(amostra.PLANILHA, read_only=True).sheetnames
     assert abas[0] == "1 Totais" and "2 Volume preço mix" in abas and "Fontes" in abas and len(abas) >= 10
+
+
+
+# ---------- D81: estudo-amostra de café (exportação) e motor de estudos ----------
+def _cafe():
+    from rotzx.pro import coleta, estudo
+    from rotzx.pro.amostras import cafe
+    if not any(coleta.CACHE.glob("2026-exportacao-pais_ncm-*.json")):
+        pytest.skip("sem cache das consultas de exportação do café (data/fontes/pro)")
+    return estudo, cafe.RECORTE, estudo.calcular(cafe.RECORTE, log=lambda *a: None)
+
+
+def test_cafe_ancora_com_o_atlas_e_totais():
+    """Soma de 2025 das NCMs 0901 = item 0901 do atlas; as três consultas e as seções batem entre si."""
+    estudo, cfg, d = _cafe()
+    X = estudo.coletar(cfg, log=lambda *a: None)
+    P = json.loads((historia.SAIDA / "produtos.json").read_text(encoding="utf-8"))
+    serie = P["itens"]["0901"]["e"]
+    inicio = P.get("inicio", 1997)
+    so0901 = sum(r["fob"] for r in X["pais_ncm"][2025] if r["ncm"].startswith("0901"))
+    assert so0901 == pytest.approx(serie[2025 - inicio])
+    for a in estudo.ANOS:
+        tot = [sum(r["fob"] for r in X[c][a]) for c in ("pais_ncm", "urf_via", "uf")]
+        assert tot[0] == pytest.approx(tot[1]) == pytest.approx(tot[2])
+        assert all(r["ncm"].startswith(("0901", "210111")) for r in X["pais_ncm"][a])      # chá e mate ficam de fora
+    tb = d["per"]["ytd26"]["total"]
+    assert sum(x["fob"] for x in d["urf"]) == pytest.approx(tb["fob"]) and sum(x["fob"] for x in d["uf"]) == pytest.approx(tb["fob"])
+    dec = d["dec_total"]
+    assert dec["volume"] + dec["preco"] + dec["mix"] + dec["sem_peso"] == pytest.approx(dec["variacao"], abs=1)
+    assert d["per"]["ytd26"]["frete_t"] is None and d["frete_origem"] == []                # exportação: sem frete
+
+
+def test_cafe_html_rigor():
+    estudo, cfg, d = _cafe()
+    h = estudo.html(cfg, d)
+    assert "…" not in h and "(a escrever)" not in h and "Fornecedor" not in h
+    assert "não é recomendação de investimento ou de negócio" in h and "Leitura do analista" in h and "Contexto, não causa comprovada" in h
+    assert "arábica" in h and "robusta" in h and "estado produtor" in h
+    for c in cfg.contexto:
+        assert c["fontes"] and all(dt and u.startswith("https://") for _, dt, u in c["fontes"])

@@ -1,7 +1,7 @@
 # rotzx — visão do projeto
 
-Estado em 16/11/2026 (v1.0.0; decisões até D80). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
-código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D80).
+Estado em 16/11/2026 (v1.0.0; decisões até D81). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D81).
 Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é
@@ -38,6 +38,7 @@ rotzx/                     código Python: coleta, retrato, detalhamento, págin
                            detalhamento, páginas estáticas e cartões (com as fontes tipográficas em mundo/fontes/)
   pro/                     rotzx Pro: coleta mensal e cruzada (cache em data/fontes/pro/), indicadores (volume × preço × mix, HHI),
                            Pink Sheet (referencia.py), nomes legíveis (nomes.py), planilha (planilha.py), relatório em PDF,
+                           motor dos estudos (estudo.py) e um recorte por estudo em amostras/ (fertilizantes, café),
                            estudo-amostra e página /pro/ (plano em docs/PRO.md)
   public_build.py          gera site/ para o GitHub Pages
   cli.py                   python -m rotzx <comando>
@@ -139,7 +140,7 @@ Participação alta indica concentração, não vulnerabilidade. Os totais do Br
 | `detalhe-gerar [--de A] [--ate A]` | refaz `dados/detalhe/` (58 consultas ao Comex Stat, com cache em `data/fontes/mundo/detalhe/`) |
 | `detalhe-validar [pasta]` | confere o detalhamento contra o formato (sai com erro se houver problema) |
 | `mundo-codigos` | regera `catalog/paises_mundo.csv` |
-| `pro-amostra` | refaz o estudo-amostra do rotzx Pro (`prototipos/globo/pro/estudo-fertilizantes.pdf`; consultas mensais ao Comex Stat com cache em `data/fontes/pro/`; precisa do Chromium) a planilha com as tabelas (`estudo-fertilizantes.xlsx`, openpyxl) e as miniaturas da prévia (`estudo-p1.webp`, `estudo-p3.webp`; precisa do `pdftoppm`); baixa o Pink Sheet se faltar |
+| `pro-amostra [--estudo fertilizantes\|cafe\|todos]` | refaz os estudos-amostra do rotzx Pro (`prototipos/globo/pro/estudo-<slug>.pdf`, a planilha `.xlsx` e as miniaturas `estudo-<slug>-p1/p3.webp`); consultas cruzadas ao Comex Stat com cache em `data/fontes/pro/`; precisa do Chromium e do `pdftoppm`; baixa o Pink Sheet se faltar |
 | `publicar [--sem-cartoes]` | gera `site/` (atlas, páginas estáticas, cartões, sitemap) |
 
 Para ver a página localmente: `cd prototipos/globo && python3 -m http.server 8000` e abrir http://localhost:8000.

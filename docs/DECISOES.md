@@ -1156,3 +1156,39 @@ As outras perguntas ficam em "Outras perguntas".
 - planilha;
 - revisão visual das 12 páginas renderizadas;
 - Chromium em 1440×900 e 390×844 no atlas e na /pro/, sem erros e sem violação de CSP.
+
+### D81 · 24/11/2026 · Pro "redondinho": motor de estudos, amostra de café, escopo sem preço, "Quem faz" e selo rotzx PRO
+**Pedido do dono:**
+- deixar o Pro pronto antes de divulgar: "Quem faz", escopo sem preço e uma segunda amostra, do lado da exportação (café);
+- feedback visual: o "Pro" do atlas sem personalidade, o card do Pro "meh", o item "rotzx Pro" das páginas estáticas xoxo e o "ROTZX PRO" pequeno acima do título.
+
+**Motor de estudos:**
+- **Separação:** `rotzx/pro/estudo.py` (cálculo, HTML, planilha e miniaturas) e um `Recorte` por estudo em `rotzx/pro/amostras/` (fertilizantes, café).
+- **Rótulos pelo fluxo:** importação fala em fornecedor e origem; exportação, em destino. Frete, seguro e CIF só existem na importação.
+- **Comando:** `rotzx pro-amostra [--estudo …]`.
+- **Não regressão:** o PDF de fertilizantes sai com o texto idêntico ao de D80 (conferido com `pdftotext`).
+- **Miniaturas:** passam a se chamar `estudo-<slug>-pN.webp`.
+
+**Amostra de café** ("Para onde o Brasil vende café, e o que mudou em 2026", 11 páginas):
+- **Recorte:** SH4 0901 mais as NCMs 2101.11 (café solúvel e extratos), filtradas dentro da 2101, que também tem chá e mate. Por isso as três consultas cruzadas incluem a NCM.
+- **Âncora:** a soma de 2025 das NCMs 0901 = item 0901 do atlas.
+- **Referência:** arábica e robusta do Pink Sheet (indicadores da OIC, convertidos de US$/kg para US$/t). Como a NCM do café cru junta arábica e conilon, a comparação é com a faixa entre as duas.
+- **Contexto, com fontes datadas:** tarifa adicional dos EUA e isenção do café em 20/11/2025 (o solúvel ficou de fora); adiamento da EUDR para 30/12/2026; expectativa de safra ampla em 2026/27.
+- **Leitura:** a receita caiu por preço (−7,9 p.p. no preço médio), com volume estável e embarques concentrados no segundo semestre.
+
+**Página /pro/:**
+- **Exemplos:** dois cards de amostra ("Exportação" e "Importação"), cada um com prévia real, páginas, PDF e .xlsx.
+- **Escopo:** "parte de tudo o que está nas amostras e vai além", sem preço.
+- **"Quem faz":** rascunho com lacunas (`QUEM_FAZ`), escondido até o dono completar.
+
+**Visual:**
+- **Selo "rotzx PRO":** o símbolo X e a palavra do logo do atlas, mais a etiqueta PRO, com animação curta: o X gira e aparece, a palavra desliza, a etiqueta cai no lugar, um brilho passa e, no hover, o X gira 90°. Sem animação com `prefers-reduced-motion`.
+  - No atlas, via `<use>` dos dois desenhos do logo.
+  - Nas páginas estáticas, via máscara de `logo.svg`. No celular, só o X e a etiqueta; a navegação rola até o item ativo e não encolhe a pílula.
+  - Substitui o kicker "ROTZX PRO" no topo da /pro/ e o link "rotzx Pro" da navegação das páginas estáticas.
+- **Card do Pro:** fundo verde profundo nos dois temas e grade sutil; os recortes acendem em dourado em sequência e reagem ao hover.
+
+**Conferência:**
+- 56 testes, entre eles âncora do café, totais cruzados, rigor do HTML, amostras e miniaturas da /pro/, e lacunas do "Quem faz" que nunca chegam à página;
+- revisão visual das 11 páginas do café;
+- Chromium em 1440×900 e 390×844, nos temas claro e escuro, no atlas, na /pro/ e nas páginas de país: sem erros, sem violação de CSP e sem rolagem lateral.

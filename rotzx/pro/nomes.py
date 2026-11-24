@@ -12,7 +12,7 @@ PALAVRAS = {
     "BELEM": "Belém", "CORUMBA": "Corumbá", "PECEM": "Pecém", "IGUACU": "Iguaçu", "AMAPA": "Amapá", "PARANA": "Paraná",
     "MARITIMA": "Marítima", "AEREA": "Aérea", "RODOVIARIA": "Rodoviária", "FERROVIARIA": "Ferroviária", "FLUVIAL": "Fluvial",
     "LACUSTRE": "Lacustre", "POSTAL": "Postal", "BRASILIA": "Brasília", "GOIANIA": "Goiânia", "CUIABA": "Cuiabá",
-    "UBERLANDIA": "Uberlândia", "JUNDIAI": "Jundiaí", "TAUBATE": "Taubaté", "SUAPE": "Suape", "IRF": "IRF",
+    "UBERLANDIA": "Uberlândia", "JUNDIAI": "Jundiaí", "TAUBATE": "Taubaté", "SUAPE": "Suape", "IRF": "IRF", "NAO": "Não", "INFORMADO": "informado", "DECLARADA": "declarada",
 }
 MINUSCULAS = {"de", "do", "da", "dos", "das", "e"}
 
@@ -36,6 +36,15 @@ def lugar(txt: str) -> str:
 
 # nome curto das NCMs do capítulo 31 que aparecem no estudo (a partir do texto oficial da NCM)
 NCM_CURTO = {
+    # café (D81)
+    "09011110": "Café cru em grão",
+    "09011190": "Café cru, exceto em grão",
+    "09011200": "Café cru descafeinado",
+    "09012100": "Café torrado",
+    "09012200": "Café torrado descafeinado",
+    "09019000": "Cascas e películas de café; sucedâneos",
+    "21011110": "Café solúvel",
+    "21011190": "Extratos e concentrados de café",
     "31010000": "Adubos de origem animal ou vegetal",
     "31021010": "Ureia (mais de 45% de N)",
     "31022100": "Sulfato de amônio",
