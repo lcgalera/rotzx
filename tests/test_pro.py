@@ -92,3 +92,22 @@ def test_pagina_pro_tema_planos_e_rodape(tmp_path):
     assert 'href="estudo-fertilizantes.pdf" target="_blank"' in pro
     assert "pessoa física" in pro and "MEIs" in pro and "opcionais" in pro
     assert "opcionais" in priv and 'href="../"' in priv
+
+
+def test_pagina_pro_acabamento_d79(tmp_path):
+    """D79: copy mantida, Pro ativo no cabeçalho, prévia real do PDF sem CLS, movimento com respeito a prefers-reduced-motion."""
+    from rotzx.mundo import paginas
+    from rotzx.pro import amostra, pagina
+    pagina.gerar(tmp_path, paginas._pagina, "24/11/2026")
+    pro = (tmp_path / "pro" / "index.html").read_text(encoding="utf-8")
+    priv = (tmp_path / "pro" / "privacidade" / "index.html").read_text(encoding="utf-8")
+    for frase in ("Análise sob demanda do comércio exterior", "Pedido individual? Empresa e cargo são opcionais", "Ponto de partida",
+                  "Diferente do <b>Incorporar</b>", "Perguntas pontuais cabem em escopos enxutos", "Tem uma pergunta sobre comércio exterior?"):
+        assert frase in pro, frase
+    assert '<a href="../pro/" aria-current="page">rotzx Pro</a>' in pro and 'aria-current="page">rotzx Pro</a>' in priv
+    for n in amostra.MINIATURAS:
+        assert (amostra.DESTINO.parent / f"estudo-p{n}.webp").exists()
+        assert f'src="estudo-p{n}.webp" width="480" height="680"' in pro
+    assert "IntersectionObserver" in pro and "prefers-reduced-motion:reduce" in pro and "prefers-reduced-motion: reduce" in pro
+    import re
+    assert pagina.PAGINAS_AMOSTRA == len(re.findall(rb"/Type\s*/Page[^s]", amostra.DESTINO.read_bytes()))   # "9 páginas" é o real

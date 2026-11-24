@@ -86,21 +86,32 @@ function pintar() { const a = ef(), o = a === "dark" ? "light" : "dark", sis = e
 b.onclick = () => { const t = ef() === "dark" ? "light" : "dark"; R.dataset.theme = t;
   try { localStorage.setItem("rotzx-tema", t); } catch (e) { /* só nesta visita */ } pintar(); };
 mm.addEventListener && mm.addEventListener("change", () => { if (!escolhido()) pintar(); });
-pintar(); })();</script>"""
+pintar();
+const nav = document.querySelector("header nav"), at = nav && nav.querySelector('[aria-current="page"]');   // celular: item ativo à vista
+if (at && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = at.offsetLeft + at.offsetWidth - nav.clientWidth + 12;
+})();</script>"""
 
 ESTILO = """
-:root{--bg:#F3F0E8;--surface:#FAF8F3;--ink:#222721;--ink-2:#464C45;--muted:#676B62;--rule:#D8D4C9;--rule-2:#BDB8AB;--accent:#385344;--accent-ink:#2C4436;--ochre:#A16D2F;--on-accent:#FAF8F3;--sel-bg:#E3E9E1;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--accent-ink:#A9D0B8;--ochre:#D7A465;--on-accent:#151916;--sel-bg:#26302A;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--accent-ink:#A9D0B8;--ochre:#D7A465;--on-accent:#151916;--sel-bg:#26302A;color-scheme:dark}
+:root{--hover:#ECE9E0;--bg:#F3F0E8;--surface:#FAF8F3;--ink:#222721;--ink-2:#464C45;--muted:#676B62;--rule:#D8D4C9;--rule-2:#BDB8AB;--accent:#385344;--accent-ink:#2C4436;--ochre:#A16D2F;--on-accent:#FAF8F3;--sel-bg:#E3E9E1;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--accent-ink:#A9D0B8;--ochre:#D7A465;--on-accent:#151916;--sel-bg:#26302A;--hover:#222823;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151916;--surface:#1C211D;--ink:#E9E6DE;--ink-2:#C3C2B8;--muted:#9C9D93;--rule:#343A34;--rule-2:#4A514A;--accent:#8DBA9F;--accent-ink:#A9D0B8;--ochre:#D7A465;--on-accent:#151916;--sel-bg:#26302A;--hover:#222823;color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 a{color:var(--accent);text-underline-offset:3px}
-header{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--ink)}
-header .marca{font:600 26px/1 Newsreader,Georgia,serif;color:var(--accent);text-decoration:none;letter-spacing:-.01em}
-header nav{display:flex;gap:16px;font-size:14.5px;flex-wrap:wrap}
+header{display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap;padding:12px 24px;border-bottom:1px solid var(--ink);background:var(--bg)}
+header .marca{display:inline-flex;align-items:center;color:var(--accent);text-decoration:none;font:600 26px/1 Newsreader,Georgia,serif}
+header .logo{display:block;height:28px;aspect-ratio:1164/278;background:currentColor;-webkit-mask:var(--logo) no-repeat center/contain;mask:var(--logo) no-repeat center/contain}
+header nav{display:flex;gap:2px;font-size:14.5px}
+header nav a{position:relative;padding:7px 11px;border-radius:999px;color:var(--ink-2);text-decoration:none;white-space:nowrap;transition:color .2s,background-color .2s}
+header nav a:hover{color:var(--ink);background:var(--hover)}
+header nav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header nav a[aria-current="page"]{color:var(--ink);font-weight:500}
+header nav a[aria-current="page"]::after{content:"";position:absolute;left:11px;right:11px;bottom:1px;height:2px;border-radius:2px;background:var(--accent);transform-origin:left;animation:traco .35s cubic-bezier(.2,.7,.2,1) both}
+@keyframes traco{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){header nav a[aria-current="page"]::after{animation:none}}
 .tema{display:inline-grid;place-items:center;width:36px;height:36px;margin-left:auto;border:1px solid var(--rule-2);border-radius:50%;background:transparent;cursor:pointer;color:var(--ink-2);flex:none}
 .tema:hover{color:var(--ink);border-color:var(--ink-2)}
-@media (max-width:640px){header{position:relative;padding-right:64px}.tema{position:absolute;top:10px;right:16px}}
+@media (max-width:640px){header{position:relative;padding:10px 16px 6px}.tema{position:absolute;top:8px;right:16px}header nav{margin:0 -16px;padding:0 10px 4px;width:calc(100% + 32px);overflow-x:auto;scrollbar-width:none}header nav::-webkit-scrollbar{display:none}header nav a{padding:7px 9px;font-size:14px}header nav a[aria-current="page"]::after{left:9px;right:9px}}
 main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
 .kicker{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
 h1{font:500 40px/1.1 Newsreader,Georgia,serif;margin:6px 0 14px;letter-spacing:-.01em}
@@ -122,8 +133,26 @@ footer{max-width:860px;margin:0 auto;padding:18px 20px 40px;border-top:1px solid
 """
 
 
+NAV = [("", "Atlas interativo"), ("pais/", "Países e territórios"), ("produto/", "Produtos"), ("pro/", "rotzx Pro")]
+
+
+def _nav(raiz: str, caminho: str) -> str:
+    """Navegação das páginas estáticas (D79): o item da seção atual leva aria-current (traço em --accent)."""
+    sec = caminho.split("/", 1)[0] + "/" if "/" in caminho else ""
+    atual = ' aria-current="page"'
+    return "".join(f'<a href="{raiz}{h}"{atual if h and h == sec else ""}>{n}</a>' for h, n in NAV)
+
+
+def logo_svg(atlas_html: Path) -> Optional[str]:
+    """O logo do atlas (ícone + texto, inline em index.html) como arquivo para máscara CSS; None se não achar."""
+    m = re.search(r'<svg class="logo"[^>]*viewBox="([^"]+)"[^>]*>(.*?)</svg>', atlas_html.read_text(encoding="utf-8"), re.S)
+    if not m:
+        return None
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{m.group(1)}">{m.group(2).replace("currentColor", "#000")}</svg>'
+
+
 def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, contar: str, gerado: str, cartao: bool = False,
-            estilo_extra: str = "", rodape: Optional[str] = None, classe: str = "") -> str:
+            estilo_extra: str = "", rodape: Optional[str] = None, classe: str = "", script_extra: str = "") -> str:
     e = html.escape
     url = BASE + caminho
     img = url + "cartao.png" if cartao else BASE + "og.png"     # D70: cartão próprio de cada país e produto
@@ -159,15 +188,15 @@ def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, cont
 <style>{ESTILO}{estilo_extra}</style>
 </head>
 <body>
-<header><a class="marca" href="{raiz}">rotzx</a>
-<nav aria-label="Seções"><a href="{raiz}">Atlas interativo</a><a href="{raiz}pais/">Países e territórios</a><a href="{raiz}produto/">Produtos</a><a href="{raiz}pro/">rotzx Pro</a></nav>
+<header><a class="marca" href="{raiz}" aria-label="rotzx, início do atlas" style="--logo:url({raiz}logo.svg)"><span class="logo"></span></a>
+<nav aria-label="Seções">{_nav(raiz, caminho)}</nav>
 <button class="tema" id="tema" type="button" aria-label="Mudar o tema">◐</button></header>
 <main{(' class="' + classe + '"') if classe else ""}>
 {corpo}
 </main>
 <footer><p>{rodape if rodape is not None else f'Fonte: {FONTE}, dados abertos. Valores em US$ FOB correntes, sem correção pela inflação: alta em valor não prova alta em volume. Retrato dos dados coletado em {e(gerado)}, sem atualização em tempo real. Ano sem valor aparece como “sem registro”, nunca como zero.'}</p>
 <p><a href="{raiz}#ver=fontes">Fontes e método</a> · Autor: <a href="https://www.linkedin.com/in/lucasfgalera" rel="noopener">LinkedIn</a> · <a href="https://github.com/lcgalera" rel="noopener">GitHub</a></p></footer>
-{TEMA_BOTAO}
+{TEMA_BOTAO}{script_extra}
 <script src="{raiz}medicao.js"></script>
 <script>window.rotzxContar && rotzxContar({json.dumps(contar)});</script>
 </body>
@@ -202,6 +231,9 @@ def gerar(out: Path, dados: Path, cartoes: bool = True) -> Dict[str, int]:
     `cartoes=False` pula as imagens de compartilhamento (usado nos testes que não precisam delas)."""
     from . import cartao as cartao_m
     out, dados = Path(out), Path(dados)
+    out.mkdir(parents=True, exist_ok=True)
+    if (dados.parent / "index.html").exists() and (svg := logo_svg(dados.parent / "index.html")):
+        (out / "logo.svg").write_text(svg, encoding="utf-8")         # D79: logo do atlas no cabeçalho das páginas estáticas
     H = json.loads((dados / "historia.json").read_text(encoding="utf-8"))
     P = json.loads((dados / "produtos.json").read_text(encoding="utf-8")) if (dados / "produtos.json").exists() else {"itens": {}}
     C, paises = H["comercio"], H["paises"]
