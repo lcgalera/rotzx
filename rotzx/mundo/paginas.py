@@ -95,6 +95,7 @@ table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:
 th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--rule)}th:first-child,td:first-child{text-align:left}
 thead th{border-bottom:1px solid var(--ink);font-weight:600}
 .rolavel{overflow-x:auto}
+ol,ul{padding-left:20px;margin:0 0 12px}ol li,ul li{margin-bottom:4px;max-width:68ch}
 ul.cols{columns:3 200px;padding-left:18px;font-size:15px}ul.cols li{break-inside:avoid;margin-bottom:4px}
 footer{max-width:860px;margin:0 auto;padding:18px 20px 40px;border-top:1px solid var(--ink);font-size:13.5px;color:var(--ink-2)}
 """
@@ -136,7 +137,7 @@ def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, cont
 </head>
 <body>
 <header><a class="marca" href="{raiz}">rotzx</a>
-<nav aria-label="Seções"><a href="{raiz}">Atlas interativo</a><a href="{raiz}pais/">Países e territórios</a><a href="{raiz}produto/">Produtos</a></nav></header>
+<nav aria-label="Seções"><a href="{raiz}">Atlas interativo</a><a href="{raiz}pais/">Países e territórios</a><a href="{raiz}produto/">Produtos</a><a href="{raiz}pro/">rotzx Pro</a></nav></header>
 <main>
 {corpo}
 </main>
@@ -346,6 +347,9 @@ def gerar(out: Path, dados: Path, cartoes: bool = True) -> Dict[str, int]:
             caminho="produto/", raiz="../", contar="/produto/", gerado=gerado,
             corpo=f'<div class="kicker">Produtos</div><h1>Produtos do comércio exterior do Brasil</h1><p class="lead">{len(itens)} produtos e grupos, em ordem de valor comercializado em {fim} (exportações + importações).</p><ul class="cols">{lis}</ul>'), encoding="utf-8")
         urls.append("produto/")
+
+    from ..pro import pagina as pro_pagina                    # D77: páginas públicas do rotzx Pro
+    urls += pro_pagina.gerar(out, _pagina, gerado)
 
     data = H["gerado_em"][:10]
     (out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

@@ -61,3 +61,16 @@ def test_ancora_12_meses_igual_ao_anual_do_atlas():
     assert round(sum(por_iso.values())) == anual["t"]
     for iso, v in anual["top"]:
         assert round(por_iso[iso]) == v, iso
+
+
+def test_pagina_pro_gerada(tmp_path):
+    """A página /pro/ e a de privacidade saem do gerador com o botão de contato, o PDF e o aviso de não recomendação."""
+    from rotzx.mundo import paginas
+    from rotzx.pro import pagina
+    urls = pagina.gerar(tmp_path, paginas._pagina, "24/11/2026")
+    assert urls == ["pro/", "pro/privacidade/"]
+    pro = (tmp_path / "pro" / "index.html").read_text(encoding="utf-8")
+    priv = (tmp_path / "pro" / "privacidade" / "index.html").read_text(encoding="utf-8")
+    assert (pagina.FORMULARIO or pagina.LINKEDIN) in pro
+    assert "estudo-fertilizantes.pdf" in pro and "não é recomendação" in pro
+    assert "privacidade/" in pro and "LGPD" in priv

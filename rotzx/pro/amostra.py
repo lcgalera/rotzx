@@ -22,7 +22,18 @@ DESTINO = historia.SAIDA.parent / "pro" / "estudo-fertilizantes.pdf"
 MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
 
 # Interpretação: rascunho do Claude a partir dos números calculados em calcular(); o dono revisa antes de publicar.
-LEITURA: List[str] = []
+LEITURA: List[str] = [
+    "O Brasil está comprando menos fertilizante e pagando mais por tonelada. De janeiro a outubro de 2026, o volume importado "
+    "caiu 14,7% e o preço médio subiu 12,6% em relação ao mesmo período de 2025; como um efeito compensa parte do outro, o valor "
+    "caiu só 3,9%. Os dados de comércio não dizem o motivo da queda de volume: estoques, calendário de safra e preço são "
+    "explicações possíveis, a conferir nos próximos meses.",
+    "A queda de volume vem de dois fornecedores: China (de 9,74 para 6,64 milhões de toneladas) e Rússia (de 9,73 para 7,11). "
+    "Somadas, essas reduções são maiores que a do grupo inteiro, porque outros países aumentaram as vendas ao Brasil.",
+    "Com isso, a concentração diminuiu: os 3 maiores fornecedores passaram de 55,9% para 49,1% do valor importado. Turcomenistão "
+    "(de 0,4% para 5,4%) e Marrocos (de 8,2% para 11,2%) foram os que mais ganharam espaço. Para quem compra, o mercado "
+    "brasileiro de fertilizantes está recebendo de mais origens, o que pede acompanhar preço e prazo de fornecedores novos.",
+    "A entrada segue concentrada em poucos portos: Santos, Paranaguá e Rio Grande somaram 60,8% do valor importado no período.",
+]
 
 
 def _nomes_paises() -> Dict[str, str]:
@@ -80,9 +91,11 @@ def calcular(rec: Optional[dict] = None, log=print) -> dict:
     return out
 
 
-def _tabela(cab: List[str], linhas: List[List[str]]) -> str:
-    th = "".join(f"<th>{e(c)}</th>" for c in cab)
-    return f"<table><thead><tr>{th}</tr></thead><tbody>{''.join('<tr>' + ''.join(f'<td>{c}</td>' for c in l) + '</tr>' for l in linhas)}</tbody></table>"
+def _tabela(cab: List[str], linhas: List[List[str]], txt=(0,)) -> str:
+    """`txt`: colunas de texto (alinhadas à esquerda e com quebra de linha); as outras são números."""
+    cl = lambda i: ' class="txt"' if i in txt else ""
+    th = "".join(f"<th{cl(i)}>{e(c)}</th>" for i, c in enumerate(cab))
+    return f"<table><thead><tr>{th}</tr></thead><tbody>{''.join('<tr>' + ''.join(f'<td{cl(i)}>{c}</td>' for i, c in enumerate(l)) + '</tr>' for l in linhas)}</tbody></table>"
 
 
 def html(d: dict) -> str:
@@ -106,7 +119,7 @@ def html(d: dict) -> str:
         f"O maior fornecedor de {ry}/2026 foi {e(b['pais']['rank'][0]['nome'])}, com {e(R.pct(b['dep']['maior']))} do valor importado; os 3 maiores somaram {e(R.pct(b['dep']['tres']))}, "
         f"e {b['dep']['n']} países e territórios venderam ao Brasil no período.",
         f"{e(b['uf']['rank'][0]['nome'])} foi o estado com a maior parte do valor importado ({e(R.pct(b['uf']['rank'][0]['parte']))}), "
-        f"e {e(b['urf']['rank'][0]['nome'])} foi a unidade da Receita com a maior parte ({e(R.pct(b['urf']['rank'][0]['parte']))}).",
+        f"e {e(R.nome_urf(b['urf']['rank'][0]['nome']))} foi a unidade da Receita com a maior parte ({e(R.pct(b['urf']['rank'][0]['parte']))}).",
     ]
     leitura = "".join(f"<p>{e(x)}</p>" for x in LEITURA) or "<p><i>(a escrever)</i></p>"
     corpo.append(f"""<section class="sec quebra"><div class="kicker">Resumo</div><h2>O que os números mostram</h2>{''.join(f'<p>{x}</p>' for x in fatos)}
@@ -142,12 +155,12 @@ def html(d: dict) -> str:
     # 7. por onde entra
     corpo.append(f"""<section class="sec quebra"><div class="kicker">5 · Por onde entra</div><h2>Estados e portos, {ry} 2026</h2>
 <h3>Estados (UF)</h3>{R.barras([(x['nome'], x['parte'], f"{R.pct(x['parte'])} · {R.ton(x['kg'])}") for x in b['uf']['rank'][:10]], cor=R.OCRE)}
-<h3>Unidades da Receita (portos, aeroportos e fronteiras)</h3>{_tabela(['Unidade', 'Valor', 'Volume', 'Parte'], [[e(x['nome']), R.usd(x['fob']), R.ton(x['kg']), R.pct(x['parte'])] for x in b['urf']['rank'][:10]])}
+<h3>Unidades da Receita (portos, aeroportos e fronteiras)</h3>{_tabela(['Unidade', 'Valor', 'Volume', 'Parte'], [[e(R.nome_urf(x['nome'])), R.usd(x['fob']), R.ton(x['kg']), R.pct(x['parte'])] for x in b['urf']['rank'][:10]])}
 <h3>Vias</h3>{_tabela(['Via', 'Valor', 'Parte'], [[e(x['nome'].capitalize()), R.usd(x['fob']), R.pct(x['parte'])] for x in b['via']['rank'][:5]])}
 <p class="fonte">{fonte} UF e unidade da Receita como registradas pelo Comex Stat para cada importação. Partes sobre o valor total importado do grupo no período.</p></section>""")
     # 8. produtos (NCM)
     corpo.append(f"""<section class="sec"><div class="kicker">6 · Quais fertilizantes</div><h2>Os itens (NCM) com maior valor, {ry} 2026</h2>
-{_tabela(['NCM', 'Descrição oficial', 'Valor', 'Volume', 'Parte'], [[e(x['chave']), e(x['nome'][:70] + ('…' if len(x['nome']) > 70 else '')), R.usd(x['fob']), R.ton(x['kg']), R.pct(x['parte'])] for x in b['ncm']['rank'][:10]])}
+{_tabela(['NCM', 'Descrição oficial', 'Valor', 'Volume', 'Parte'], [[e(x['chave']), e(x['nome'][:95] + ('…' if len(x['nome']) > 95 else '')), R.usd(x['fob']), R.ton(x['kg']), R.pct(x['parte'])] for x in b['ncm']['rank'][:10]], txt=(0, 1))}
 <p class="fonte">{fonte} Descrição oficial da NCM, como no Comex Stat.</p></section>""")
     # 9. mês a mês
     m = d["mensal"]
@@ -166,7 +179,7 @@ def html(d: dict) -> str:
         pib = f"{R.usd(c['pib']['valor'])} ({c['pib']['ano']})" if c["pib"] else "sem dado"
         cx.append([e(c["nome"]), onu, f"{c['omc']}{' (pela UE)' if c['omc_ue'] else ''}", f"{conf_txt} ({c['conf_fim']})", pib])
     corpo.append(f"""<section class="sec"><div class="kicker">8 · Contexto dos maiores fornecedores</div><h2>O que o atlas rotzx mostra sobre eles</h2>
-{_tabela(['País', 'Concordância com o Brasil na ONU', 'Disputas com o Brasil na OMC (desde 1995)', 'Conflito armado', 'PIB'], cx)}
+{_tabela(['País', 'ONU: concordância com o Brasil', 'OMC: disputas com o Brasil desde 1995', 'Conflito armado', 'PIB'], cx, txt=(0, 3))}
 <p class="fonte">Votos na ONU: Voeten, Strezhnev e Bailey (Harvard Dataverse, CC0). OMC: lista oficial de disputas. Conflitos: UCDP/PRIO (CC BY 4.0). PIB: Banco Mundial (CC BY 4.0), valor mais recente. Contexto, não nota de risco.</p></section>""")
     # 11. método
     corpo.append(f"""<section class="sec"><div class="kicker">Fontes e método</div><h2>Como este estudo foi feito</h2>

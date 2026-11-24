@@ -5,6 +5,7 @@ aqui, sem biblioteca. O PDF sai do Chromium sem tela (--print-to-pdf). Só forma
 """
 import html
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -52,6 +53,23 @@ def sinal_usd(x: Optional[float]) -> str:
     return ("+" if x > 0 else "−" if x < 0 else "") + usd(abs(x))
 
 
+def teto(v: float) -> float:
+    """Arredonda para cima num número "redondo" (1, 2, 2,5, 5 × 10^k), para o eixo ter marcas legíveis."""
+    import math
+    if v <= 0:
+        return 1
+    k = 10 ** math.floor(math.log10(v))
+    return next(m * k for m in (1, 2, 2.5, 4, 5, 8, 10) if m * k >= v)
+
+
+def nome_urf(txt: str) -> str:
+    """'0817800 - PORTO DE SANTOS' → 'Porto de Santos' (o código da Receita sai; acentos como na fonte)."""
+    n = re.sub(r"^\d+\s*-\s*", "", txt).strip()
+    n = re.sub(r"^ALF\s*-\s*", "Alfândega de ", n)
+    palavras = [w if w in ("IRF", "ALF") or w.startswith("Alfândega") else w.capitalize() for w in n.split()]
+    return " ".join(w.lower() if w.lower() in ("de", "do", "da", "dos", "das", "e") and i else w for i, w in enumerate(palavras))
+
+
 # ---------- gráficos (SVG) ----------
 def barras(itens: Sequence[Tuple[str, float, str]], largura: int = 640, cor: str = VERDE) -> str:
     """Barras horizontais: (rótulo, fração 0–1, texto à direita). A barra vai de 0 a 100% do denominador dito no título."""
@@ -70,9 +88,9 @@ def barras(itens: Sequence[Tuple[str, float, str]], largura: int = 640, cor: str
 
 def linhas_mensais(series: List[Tuple[str, List[Optional[float]], str]], rotulos: List[str], fmt, largura: int = 640, altura: int = 210) -> str:
     """Linhas mês a mês; ponto ausente = lacuna (sem registro, nunca zero)."""
-    esq, dir_, top, base = 64, 12, 12, 34
+    esq, dir_, top, base = 64, 30, 12, 34
     vals = [v for _, s, _ in series for v in s if v is not None]
-    mx = max(vals) if vals else 1
+    mx = teto(max(vals) if vals else 1)
     n = len(rotulos)
     X = lambda i: esq + (largura - esq - dir_) * (i / max(1, n - 1))
     Y = lambda v: top + (altura - top - base) * (1 - v / mx)
@@ -129,7 +147,8 @@ p{{margin:0 0 7pt}}
 .kpi{{padding:7pt 8pt 7pt 0}}.kpi span{{display:block;font-size:8.5pt;color:{TINTA2}}}
 .kpi b{{display:block;font:500 15pt/1.2 Newsreader,serif}}.kpi small{{font-size:8.5pt;color:{APOIO}}}
 table{{width:100%;border-collapse:collapse;font-size:9pt;font-variant-numeric:tabular-nums;margin:4pt 0 6pt}}
-th,td{{text-align:right;padding:3.5pt 5pt;border-bottom:1px solid {REGRA}}}th:first-child,td:first-child{{text-align:left}}
+th,td{{text-align:right;padding:3.5pt 5pt;border-bottom:1px solid {REGRA};white-space:nowrap}}th:first-child,td:first-child{{text-align:left}}
+td.txt,th.txt{{text-align:left;white-space:normal}}
 thead th{{border-bottom:1px solid {TINTA};font-weight:600}}
 .leitura{{border-left:3pt solid {OCRE};background:#FAF6EE;padding:8pt 11pt;margin:8pt 0}}
 .leitura .kicker{{color:{OCRE}}}

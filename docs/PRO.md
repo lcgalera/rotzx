@@ -220,5 +220,33 @@ Código em **repositório privado** `rotzx-pro` (briefings e dados de clientes n
 - **Ensaio geral:** um diagnóstico e um mês de acompanhamento completos com escopos de teste, enviados só para o dono, antes de cobrar.
 - **Registro:** cada passo gera uma decisão em `docs/DECISOES.md` (D76 em diante).
 
+## Briefing (Google Forms)
+O dono cria o formulário na conta Google dele; a planilha de respostas fica lá, nunca no repositório. Até o link existir, o botão da página `/pro/` aponta para o LinkedIn (`FORMULARIO` em `rotzx/pro/pagina.py`).
+
+**Título:** "rotzx Pro: conte a sua pergunta". **Descrição:** "Conte o que você quer entender. Eu respondo por e-mail com o escopo, o prazo e o valor antes de começar. Análise de dados públicos; não é recomendação de investimento ou de negócio."
+
+| # | Pergunta | Tipo | Obrigatória |
+|---|---|---|---|
+| 1 | Nome | resposta curta | sim |
+| 2 | Empresa e cargo | resposta curta | não |
+| 3 | E-mail | resposta curta (validação de e-mail) | sim |
+| 4 | Sua pergunta, com suas palavras | parágrafo | sim |
+| 5 | Produtos (nome ou NCM) | parágrafo | sim |
+| 6 | Países ou regiões de interesse | resposta curta | não |
+| 7 | Estado (UF) | resposta curta | não |
+| 8 | Período (ex.: desde 2015, últimos 12 meses) | resposta curta | não |
+| 9 | Você exporta, importa ou os dois? | múltipla escolha: exporto / importo / os dois / nenhum, estou estudando o mercado | sim |
+| 10 | Para que vai usar a análise? | parágrafo | não |
+| 11 | Prazo | múltipla escolha: até 1 semana / até 2 semanas / sem pressa | não |
+| 12 | Como conheceu o rotzx? | resposta curta | não |
+| 13 | "Li a política de privacidade (link para /pro/privacidade/) e concordo com o uso destes dados para responder ao meu pedido." | caixa de seleção | sim |
+
+Configurações: não coletar e-mail automaticamente (a pergunta 3 já pede), não exigir login, mostrar mensagem de confirmação "Recebido. Respondo por e-mail em até 2 dias úteis."
+
+## Situação da Fase 0 (D77)
+- Página `/pro/` e política de privacidade `/pro/privacidade/`: prontas, geradas no build por `rotzx/pro/pagina.py`.
+- Estudo-amostra de fertilizantes: `prototipos/globo/pro/estudo-fertilizantes.pdf`, gerado por `rotzx pro-amostra`. O bloco "Leitura do analista" é rascunho e precisa da revisão do dono.
+- Falta: link do formulário e revisão do PDF pelo dono; só então publicar.
+
 ## Primeiro passo depois da aprovação
 **Fase 0:** a página "rotzx Pro" com o formulário de briefing e o estudo-amostra em PDF. Antes, o spike da API mensal (meses, kg, UF), que define o que os estudos conseguem mostrar. A formalização com contador corre em paralelo, com o dono.

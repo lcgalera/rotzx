@@ -380,6 +380,8 @@
   .acoes-dado { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; }
   .acoes-dado .btn, .btn-leve { min-height: 32px; padding: 5px 11px; font-size: 13px; color: var(--ink-2); }
   .btn-leve { border-color: var(--rule-2); background: transparent; }
+  .pro-link { text-decoration: none; font-weight: 600; color: var(--accent-ink); }
+  body.embed .pro-link { display: none; }
   a.pag-est { display: inline-flex; align-items: center; text-decoration: none; }
   body.embed a.pag-est { display: none; }
   #dlgIncorporar { max-width: min(560px, calc(100vw - 32px)); border: 1px solid var(--rule-2); border-radius: 4px; background: var(--surface); color: var(--ink); padding: 22px 24px; }
@@ -502,6 +504,7 @@
     <input id="busca" type="search" placeholder="Buscar país ou território…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaLista" aria-autocomplete="list">
     <ul id="buscaLista" role="listbox" hidden></ul>
   </div>
+  <a class="fontes-link pro-link" href="pro/">Pro</a>
   <button class="fontes-link" type="button" id="abrirFontes">Fontes e método</button>
   <button class="tema" type="button" id="guiaAbrir" aria-label="Como usar o atlas: guia passo a passo" title="Como usar o atlas">?</button>
   <button class="tema" type="button" id="tema" aria-label="Tema: automático. Trocar">◐</button>
@@ -1226,7 +1229,7 @@ function vistaInicio() {
         ${porta("Produtos", "Destinos e origens de cada produto", { vista: "produto", pais: null, prod: null, m: "corrente" })}
         ${porta("Comparar", "Dois parceiros lado a lado", { vista: "comparar", pais: null, prod: null, m: "corrente" })}
       </ul></section>
-    <footer class="assinatura">${brSilhueta()}<p class="contato"><a href="pais/">Todos os países</a> · <a href="produto/">Todos os produtos</a> · Autor: <a href="https://www.linkedin.com/in/lucasfgalera" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/lcgalera" target="_blank" rel="noopener">GitHub</a></p>
+    <footer class="assinatura">${brSilhueta()}<p class="contato"><a href="pais/">Todos os países</a> · <a href="produto/">Todos os produtos</a> · <a href="pro/">rotzx Pro: análise sob demanda</a> · Autor: <a href="https://www.linkedin.com/in/lucasfgalera" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/lcgalera" target="_blank" rel="noopener">GitHub</a></p>
       <p class="meta"><span>rotzx</span><span>retrato dos dados coletado em ${quando(H.gerado_em)}, sem atualização em tempo real</span><span><button type="button" class="link" data-ir='${irJ({ vista: "fontes", pais: null, prod: null, m: "corrente" })}'>Fontes e método</button></span></p></footer>`;
 }
 // barras curtas dos 3 maiores parceiros de um produto num ano (parte no total do produto, de 0 a 100%)

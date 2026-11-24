@@ -1019,3 +1019,17 @@ As outras perguntas ficam em "Outras perguntas".
 **Cobertura:** 2026 já tem dado de janeiro a outubro.
 
 **Ainda não muda nada no site público.**
+
+### D77 · 24/11/2026 · rotzx Pro, Fase 0: página, briefing e estudo-amostra
+**Pedido do dono:** começar a Fase 0 do plano (D76), com briefing por Google Forms e estudo-amostra sobre fertilizantes.
+
+**O que entrou:**
+- **`rotzx/pro/`:** coleta mensal no Comex Stat (mês, kg, país, UF, porto/aeroporto, via e NCM, filtro por SH4, cache em `data/fontes/pro/`), indicadores puros (fatia com denominador, p.p., US$/t, efeito preço × volume exato, dependência) e relatório em HTML → PDF pelo Chromium sem tela, com gráficos em SVG gerados em Python e a identidade do atlas.
+- **Estudo-amostra** "De quem o Brasil compra fertilizantes, e o que mudou em 2026" (SH4 3101–3105, importação, 2024, 2025 e jan–out 2026 contra jan–out 2025), 9 páginas, em `prototipos/globo/pro/estudo-fertilizantes.pdf`, pelo comando `rotzx pro-amostra`. A interpretação fica num bloco separado, "Leitura do analista", marcado como interpretação.
+- **Página `/pro/`** (o que é, para quem, exemplos de perguntas, serviços sem preço, como funciona, link para a amostra, aviso de que não é recomendação) e **política de privacidade `/pro/privacidade/`** (LGPD: dados, finalidade, 12 meses de guarda, exclusão), geradas no build no estilo das páginas estáticas, com a mesma CSP e medição; `/pro/` e `/pro/privacidade/` entram no sitemap.
+- **Links:** "Pro" no cabeçalho do atlas (escondido no modo incorporado), no rodapé do atlas e na navegação das páginas estáticas.
+- **Briefing:** as 13 perguntas do Google Forms estão em `docs/PRO.md`; o dono cria o formulário. Até lá, o botão aponta para o LinkedIn.
+
+**Conferência:** a soma mensal de 2025 por fornecedor bate com o total anual do grupo publicado no atlas (teste em `tests/test_pro.py`). Chromium sem tela em 1440×900 e 390×844: `/pro/`, `/pro/privacidade/` e o atlas sem erros e sem violação de CSP, sem rolagem horizontal.
+
+**Publicação:** só depois do link do formulário e da revisão do PDF pelo dono.

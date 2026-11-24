@@ -41,6 +41,7 @@ Comandos (`.venv/bin/python -m rotzx <comando>`):
 | `detalhe-gerar` | refaz o detalhamento ano a ano (Comex Stat) |
 | `detalhe-validar` | confere o detalhamento antes de publicar |
 | `mundo-codigos` | regera a tabela de países |
+| `pro-amostra` | refaz o estudo-amostra do rotzx Pro (PDF) |
 | `publicar` | gera o site em `site/` |
 
 A publicação é feita pelo workflow **Publicar**, na aba Actions do GitHub.
