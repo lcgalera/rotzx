@@ -1192,3 +1192,18 @@ As outras perguntas ficam em "Outras perguntas".
 - 56 testes, entre eles âncora do café, totais cruzados, rigor do HTML, amostras e miniaturas da /pro/, e lacunas do "Quem faz" que nunca chegam à página;
 - revisão visual das 11 páginas do café;
 - Chromium em 1440×900 e 390×844, nos temas claro e escuro, no atlas, na /pro/ e nas páginas de país: sem erros, sem violação de CSP e sem rolagem lateral.
+
+**Revisão do café no mesmo dia (pedido do dono: "muito cru e pouco direcionado"):**
+- **Público e pergunta, escolhidos pelo dono:** cooperativa e produtor; "Quem paga mais pelo café brasileiro, e o que mudou em 2026" (10 páginas).
+- **Unidade:** US$ por saca de 60 kg e sacas, a unidade de quem vende café.
+- **Seções próprias** (gancho `secoes` do motor):
+  1. quem paga mais, com o prêmio de cada destino com 1% ou mais do volume sobre a média do Brasil;
+  2. o prêmio mês a mês dos 4 maiores compradores;
+  3. arábica × conilon pelo estado produtor, com a produção por espécie da Conab (3º levantamento de 2026, gov.br, baixado e lido na fonte);
+  4. quando vender: o preço por saca mês a mês, por ano;
+  5. para onde foi o volume;
+  6. café solúvel e a tarifa americana.
+- **Contexto:** ganha a safra 2026 da Conab.
+- **Nota:** o preço por destino mistura preço e tipo (arábica ou conilon).
+- **Gancho `grandes`:** os números da capa são próprios do estudo (preço por saca, sacas e valor).
+- **Data da coleta:** o motor passa a imprimir a data das consultas em cache (a data em que os dados foram de fato coletados), não a data de geração do PDF.

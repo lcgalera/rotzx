@@ -53,7 +53,7 @@ CONTEXTO = [
 CONTEXTO_CONSULTA = "24/11/2026"
 
 
-def extras(d, PN, UV, ytd, pais):
+def extras(d, PN, UV, ytd, pais, UF=None):
     """O que só este estudo usa: o que mais mudou no que a China vende (explica o mix dela) e os dados dos sinais."""
     from ..estudo import _soma
     oficial = d["ncm_oficial"]

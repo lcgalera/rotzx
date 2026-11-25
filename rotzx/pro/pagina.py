@@ -10,7 +10,7 @@ from typing import Callable, List
 
 FORMULARIO = "https://docs.google.com/forms/d/e/1FAIpQLScjz5rhGd8X_tY7Xmy04O2P9NqgBCd5dU8L-s_cuMtGcxPPMg/viewform"  # link do Google Forms do briefing (preenchido pelo dono)
 LINKEDIN = "https://www.linkedin.com/in/lucasfgalera"
-PAGINAS_AMOSTRA = {"fertilizantes": 12, "cafe": 11}  # páginas de cada estudo (conferido no teste contra o PDF)                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
+PAGINAS_AMOSTRA = {"fertilizantes": 12, "cafe": 10}  # páginas de cada estudo (conferido no teste contra o PDF)                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
 e = html.escape
 
 PERGUNTAS = [
@@ -41,11 +41,11 @@ PLANOS = [
 ]
 # D81: os estudos-amostra mostrados na página (um de importação, um de exportação)
 AMOSTRAS = [
-    {"slug": "cafe", "fluxo": "Exportação", "titulo": "Para onde o Brasil vende café, e o que mudou em 2026",
-     "meta": "SH4 0901 e café solúvel · exportação · 2024 a out/2026",
-     "itens": ["Volume × preço × mix", "Preço por produto e destino", "Arábica e robusta (Banco Mundial)", "Dependência por destino",
-               "Calendário de embarque", "Estados e portos", "Contexto de mercado", "Leitura por perfil"],
-     "alt_tras": "Página do estudo de café que divide a variação do valor exportado em volume, preço e mix",
+    {"slug": "cafe", "fluxo": "Exportação", "titulo": "Quem paga mais pelo café brasileiro, e o que mudou em 2026",
+     "meta": "Para cooperativas e produtores · café cru e solúvel · 2024 a out/2026",
+     "itens": ["Preço por saca de cada destino", "Prêmio sobre a média do Brasil", "Arábica × conilon pelo estado produtor (Conab)",
+               "Quando vender: o preço mês a mês", "Para onde foi o volume", "Café solúvel e a tarifa americana", "Leitura para produtor e cooperativa"],
+     "alt_tras": "Página do estudo de café com o prêmio de cada destino sobre a média do Brasil, em US$ por saca",
      "alt_frente": "Capa do estudo-amostra de café"},
     {"slug": "fertilizantes", "fluxo": "Importação", "titulo": "De quem o Brasil compra fertilizantes, e o que mudou em 2026",
      "meta": "SH4 3101 a 3105 · importação · 2024 a out/2026",

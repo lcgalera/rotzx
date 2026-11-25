@@ -115,6 +115,8 @@ def gerar(d: dict, destino: Path, cfg=None) -> Path:
     aba("Fontes", "Fontes, licenças e contexto", "rotzx Pro · estudo-amostra · não é recomendação de investimento ou de negócio.", ["Item", "Detalhe"],
         [["Comex Stat (MDIC)", "api-comexstat.mdic.gov.br, rota /general; dados abertos do governo federal"],
          ["Pink Sheet (Banco Mundial)", f"{referencia.FONTE}; {referencia.URL}"]])
+    if cfg is not None and cfg.planilha_extra:                 # D81: abas próprias do recorte
+        cfg.planilha_extra(d, aba)
     destino.parent.mkdir(parents=True, exist_ok=True)
     wb.save(destino)
     return destino

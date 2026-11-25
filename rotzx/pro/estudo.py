@@ -61,7 +61,12 @@ class Recorte:
     miniaturas: Tuple[int, ...] = (1, 3)
     titulo_doc: str = ""
     licencas_extra: str = ""
-    ancora: str = ""                            # frase da conferência com o atlas (padrão: soma por parceiro = total do atlas)
+    ancora: str = ""
+    # D81: ganchos para estudos com perguntas próprias (ex.: café, "quem paga mais")
+    secoes: Optional[Callable] = None           # secoes(cfg, d) → [HTML de cada seção]; substitui as seções 1 a 6 padrão
+    grandes: Optional[Callable] = None          # grandes(d) → HTML dos 3 números da capa
+    planilha_extra: Optional[Callable] = None   # planilha_extra(d, aba) → abas a mais na planilha
+    perfis_titulo: str = "O que os números significam para cada perfil"                            # frase da conferência com o atlas (padrão: soma por parceiro = total do atlas)
     L: Dict[str, str] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -121,7 +126,7 @@ def calcular(cfg: Recorte, X: Optional[dict] = None, log=print) -> dict:
     ult = max(x["mes"] for x in PN[2026])
     ytd = list(range(1, ult + 1))
     per = {"2024": (2024, None), "2025": (2025, None), "ytd25": (2025, ytd), "ytd26": (2026, ytd)}
-    d: dict = {"ultimo_mes": ult, "ry": f"jan–{MESES[ult - 1]}", "coleta": date.today().strftime("%d/%m/%Y"), "per": {}, "fluxo": cfg.fluxo}
+    d: dict = {"ultimo_mes": ult, "ry": f"jan–{MESES[ult - 1]}", "coleta": coleta.data_da_coleta(ANOS, cfg.fluxo, cfg.chaves).strftime("%d/%m/%Y"), "per": {}, "fluxo": cfg.fluxo}
     oficial = {x["ncm"]: x["ncm_nome"] for a in ANOS for x in PN[a]}
     d["ncm_oficial"] = oficial
     pt = lambda v, kg: ind.preco_t(v, kg) if imp else None          # frete e CIF por tonelada: só na importação
@@ -251,7 +256,7 @@ def calcular(cfg: Recorte, X: Optional[dict] = None, log=print) -> dict:
     d["vol_gap"] = ind.variacao(d["cal_acum"][2025][ult], d["cal_acum"][2026][ult])
     d["sinais"] = {"vol_prox_25": d["vol_prox_25"], "vol_gap": d["vol_gap"]}
     if cfg.extras:
-        cfg.extras(d, PN, UV, ytd, pais)
+        cfg.extras(d, PN, UV, ytd, pais, UF)
     # contexto: o que o Brasil negociou com os países citados (fato do Comex ao lado do evento)
     d["contexto"] = []
     for c in cfg.contexto:
@@ -312,12 +317,13 @@ def html(cfg: Recorte, d: dict) -> str:
     corpo = []
 
     # capa
+    grandes = cfg.grandes(d) if cfg.grandes else f"""<div class="grandes"><div><span>{L['Valor']}</span><b>{e(R.usd(tb['fob']))}</b><small>{e(R.sinal_pct(ind.variacao(ta['fob'], tb['fob'])))} sobre {ry}/2025 · US$ FOB</small></div>
+<div><span>Volume</span><b>{e(R.ton(tb['kg']))}</b><small>{e(R.sinal_pct(ind.variacao(ta['kg'], tb['kg'])))} sobre {ry}/2025 · peso líquido</small></div>
+<div><span>Preço médio</span><b>{e(R.usd_t(B['preco_t']))}</b><small>{e(R.sinal_pct(dp['total']))} sobre {ry}/2025, dos quais {e(R.sinal_pp(dp['preco']))} de preço dentro de cada produto</small></div></div>"""
     corpo.append(f"""<section class="capa"><div><div class="marca">rotzx</div><p class="sub" style="margin-top:4pt">Pro · análise sob demanda com dados públicos e oficiais</p></div>
 <div><span class="selo">Estudo-amostra</span><h1 style="margin-top:12pt">{e(cfg.titulo)}</h1>
 <p class="sub">{cfg.subtitulo(d)}</p>
-<div class="grandes"><div><span>{L['Valor']}</span><b>{e(R.usd(tb['fob']))}</b><small>{e(R.sinal_pct(ind.variacao(ta['fob'], tb['fob'])))} sobre {ry}/2025 · US$ FOB</small></div>
-<div><span>Volume</span><b>{e(R.ton(tb['kg']))}</b><small>{e(R.sinal_pct(ind.variacao(ta['kg'], tb['kg'])))} sobre {ry}/2025 · peso líquido</small></div>
-<div><span>Preço médio</span><b>{e(R.usd_t(B['preco_t']))}</b><small>{e(R.sinal_pct(dp['total']))} sobre {ry}/2025, dos quais {e(R.sinal_pp(dp['preco']))} de preço dentro de cada produto</small></div></div></div>
+{grandes}</div>
 <div><p class="nota">Exemplo do formato de um diagnóstico do rotzx Pro, com dados reais. Comex Stat (MDIC), dados coletados em {e(d['coleta'])}; Pink Sheet do Banco Mundial ({e(d['ref_atualizado'] or 'sem arquivo')}). Análise de dados públicos; não é recomendação de investimento ou de negócio.</p>
 <p class="nota">lcgalera.github.io/rotzx/pro · tabelas deste estudo em planilha: {cfg.planilha.name}</p></div></section>""")
 
@@ -327,6 +333,8 @@ def html(cfg: Recorte, d: dict) -> str:
 <h3>3 sinais para acompanhar no próximo mês</h3>{cfg.sinais(d)}
 <p class="fonte">{fonte} Participações sobre o total {L['adj']} do grupo no período. Pink Sheet: World Bank Commodity Price Data, CC BY 4.0. Os limiares dos sinais são critérios de leitura deste estudo, não previsões.</p></section>""")
 
+    padrao = []
+    corpo_ini = len(corpo)
     # 1. volume × preço × mix
     fmt_c = lambda v, t: R.usd(v) if t == "total" else R.sinal_usd(v)
     passos = [(f"{ry}/25", dec["v0"], "total"), ("Volume", dec["volume"], "delta"), ("Preço", dec["preco"], "delta"), ("Mix", dec["mix"], "delta")]
@@ -457,6 +465,12 @@ def html(cfg: Recorte, d: dict) -> str:
 {nota_via}
 <p class="fonte">{fonte} Na exportação, o Comex Stat registra como UF o estado produtor da mercadoria, e a unidade da Receita é a de despacho. Partes sobre o valor total exportado do grupo em {ry}/2026. A API não informa frete na exportação. IRF = Inspetoria da Receita Federal.</p></section>""")
 
+    n_secoes = 6
+    if cfg.secoes:                                              # o recorte troca as seções 1 a 6 pelas suas
+        proprias = cfg.secoes(cfg, d)
+        corpo[corpo_ini:] = proprias
+        n_secoes = len(proprias)
+    nc, nf, nd = n_secoes + 1, n_secoes + 2, n_secoes + 3
     # 7. contexto
     cx = []
     for c in d["contexto"]:
@@ -465,17 +479,17 @@ def html(cfg: Recorte, d: dict) -> str:
         cx.append(f"""<div class="ctx"><h3>{e(c['tema'])}</h3><p>{e(c['fato'])}</p>
 {f'<p class="nota"><b>{L["Mov"]} brasileiras ({ry}/25 → {ry}/26, US$ FOB):</b> {compras or "sem registro"}.</p>' if c["paises"] else ""}<p class="fonte">Fontes: {fontes}.</p></div>""")
     titulo7 = ("Contexto de fornecimento", "O que aconteceu com os maiores fornecedores") if imp else ("Contexto de mercado", "O que aconteceu com os maiores destinos")
-    corpo.append(f"""<section class="sec quebra"><div class="kicker">7 · {titulo7[0]}</div><h2>{titulo7[1]}</h2>
+    corpo.append(f"""<section class="sec quebra"><div class="kicker">{nc} · {titulo7[0]}</div><h2>{titulo7[1]}</h2>
 <p class="nota">Contexto, não causa comprovada: os fatos abaixo são públicos e datados e acontecem ao mesmo tempo que as mudanças nas {L['mov']}, mas os dados de comércio não provam relação de causa. Só entram itens confirmados em mais de uma fonte (consulta em {cfg.contexto_consulta}).</p>
 {''.join(cx)}</section>""")
 
     # 8. o que fazer com isso
-    corpo.append(f"""<section class="sec quebra"><div class="kicker">8 · O que fazer com isso</div><h2>O que os números significam para cada perfil</h2>
+    corpo.append(f"""<section class="sec quebra"><div class="kicker">{nf} · O que fazer com isso</div><h2>{cfg.perfis_titulo}</h2>
 <p class="nota">Interpretação, não recomendação de compra, venda ou crédito. Cada bloco aponta o que observar a partir dos números deste estudo.</p>
 {''.join(f'<div class="perfil"><h3>{e(t)}</h3><p>{e(x)}</p></div>' for t, x in cfg.perfis(d))}</section>""")
 
     # 9. o que o diagnóstico inclui
-    corpo.append(f"""<section class="sec"><div class="kicker">9 · O que o diagnóstico completo inclui</div><h2>Do exemplo para a sua pergunta</h2>
+    corpo.append(f"""<section class="sec"><div class="kicker">{nd} · O que o diagnóstico completo inclui</div><h2>Do exemplo para a sua pergunta</h2>
 <ul class="inclui">
 <li><b>O seu recorte:</b> os produtos (por NCM), as {L['origens']}, os estados e os portos que importam para você, em vez do grupo inteiro.</li>
 <li><b>Seus preços contra a média do país:</b> você envia os preços que pagou (ou recebeu), e o estudo compara com a média do Comex Stat por NCM, {L['origem']} e mês, com a mesma base (FOB ou CIF).</li>
@@ -493,7 +507,7 @@ def html(cfg: Recorte, d: dict) -> str:
 <p><b>Pink Sheet (Banco Mundial).</b> World Bank Commodity Price Data, arquivo mensal CMO-Historical-Data-Monthly.xlsx ({e(d['ref_atualizado'] or 'sem arquivo')}), licença CC BY 4.0. {cfg.metodo_series}</p>
 <p><b>Volume × preço × mix.</b> Com Q = peso total, sᵢ = fatia da NCM no peso e pᵢ = US$/kg da NCM: volume = (Q₁ − Q₀) × preço médio₀; preço = Q₁ × Σ s₁ᵢ (p₁ᵢ − p₀ᵢ); mix = Q₁ × Σ (s₁ᵢ − s₀ᵢ) p₀ᵢ. A soma é exatamente a variação de valor, conferida no código. NCM sem registro no período base entra só no mix; valor sem peso registrado ficaria numa parcela à parte.</p>
 {hhi_frete}
-<p>Valores em dólares correntes, sem correção pela inflação. Dados do ano corrente podem ser revistos pela fonte. Ausência de registro aparece como “sem registro”, nunca como zero. {titulo7[0]}: fontes citadas na seção 7.</p>
+<p>Valores em dólares correntes, sem correção pela inflação. Dados do ano corrente podem ser revistos pela fonte. Ausência de registro aparece como “sem registro”, nunca como zero. {titulo7[0]}: fontes citadas na seção {nc}.</p>
 <h3>Descrições oficiais das NCMs citadas</h3>
 <ol class="apendice">{''.join(f'<li><b>{c}</b> ({e(N.ncm(c, d["ncm_oficial"].get(c, c)))}): {e(d["ncm_oficial"].get(c, "sem registro"))}</li>' for c in citadas)}</ol>
 <p class="aviso">rotzx Pro · lcgalera.github.io/rotzx/pro · Análise de dados públicos; não é recomendação de investimento ou de negócio. Licenças: Comex Stat (dados abertos do governo federal), Pink Sheet do Banco Mundial (CC BY 4.0).</p></section>""")

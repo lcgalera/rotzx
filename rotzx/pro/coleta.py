@@ -96,3 +96,10 @@ def recorte_cruzado(anos: List[int], fluxo: str, sh4: List[str], cache: Optional
                     chaves=("pais_ncm", "urf_via", "uf")) -> Dict[str, Dict[int, List[dict]]]:
     """{chave: {ano: linhas}} para as consultas cruzadas pedidas (padrão: país × NCM, URF × via, UF)."""
     return {c: {a: cruzado(a, fluxo, c, sh4, cache, log) for a in anos} for c in chaves}
+
+
+def data_da_coleta(anos: List[int], fluxo: str, chaves, cache: Optional[Path] = CACHE):
+    """Data (date) da consulta mais antiga em cache para o recorte: é a data em que os dados foram de fato coletados (D81)."""
+    from datetime import date
+    arqs = [a for ano in anos for c in chaves for a in (cache.glob(f"{ano}-{fluxo}-{c}-*.json") if cache else [])]
+    return date.fromtimestamp(min(a.stat().st_mtime for a in arqs)) if arqs else date.today()

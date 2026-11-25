@@ -160,6 +160,24 @@ def cascata(passos, fmt, largura: int = 640, altura: int = 210) -> str:
     return f'<svg class="graf" viewBox="0 0 {largura} {altura}" width="100%" role="img">{"".join(g)}</svg>'
 
 
+def divergente(itens, largura: int = 640, fmt=lambda v: f"{v:+.1%}") -> str:
+    """Barras que saem do centro (0): à direita (verde) acima da referência, à esquerda (vermelho) abaixo. itens = [(rótulo, fração, texto)]."""
+    h, top, esq_rot = 22, 4, 170
+    alt = top + h * len(itens) + 6
+    mx = max(abs(v) for _, v, _ in itens) or 1
+    meio = esq_rot + (largura - esq_rot - 110) / 2
+    meia = (largura - esq_rot - 110) / 2
+    g = [f'<line x1="{meio:.1f}" x2="{meio:.1f}" y1="0" y2="{alt}" stroke="{TINTA2}" stroke-width=".8"/>']
+    for i, (rot, v, txt) in enumerate(itens):
+        y = top + i * h
+        w = meia * abs(v) / mx
+        x = meio if v >= 0 else meio - w
+        g.append(f'<text x="0" y="{y + 15}" class="rot">{e(rot)}</text>'
+                 f'<rect x="{x:.1f}" y="{y + 5}" width="{max(1.2, w):.1f}" height="12" fill="{VERDE if v >= 0 else NEG}"/>'
+                 f'<text x="{largura}" y="{y + 15}" class="val" text-anchor="end">{e(txt)}</text>')
+    return f'<svg class="graf" viewBox="0 0 {largura} {alt}" width="100%" role="img">{"".join(g)}</svg>'
+
+
 # ---------- página ----------
 def documento(titulo: str, corpo: str, css_extra: str = "") -> str:
     f = FONTES.as_uri()
