@@ -92,15 +92,21 @@ def linhas_mensais(series: List[Tuple[str, List[Optional[float]], str]], rotulos
     vals = [v for _, s, *_ in series for v in s if v is not None]
     mn = min(vals) if vals else 0
     mx = teto(max(vals) if vals else 1)
+    lo = 0.0
+    if mn < 0:                                                      # D82: eixo simétrico em torno do zero (ex.: prêmio em %)
+        mx = teto(max(abs(mn), max(vals)))
+        lo = -mx
     n = len(rotulos)
     X = lambda i: esq + (largura - esq - dir_) * (i / max(1, n - 1))
-    Y = lambda v: top + (altura - top - base) * (1 - v / mx)
+    Y = lambda v: top + (altura - top - base) * (1 - (v - lo) / ((mx - lo) or 1))
     g = []
     for k in range(5):
-        v = mx * k / 4
+        v = lo + (mx - lo) * k / 4
         y = Y(v)
         g.append(f'<line x1="{esq}" x2="{largura - dir_}" y1="{y:.1f}" y2="{y:.1f}" stroke="{REGRA}" stroke-dasharray="2 3"/>'
                  f'<text x="{esq - 6}" y="{y + 4:.1f}" class="eixo" text-anchor="end">{e(fmt(v))}</text>')
+    if lo < 0:                                                      # linha do zero, mais forte
+        g.append(f'<line x1="{esq}" x2="{largura - dir_}" y1="{Y(0):.1f}" y2="{Y(0):.1f}" stroke="{TINTA2}" stroke-width=".9"/>')
     for i, r in enumerate(rotulos):
         if todos or r.endswith("/01") or i == n - 1:
             g.append(f'<text x="{X(i):.1f}" y="{altura - 12}" class="eixo" text-anchor="middle">{e(r)}</text>')
@@ -165,8 +171,8 @@ def divergente(itens, largura: int = 640, fmt=lambda v: f"{v:+.1%}") -> str:
     h, top, esq_rot = 22, 4, 170
     alt = top + h * len(itens) + 6
     mx = max(abs(v) for _, v, _ in itens) or 1
-    meio = esq_rot + (largura - esq_rot - 110) / 2
-    meia = (largura - esq_rot - 110) / 2
+    meio = esq_rot + (largura - esq_rot - 235) / 2
+    meia = (largura - esq_rot - 235) / 2
     g = [f'<line x1="{meio:.1f}" x2="{meio:.1f}" y1="0" y2="{alt}" stroke="{TINTA2}" stroke-width=".8"/>']
     for i, (rot, v, txt) in enumerate(itens):
         y = top + i * h

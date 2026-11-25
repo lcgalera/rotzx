@@ -52,7 +52,9 @@ def recorte(anos: List[int], fluxo: str, sh4: List[str], niveis=tuple(NIVEIS), c
 CAMPOS = {"pais": "noPaispt", "ncm": "noNcmpt", "urf": "noUrf", "via": "noVia", "uf": "noUf"}
 CRUZADOS = {"pais_ncm": ("pais", "ncm"), "urf_via": ("urf", "via"), "uf": ("uf",),
             # D81: com a NCM junto, para recortes que filtram NCMs dentro de uma posição SH4 (ex.: só o café solúvel na 2101)
-            "urf_via_ncm": ("urf", "via", "ncm"), "uf_ncm": ("uf", "ncm")}
+            "urf_via_ncm": ("urf", "via", "ncm"), "uf_ncm": ("uf", "ncm"),
+            # D82: destino × estado produtor × NCM (prêmio por tipo de café, pelo estado)
+            "pais_uf_ncm": ("pais", "uf", "ncm")}
 
 
 def filtro_cruzado(ano: int, fluxo: str, detalhes, sh4: List[str], mes_ate: int = 12, frete: bool = True) -> dict:

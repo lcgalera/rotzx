@@ -10,7 +10,7 @@ from typing import Callable, List
 
 FORMULARIO = "https://docs.google.com/forms/d/e/1FAIpQLScjz5rhGd8X_tY7Xmy04O2P9NqgBCd5dU8L-s_cuMtGcxPPMg/viewform"  # link do Google Forms do briefing (preenchido pelo dono)
 LINKEDIN = "https://www.linkedin.com/in/lucasfgalera"
-PAGINAS_AMOSTRA = {"fertilizantes": 12, "cafe": 10}  # páginas de cada estudo (conferido no teste contra o PDF)                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
+PAGINAS_AMOSTRA = {"fertilizantes": 12, "cafe": 11}  # páginas de cada estudo (conferido no teste contra o PDF)                                                 # páginas do estudo-fertilizantes.pdf gerado por `rotzx pro-amostra`
 e = html.escape
 
 PERGUNTAS = [
@@ -43,9 +43,9 @@ PLANOS = [
 AMOSTRAS = [
     {"slug": "cafe", "fluxo": "Exportação", "titulo": "Quem paga mais pelo café brasileiro, e o que mudou em 2026",
      "meta": "Para cooperativas e produtores · café cru e solúvel · 2024 a out/2026",
-     "itens": ["Preço por saca de cada destino", "Prêmio sobre a média do Brasil", "Arábica × conilon pelo estado produtor (Conab)",
-               "Quando vender: o preço mês a mês", "Para onde foi o volume", "Café solúvel e a tarifa americana", "Leitura para produtor e cooperativa"],
-     "alt_tras": "Página do estudo de café com o prêmio de cada destino sobre a média do Brasil, em US$ por saca",
+     "itens": ["Quem paga mais pelo arábica e pelo conilon", "Preço por saca em dólar e em real", "Estados produtores com a Conab",
+               "Quando vender: o preço mês a mês", "Quantas sacas pagam o adubo", "Café solúvel e a tarifa americana", "Leitura para produtor e cooperativa"],
+     "alt_tras": "Página do estudo de café que explica por que separar arábica e conilon e mostra o prêmio de cada destino no arábica",
      "alt_frente": "Capa do estudo-amostra de café"},
     {"slug": "fertilizantes", "fluxo": "Importação", "titulo": "De quem o Brasil compra fertilizantes, e o que mudou em 2026",
      "meta": "SH4 3101 a 3105 · importação · 2024 a out/2026",

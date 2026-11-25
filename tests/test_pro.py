@@ -244,3 +244,40 @@ def test_cafe_html_rigor():
     assert "arábica" in h and "robusta" in h and "estado produtor" in h
     for c in cfg.contexto:
         assert c["fontes"] and all(dt and u.startswith("https://") for _, dt, u in c["fontes"])
+
+
+
+# ---------- D82: café v3 (prêmio por tipo, R$/saca, relação de troca) ----------
+def test_cafe_premio_por_tipo_reais_e_troca():
+    estudo, cfg, d = _cafe()
+    from rotzx.pro import coleta
+    from rotzx.pro.amostras import cafe
+    # destino × estado × NCM bate com destino × NCM no café cru
+    X = estudo.coletar(cfg, log=lambda *a: None)
+    for a in estudo.ANOS:
+        cru = sum(r["fob"] for r in X["pais_ncm"][a] if r["ncm"] == cafe.CRU)
+        assert d["cafe_x_ancora"][a] == pytest.approx(cru)
+    # dentro de cada grupo de estados: o prêmio é sobre a média do próprio grupo, e as partes do volume ficam ≤ 100%
+    for tipo, T in d["cafe_tipos"].items():
+        assert 0 < T["parte_total"] < 1 and sum(x["parte_vol"] for x in T["destinos"]) <= 1 + 1e-9
+        for x in T["destinos"]:
+            assert x["premio"] == pytest.approx(x["p1"] / T["media1"] - 1)
+    # relação de troca = US$/t CIF ÷ US$/saca FOB do mesmo período
+    kcl = d["cafe_troca"]["Cloreto de potássio (KCl)"]
+    assert kcl["ytd26"] == pytest.approx(kcl["cif26"] / d["cafe"]["p_br1"])
+    # R$/saca: quando há PTAX, o real e o dólar andam no mesmo sentido do câmbio do período
+    r = d["cafe_rs"]
+    if r["br1"]:
+        assert r["br1"] == pytest.approx(d["cafe"]["p_br1"] * r["ptax_ytd"][2026], rel=0.05)
+
+
+def test_ptax_sem_rede_nao_inventa(tmp_path, monkeypatch):
+    """Sem rede e sem cache, a PTAX devolve vazio (o estudo sai só em dólar); média mensal com fixture inventada."""
+    from rotzx.pro import cambio
+    def falha(*a, **k):
+        raise OSError("sem rede")
+    monkeypatch.setattr(cambio.urllib.request, "urlopen", falha)
+    assert cambio.media_mensal(2024, 2024, pasta=tmp_path, log=lambda *a: None) == ({}, None)
+    (tmp_path / "ptax-2024-2024.json").write_text('{"2024-01-02": 5.0, "2024-01-03": 5.2, "2024-02-01": 4.9}', encoding="utf-8")
+    m, consulta = cambio.media_mensal(2024, 2024, pasta=tmp_path, log=lambda *a: None)
+    assert m[(2024, 1)] == pytest.approx(5.1) and m[(2024, 2)] == pytest.approx(4.9) and consulta

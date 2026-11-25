@@ -469,7 +469,8 @@ def html(cfg: Recorte, d: dict) -> str:
     if cfg.secoes:                                              # o recorte troca as seções 1 a 6 pelas suas
         proprias = cfg.secoes(cfg, d)
         corpo[corpo_ini:] = proprias
-        n_secoes = len(proprias)
+        import re as _re
+        n_secoes = sum(1 for s in proprias if _re.search(r'class="kicker">\d+ ·', s))   # só as numeradas
     nc, nf, nd = n_secoes + 1, n_secoes + 2, n_secoes + 3
     # 7. contexto
     cx = []

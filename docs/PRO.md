@@ -268,7 +268,7 @@ Junto do PDF vai a planilha com as tabelas de cada seção (`estudo-fertilizante
 
 ## Escopo, amostras e "Quem faz" (D81)
 - **Escopo do Diagnóstico:** sem preço na página por enquanto. Parte de tudo o que está nas amostras e vai além: seções, produtos, países e estados escolhidos a partir do pedido da empresa ou da pessoa. Escopo, prazo e valor seguem por e-mail antes de qualquer compromisso.
-- **Amostras:** fertilizantes (importação, 12 páginas) e café (exportação, 10 páginas, para cooperativas e produtores), no mesmo motor (`rotzx/pro/estudo.py`). Um estudo novo é um arquivo em `rotzx/pro/amostras/`.
+- **Amostras:** fertilizantes (importação, 12 páginas) e café (exportação, 11 páginas, para cooperativas e produtores), no mesmo motor (`rotzx/pro/estudo.py`). Um estudo novo é um arquivo em `rotzx/pro/amostras/`.
 - **"Quem faz":** rascunho em `QUEM_FAZ` (`rotzx/pro/pagina.py`), com lacunas entre colchetes para o dono completar: nome, uma linha de apresentação, formação, experiência e o motivo de ter criado o rotzx. Enquanto houver lacuna, o bloco não aparece na página (teste garante).
 
 ## Primeiro passo depois da aprovação
