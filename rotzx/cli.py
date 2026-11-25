@@ -17,7 +17,8 @@ def main(argv=None):
     dg.add_argument("--ate", type=int, default=None, help="último ano (padrão: o último ano do retrato)")
     dv = sub.add_parser("detalhe-validar", help="confere os arquivos de detalhamento (docs/SCHEMA.md) antes de publicar")
     dv.add_argument("pasta", nargs="?", default=None, help="padrão: prototipos/globo/dados/detalhe")
-    sub.add_parser("pro-amostra", help="rotzx Pro: gera o estudo-amostra de fertilizantes em prototipos/globo/pro/ (coleta mensal do Comex Stat, com cache)")
+    pa = sub.add_parser("pro-amostra", help="rotzx Pro: gera os estudos-amostra em prototipos/globo/pro/ (PDF, planilha e miniaturas; coleta do Comex Stat com cache)")
+    pa.add_argument("--estudo", default="todos", help="fertilizantes, cafe ou todos (padrão)")
     pb = sub.add_parser("publicar", help="gera o site público em site/ (atlas, páginas por país e produto, cartões)")
     pb.add_argument("--sem-cartoes", action="store_true", help="não desenha os cartões de compartilhamento (build mais rápido)")
     args = ap.parse_args(argv)
@@ -37,8 +38,11 @@ def main(argv=None):
         from .mundo import detalhe
         _relatar(detalhe.validar_pasta(Path(args.pasta) if args.pasta else detalhe.PASTA), 200)
     elif args.cmd == "pro-amostra":
-        from .pro import amostra
-        amostra.gerar()
+        from .pro import estudo
+        from .pro.amostras import ESTUDOS
+        for nome, cfg in ESTUDOS.items():
+            if args.estudo in ("todos", nome):
+                estudo.gerar(cfg)
     elif args.cmd == "publicar":
         from . import public_build
         meta = public_build.build(cartoes=not args.sem_cartoes)

@@ -50,7 +50,9 @@ def recorte(anos: List[int], fluxo: str, sh4: List[str], niveis=tuple(NIVEIS), c
 
 # ---------- D80: consultas cruzadas (vários detalhes ao mesmo tempo) com frete, seguro e CIF ----------
 CAMPOS = {"pais": "noPaispt", "ncm": "noNcmpt", "urf": "noUrf", "via": "noVia", "uf": "noUf"}
-CRUZADOS = {"pais_ncm": ("pais", "ncm"), "urf_via": ("urf", "via"), "uf": ("uf",)}
+CRUZADOS = {"pais_ncm": ("pais", "ncm"), "urf_via": ("urf", "via"), "uf": ("uf",),
+            # D81: com a NCM junto, para recortes que filtram NCMs dentro de uma posição SH4 (ex.: só o café solúvel na 2101)
+            "urf_via_ncm": ("urf", "via", "ncm"), "uf_ncm": ("uf", "ncm")}
 
 
 def filtro_cruzado(ano: int, fluxo: str, detalhes, sh4: List[str], mes_ate: int = 12, frete: bool = True) -> dict:
@@ -90,6 +92,14 @@ def cruzado(ano: int, fluxo: str, chave: str, sh4: List[str], cache: Optional[Pa
     return out
 
 
-def recorte_cruzado(anos: List[int], fluxo: str, sh4: List[str], cache: Optional[Path] = CACHE, log=print) -> Dict[str, Dict[int, List[dict]]]:
-    """{chave: {ano: linhas}} para as consultas cruzadas (país × NCM, URF × via, UF)."""
-    return {c: {a: cruzado(a, fluxo, c, sh4, cache, log) for a in anos} for c in CRUZADOS}
+def recorte_cruzado(anos: List[int], fluxo: str, sh4: List[str], cache: Optional[Path] = CACHE, log=print,
+                    chaves=("pais_ncm", "urf_via", "uf")) -> Dict[str, Dict[int, List[dict]]]:
+    """{chave: {ano: linhas}} para as consultas cruzadas pedidas (padrão: país × NCM, URF × via, UF)."""
+    return {c: {a: cruzado(a, fluxo, c, sh4, cache, log) for a in anos} for c in chaves}
+
+
+def data_da_coleta(anos: List[int], fluxo: str, chaves, cache: Optional[Path] = CACHE):
+    """Data (date) da consulta mais antiga em cache para o recorte: é a data em que os dados foram de fato coletados (D81)."""
+    from datetime import date
+    arqs = [a for ano in anos for c in chaves for a in (cache.glob(f"{ano}-{fluxo}-{c}-*.json") if cache else [])]
+    return date.fromtimestamp(min(a.stat().st_mtime for a in arqs)) if arqs else date.today()

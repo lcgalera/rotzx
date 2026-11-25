@@ -23,7 +23,11 @@ SERIES = {
     "tsp": ("TSP", "TSP (superfosfato triplo), spot, importação no Golfo dos EUA"),
     "rocha": ("Phosphate rock", "rocha fosfática, FOB Norte da África"),
     "kcl": ("Potassium chloride", "cloreto de potássio granulado, spot, CFR Brasil"),
+    # D81: café, em US$/kg no arquivo; convertido para US$/t (× 1.000)
+    "arabica": ("Coffee, Arabica", "café arábica, indicador OIC (outros arábicas suaves), média Nova York e Bremen/Hamburgo, ex-dock"),
+    "robusta": ("Coffee, Robusta", "café robusta, indicador OIC, média Nova York e Le Havre/Marselha, ex-dock"),
 }
+FATOR = {"arabica": 1000.0, "robusta": 1000.0}                       # US$/kg → US$/t
 
 
 def baixar(url: str = URL, destino: Path = ARQUIVO, log=print) -> Path:
@@ -45,7 +49,7 @@ def serie(arq: Path = ARQUIVO) -> Tuple[Dict[str, Dict[Tuple[int, int], float]],
     atualizado = next((str(r[0]) for r in linhas[:6] if r and r[0] and str(r[0]).startswith("Updated")), None)
     cab = next(i for i, r in enumerate(linhas[:10]) if r and any(isinstance(c, str) and c.strip().startswith("Urea") for c in r))
     col = {}
-    for nome, (rot, _) in SERIES.items():
+    for nome, (rot, *_) in SERIES.items():
         col[nome] = next(j for j, c in enumerate(linhas[cab]) if isinstance(c, str) and c.strip().startswith(rot))
     out: Dict[str, Dict[Tuple[int, int], float]] = {n: {} for n in SERIES}
     for r in linhas[cab + 2:]:
@@ -55,5 +59,5 @@ def serie(arq: Path = ARQUIVO) -> Tuple[Dict[str, Dict[Tuple[int, int], float]],
         for nome, j in col.items():
             v = r[j]
             if isinstance(v, (int, float)):                         # "…" ou vazio = sem registro
-                out[nome][(int(m.group(1)), int(m.group(2)))] = float(v)
+                out[nome][(int(m.group(1)), int(m.group(2)))] = float(v) * FATOR.get(nome, 1.0)
     return out, atualizado

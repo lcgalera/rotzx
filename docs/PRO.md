@@ -266,5 +266,10 @@ O estudo de fertilizantes passou de descritivo a decisório. São 12 páginas:
 
 Junto do PDF vai a planilha com as tabelas de cada seção (`estudo-fertilizantes.xlsx`). Esse é o formato de referência para os diagnósticos.
 
+## Escopo, amostras e "Quem faz" (D81)
+- **Escopo do Diagnóstico:** sem preço na página por enquanto. Parte de tudo o que está nas amostras e vai além: seções, produtos, países e estados escolhidos a partir do pedido da empresa ou da pessoa. Escopo, prazo e valor seguem por e-mail antes de qualquer compromisso.
+- **Amostras:** fertilizantes (importação, 12 páginas) e café (exportação, 10 páginas, para cooperativas e produtores), no mesmo motor (`rotzx/pro/estudo.py`). Um estudo novo é um arquivo em `rotzx/pro/amostras/`.
+- **"Quem faz":** rascunho em `QUEM_FAZ` (`rotzx/pro/pagina.py`), com lacunas entre colchetes para o dono completar: nome, uma linha de apresentação, formação, experiência e o motivo de ter criado o rotzx. Enquanto houver lacuna, o bloco não aparece na página (teste garante).
+
 ## Primeiro passo depois da aprovação
 **Fase 0:** a página "rotzx Pro" com o formulário de briefing e o estudo-amostra em PDF. Antes, o spike da API mensal (meses, kg, UF), que define o que os estudos conseguem mostrar. A formalização com contador corre em paralelo, com o dono.

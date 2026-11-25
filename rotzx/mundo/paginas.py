@@ -88,7 +88,7 @@ b.onclick = () => { const t = ef() === "dark" ? "light" : "dark"; R.dataset.them
 mm.addEventListener && mm.addEventListener("change", () => { if (!escolhido()) pintar(); });
 pintar();
 const nav = document.querySelector("header nav"), at = nav && nav.querySelector('[aria-current="page"]');   // celular: item ativo à vista
-if (at && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = at.offsetLeft + at.offsetWidth - nav.clientWidth + 12;
+if (at && nav.scrollWidth > nav.clientWidth) nav.scrollLeft += at.getBoundingClientRect().right - nav.getBoundingClientRect().right + 14;
 })();</script>"""
 
 ESTILO = """
@@ -102,7 +102,7 @@ header{display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap;padding:12px
 header .marca{display:inline-flex;align-items:center;color:var(--accent);text-decoration:none;font:600 26px/1 Newsreader,Georgia,serif}
 header .logo{display:block;height:28px;aspect-ratio:1164/278;background:currentColor;-webkit-mask:var(--logo) no-repeat center/contain;mask:var(--logo) no-repeat center/contain}
 header nav{display:flex;gap:2px;font-size:14.5px}
-header nav a{position:relative;padding:7px 11px;border-radius:999px;color:var(--ink-2);text-decoration:none;white-space:nowrap;transition:color .2s,background-color .2s}
+header nav a{position:relative;flex:none;padding:7px 11px;border-radius:999px;color:var(--ink-2);text-decoration:none;white-space:nowrap;transition:color .2s,background-color .2s}
 header nav a:hover{color:var(--ink);background:var(--hover)}
 header nav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 header nav a[aria-current="page"]{color:var(--ink);font-weight:500}
@@ -111,7 +111,7 @@ header nav a[aria-current="page"]::after{content:"";position:absolute;left:11px;
 @media (prefers-reduced-motion:reduce){header nav a[aria-current="page"]::after{animation:none}}
 .tema{display:inline-grid;place-items:center;width:36px;height:36px;margin-left:auto;border:1px solid var(--rule-2);border-radius:50%;background:transparent;cursor:pointer;color:var(--ink-2);flex:none}
 .tema:hover{color:var(--ink);border-color:var(--ink-2)}
-@media (max-width:640px){header{position:relative;padding:10px 16px 6px}.tema{position:absolute;top:8px;right:16px}header nav{margin:0 -16px;padding:0 10px 4px;width:calc(100% + 32px);overflow-x:auto;scrollbar-width:none}header nav::-webkit-scrollbar{display:none}header nav a{padding:7px 9px;font-size:14px}header nav a[aria-current="page"]::after{left:9px;right:9px}}
+@media (max-width:640px){header{position:relative;padding:10px 16px 6px}.tema{position:absolute;top:8px;right:16px}header nav{margin:0 -16px;padding:5px 12px 6px;width:calc(100% + 32px);overflow-x:auto;scrollbar-width:none}header nav::-webkit-scrollbar{display:none}header nav a{padding:7px 9px;font-size:14px}header nav a[aria-current="page"]::after{left:9px;right:9px}}
 main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
 .kicker{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
 h1{font:500 40px/1.1 Newsreader,Georgia,serif;margin:6px 0 14px;letter-spacing:-.01em}
@@ -133,6 +133,38 @@ footer{max-width:860px;margin:0 auto;padding:18px 20px 40px;border-top:1px solid
 """
 
 
+SELO_MIOLO = '<span class="x" aria-hidden="true"></span><span class="wm" aria-hidden="true"></span><span class="tag">PRO</span>'
+# D81: selo "rotzx PRO" com o logo do atlas (máscara de logo.svg): o X gira e aparece, a palavra desliza, a etiqueta cai no lugar
+SELO_CSS = """
+:root{--pro-bg:#22352A;--pro-ink:#F3F0E8;--pro-tag:#D7A465;--pro-tag-ink:#1D2A21}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pro-bg:#A9D0B8;--pro-ink:#151916;--pro-tag:#151916;--pro-tag-ink:#E0B45C}}
+:root[data-theme="dark"]{--pro-bg:#A9D0B8;--pro-ink:#151916;--pro-tag:#151916;--pro-tag-ink:#E0B45C}
+.selo-pro{--h:13px;position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:5px;padding:6px 6px 6px 10px;border-radius:999px;background:var(--pro-bg);color:var(--pro-ink);text-decoration:none;line-height:1;box-shadow:inset 0 1px 0 rgb(255 255 255/.08),0 6px 16px -10px rgb(20 40 28/.8);transition:transform .2s,box-shadow .2s;white-space:nowrap}
+header nav a.selo-pro{padding:6px 6px 6px 10px;margin-left:6px;color:var(--pro-ink);background:var(--pro-bg);border-radius:999px}
+.selo-pro .x,.selo-pro .wm{display:block;height:var(--h);background:currentColor}
+.selo-pro .x{aspect-ratio:375/278;-webkit-mask:var(--logo) no-repeat left center/auto 100%;mask:var(--logo) no-repeat left center/auto 100%;transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
+.selo-pro .wm{aspect-ratio:745/278;-webkit-mask:var(--logo) no-repeat right center/auto 100%;mask:var(--logo) no-repeat right center/auto 100%}
+.selo-pro .tag{font:700 calc(var(--h)*.78)/1 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.14em;padding:.42em .6em .42em .72em;margin-left:2px;border-radius:999px;background:var(--pro-tag);color:var(--pro-tag-ink)}
+.selo-pro::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgb(255 255 255/.32) 50%,transparent 70%);transform:translateX(-130%);pointer-events:none}
+a.selo-pro:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgb(255 255 255/.08),0 10px 22px -10px rgb(20 40 28/.9)}
+a.selo-pro:hover .x{transform:rotate(90deg)}
+a.selo-pro:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+header nav a.selo-pro[aria-current="page"]{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--pro-bg)}
+header nav a.selo-pro[aria-current="page"]::after{display:none}
+.selo-pro.grande{--h:21px;padding:9px 9px 9px 15px;gap:8px}
+@media (prefers-reduced-motion:no-preference){
+  .selo-pro .x{animation:pro-x .8s cubic-bezier(.3,1.4,.5,1) .15s both}
+  .selo-pro .wm{animation:pro-wm .6s cubic-bezier(.2,.7,.2,1) .45s both}
+  .selo-pro .tag{animation:pro-tag .6s cubic-bezier(.3,1.7,.5,1) .85s both}
+  .selo-pro::before{animation:pro-brilho 1.1s cubic-bezier(.4,0,.2,1) 1.35s both}
+}
+@keyframes pro-x{from{transform:rotate(-200deg) scale(.2);opacity:0}to{transform:none;opacity:1}}
+@keyframes pro-wm{from{clip-path:inset(0 100% 0 0);opacity:.3}to{clip-path:inset(0);opacity:1}}
+@keyframes pro-tag{from{transform:translateY(-160%) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes pro-brilho{to{transform:translateX(130%)}}
+@media (max-width:640px){header nav a.selo-pro .wm{display:none}}
+"""
+
 NAV = [("", "Atlas interativo"), ("pais/", "Países e territórios"), ("produto/", "Produtos"), ("pro/", "rotzx Pro")]
 
 
@@ -140,7 +172,14 @@ def _nav(raiz: str, caminho: str) -> str:
     """Navegação das páginas estáticas (D79): o item da seção atual leva aria-current (traço em --accent)."""
     sec = caminho.split("/", 1)[0] + "/" if "/" in caminho else ""
     atual = ' aria-current="page"'
-    return "".join(f'<a href="{raiz}{h}"{atual if h and h == sec else ""}>{n}</a>' for h, n in NAV)
+    out = []
+    for h, n in NAV:
+        cur = atual if h and h == sec else ""
+        if h == "pro/":                                         # D81: o Pro é o selo com o logo (X + rotzx) e a etiqueta PRO
+            out.append(f'<a class="selo-pro" href="{raiz}{h}" aria-label="{n}"{cur}>{SELO_MIOLO}</a>')
+        else:
+            out.append(f'<a href="{raiz}{h}"{cur}>{n}</a>')
+    return "".join(out)
 
 
 def logo_svg(atlas_html: Path) -> Optional[str]:
@@ -185,10 +224,10 @@ def _pagina(*, titulo: str, desc: str, caminho: str, raiz: str, corpo: str, cont
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
-<style>{ESTILO}{estilo_extra}</style>
+<style>{ESTILO}{SELO_CSS}{estilo_extra}</style>
 </head>
-<body>
-<header><a class="marca" href="{raiz}" aria-label="rotzx, início do atlas" style="--logo:url({raiz}logo.svg)"><span class="logo"></span></a>
+<body style="--logo:url({raiz}logo.svg)">
+<header><a class="marca" href="{raiz}" aria-label="rotzx, início do atlas"><span class="logo"></span></a>
 <nav aria-label="Seções">{_nav(raiz, caminho)}</nav>
 <button class="tema" id="tema" type="button" aria-label="Mudar o tema">◐</button></header>
 <main{(' class="' + classe + '"') if classe else ""}>

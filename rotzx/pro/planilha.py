@@ -8,14 +8,16 @@ from pathlib import Path
 from . import nomes as N, referencia
 
 
-def gerar(d: dict, destino: Path) -> Path:
+def gerar(d: dict, destino: Path, cfg=None) -> Path:
     import openpyxl
     from openpyxl.styles import Font
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
     ry, ult = d["ry"], d["ultimo_mes"]
-    comex = (f"Fonte: Comex Stat (MDIC), dados abertos, importações SH4 3101 a 3105, US$ correntes e kg líquido. Coleta em {d['coleta']}. "
-             "Célula vazia = sem registro (nunca zero).")
+    imp = d.get("fluxo", "importacao") == "importacao"
+    L = cfg.L if cfg else {"Parceiro": "Fornecedor", "adj": "importado", "origem": "origem"}
+    recorte = cfg.fonte_comex.replace("Fonte: ", "") if cfg else "Comex Stat (MDIC), dados abertos, importações SH4 3101 a 3105, US$ correntes e kg líquido"
+    comex = f"Fonte: {recorte}. Coleta em {d['coleta']}. Célula vazia = sem registro (nunca zero)."
     t = lambda kg: kg / 1000 if kg is not None else None
 
     def aba(nome, titulo, nota, cab, linhas, pct=(), usd=()):
@@ -38,11 +40,19 @@ def gerar(d: dict, destino: Path) -> Path:
         return ws
 
     P = d["per"]
-    aba("1 Totais", "Valor, volume, preço, frete e concentração por período",
-        comex + " Participações sobre o total importado do grupo no período.",
-        ["Período", "Valor US$ FOB", "Volume (t)", "US$/t FOB", "US$/t CIF", "Frete US$/t", "Parte do maior", "Parte dos 3 maiores", "HHI", "Países"],
-        [[k.replace("ytd25", f"{ry}/2025").replace("ytd26", f"{ry}/2026"), p["total"]["fob"], t(p["total"]["kg"]), p["preco_t"], p["cif_t"], p["frete_t"],
-          p["maior"], p["tres"], p["hhi"], p["n"]] for k, p in P.items()], pct=(7, 8), usd=(2, 3))
+    rotp = lambda k: k.replace("ytd25", f"{ry}/2025").replace("ytd26", f"{ry}/2026")
+    if imp:
+        aba("1 Totais", "Valor, volume, preço, frete e concentração por período",
+            comex + " Participações sobre o total importado do grupo no período.",
+            ["Período", "Valor US$ FOB", "Volume (t)", "US$/t FOB", "US$/t CIF", "Frete US$/t", "Parte do maior", "Parte dos 3 maiores", "HHI", "Países"],
+            [[rotp(k), p["total"]["fob"], t(p["total"]["kg"]), p["preco_t"], p["cif_t"], p["frete_t"],
+              p["maior"], p["tres"], p["hhi"], p["n"]] for k, p in P.items()], pct=(7, 8), usd=(2, 3))
+    else:
+        aba("1 Totais", "Valor, volume, preço e concentração por período",
+            comex + f" Participações sobre o total {L['adj']} do grupo no período.",
+            ["Período", "Valor US$ FOB", "Volume (t)", "US$/t FOB", "Parte do maior", "Parte dos 3 maiores", "HHI", "Países"],
+            [[rotp(k), p["total"]["fob"], t(p["total"]["kg"]), p["preco_t"], p["maior"], p["tres"], p["hhi"], p["n"]] for k, p in P.items()],
+            pct=(5, 6), usd=(2, 3))
     dt = d["dec_total"]
     linhas = [["Total do grupo (itens = NCM)", dt["v0"], dt["v1"], dt["variacao"], dt["volume"], dt["preco"], dt["mix"], dt["sem_peso"], None, None]]
     linhas += [[f["nome"], f["v0"], f["v1"], f["variacao"], f["volume"], f["preco"], f["mix"], f["sem_peso"], f["parte0"], f["parte1"]] for f in d["dec_forn"]]
@@ -57,18 +67,20 @@ def gerar(d: dict, destino: Path) -> Path:
             pl.append([p["nome"], p["ncm"], o["nome"], p["base"].upper(), o["p0"], o["p1"], o["parte1"], t(o["kg1"])])
     aba("3 Preço produto origem", f"US$/t por produto e origem, {ry}/2025 e {ry}/2026",
         comex + " US$/t = valor ÷ peso. Parte do produto: sobre o total do grupo; da origem: sobre o valor do produto.",
-        ["Produto", "NCM", "Origem", "Base", f"US$/t {ry}/25", f"US$/t {ry}/26", f"Parte {ry}/26", f"Volume {ry}/26 (t)"], pl, pct=(7,))
+        ["Produto", "NCM", L["Origem"] if "Origem" in L else "Origem", "Base", f"US$/t {ry}/25", f"US$/t {ry}/26", f"Parte {ry}/26", f"Volume {ry}/26 (t)"], pl, pct=(7,))
     rot = {k: v[1] for k, v in referencia.SERIES.items()}
     aba("4 Referência", f"Importado × Pink Sheet (média {ry})",
         comex + f" Referência: {referencia.FONTE} ({d['ref_atualizado'] or 'sem arquivo'}). Aproximação: bases e especificações diferentes.",
         ["Produto", "NCM", "Série de referência", "Base da importação", f"Importado {ry}/25", f"Importado {ry}/26", f"Referência {ry}/25", f"Referência {ry}/26"],
-        [[p["nome"], p["ncm"], rot.get(p["serie_ref"], "sem série equivalente"), p["base"].upper(), p["imp0"], p["imp1"], p["ref0"], p["ref1"]] for p in d["produtos"]])
+        [[p["nome"], p["ncm"], rot.get(r["serie"], "sem série equivalente") if r else "sem série equivalente", p["base"].upper(), p["imp0"], p["imp1"],
+          r["ref0"] if r else None, r["ref1"] if r else None] for p in d["produtos"] for r in (p.get("refs") or [None])])
     ws = aba("4b Mensal US$ t", "US$/t mensal: 3 maiores origens de cada produto e Pink Sheet", comex, ["Produto", "Série"] + [f"{a}-{m:02d}" for a, m in d["meses_ser"]], [])
     for p in d["produtos"]:
         for n, s in p["mensal"]:
             ws.append([p["nome"], n] + s)
-        if p["ref_mensal"]:
-            ws.append([p["nome"], "Pink Sheet: " + rot[p["serie_ref"]]] + p["ref_mensal"])
+        for r in p.get("refs") or []:
+            if r["mensal"]:
+                ws.append([p["nome"], "Pink Sheet: " + rot[r["serie"]]] + r["mensal"])
     aba("5 Dependência", f"Concentração por produto, {ry}/2025 e {ry}/2026",
         comex + " Partes sobre o valor importado de cada produto no período. HHI = soma dos quadrados das partes em % (0 a 10.000).",
         ["Produto", "NCM", f"Parte no grupo {ry}/26", f"Maior fornecedor {ry}/26", "Parte do maior", "Parte dos 3 maiores", f"HHI {ry}/26",
@@ -81,23 +93,30 @@ def gerar(d: dict, destino: Path) -> Path:
         cal.append([f"{a} acumulado"] + [t(d["cal_acum"][a].get(m)) for m in range(1, 13)])
     aba("6 Calendário", "Volume importado por mês e acumulado no ano (t)", comex,
         ["Ano"] + ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"], cal, usd=tuple(range(2, 14)))
-    aba("7 Portos", f"Unidades da Receita, {ry}/2026", comex + " Parte = valor da unidade ÷ total do grupo. Frete/t = frete declarado ÷ peso.",
-        ["Unidade", "Valor US$ FOB", "Volume (t)", "Parte do valor", "Frete US$/t"],
-        [[x["nome"], x["fob"], t(x["kg"]), x["parte"], x["frete_t"]] for x in d["urf"]], pct=(4,), usd=(2, 3))
-    aba("7b Estados", f"UF, {ry}/2026", comex + " Parte = valor da UF ÷ total do grupo.",
+    if imp:
+        aba("7 Portos", f"Unidades da Receita, {ry}/2026", comex + " Parte = valor da unidade ÷ total do grupo. Frete/t = frete declarado ÷ peso.",
+            ["Unidade", "Valor US$ FOB", "Volume (t)", "Parte do valor", "Frete US$/t"],
+            [[x["nome"], x["fob"], t(x["kg"]), x["parte"], x["frete_t"]] for x in d["urf"]], pct=(4,), usd=(2, 3))
+    else:
+        aba("7 Portos", f"Unidades da Receita de embarque, {ry}/2026", comex + " Parte = valor da unidade ÷ total do grupo. A API não informa frete na exportação.",
+            ["Unidade", "Valor US$ FOB", "Volume (t)", "Parte do valor"], [[x["nome"], x["fob"], t(x["kg"]), x["parte"]] for x in d["urf"]], pct=(4,), usd=(2, 3))
+    aba("7b Estados", f"UF, {ry}/2026", comex + " Parte = valor da UF ÷ total do grupo." + ("" if imp else " Na exportação, UF = estado produtor."),
         ["UF", "Valor US$ FOB", "Volume (t)", "Parte do valor"], [[x["nome"], x["fob"], t(x["kg"]), x["parte"]] for x in d["uf"]], pct=(4,), usd=(2, 3))
-    aba("7c Frete origem", f"Frete por origem, {ry}/2025 e {ry}/2026", comex + " Frete/t = frete declarado ÷ peso; frete ÷ FOB = frete total ÷ valor FOB.",
+    if imp:
+        aba("7c Frete origem", f"Frete por origem, {ry}/2025 e {ry}/2026", comex + " Frete/t = frete declarado ÷ peso; frete ÷ FOB = frete total ÷ valor FOB.",
         ["Origem", f"Volume {ry}/26 (t)", f"Frete US$/t {ry}/25", f"Frete US$/t {ry}/26", "Frete ÷ FOB"],
         [[x["nome"], t(x["kg"]), x["frete_t0"], x["frete_t"], x["frete_pct"]] for x in d["frete_origem"]], pct=(5,), usd=(2,))
     vl = [[k, x["nome"], x["fob"], t(x["kg"]), x["parte"]] for k in ("2025", "ytd25", "ytd26") for x in d["via"][k]]
     aba("8 Vias", "Vias de transporte como declaradas na fonte",
-        comex + " Atenção: a via “aérea” de 2026 tem sinais de erro de registro (ver nota do PDF, seção 6).",
+        comex + (" Atenção: a via “aérea” de 2026 tem sinais de erro de registro (ver nota do PDF, seção 6)." if cfg is None or cfg.nota_via else ""),
         ["Período", "Via", "Valor US$ FOB", "Volume (t)", "Parte do valor"], vl, pct=(5,), usd=(3, 4))
     aba("9 NCM oficiais", "Descrições oficiais das NCMs (Comex Stat)", comex, ["NCM", "Nome curto usado no estudo", "Descrição oficial"],
         [[c, N.ncm(c, o), o] for c, o in sorted(d["ncm_oficial"].items())])
     aba("Fontes", "Fontes, licenças e contexto", "rotzx Pro · estudo-amostra · não é recomendação de investimento ou de negócio.", ["Item", "Detalhe"],
         [["Comex Stat (MDIC)", "api-comexstat.mdic.gov.br, rota /general; dados abertos do governo federal"],
          ["Pink Sheet (Banco Mundial)", f"{referencia.FONTE}; {referencia.URL}"]])
+    if cfg is not None and cfg.planilha_extra:                 # D81: abas próprias do recorte
+        cfg.planilha_extra(d, aba)
     destino.parent.mkdir(parents=True, exist_ok=True)
     wb.save(destino)
     return destino
