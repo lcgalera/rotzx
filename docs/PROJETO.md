@@ -1,7 +1,7 @@
 # rotzx — visão do projeto
 
-Estado em 16/11/2026 (v1.0.0; decisões até D81). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
-código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D81).
+Estado em 16/11/2026 (v1.0.0; decisões até D82). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D82).
 Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é
@@ -62,6 +62,8 @@ uma.
 | [UCDP/PRIO Armed Conflict Dataset](https://ucdp.uu.se/downloads/) | conflitos armados, 1946– | CC BY 4.0 | 25+ mortes em combate no ano; conta tropas de missões multinacionais |
 | [Banco Mundial (WDI)](https://data.worldbank.org) | PIB, crescimento, inflação, população | CC BY 4.0 | valor mais recente de cada indicador |
 | [Banco Mundial, Pink Sheet](https://www.worldbank.org/en/research/commodity-markets) (CMO-Historical-Data-Monthly.xlsx) | cotações mensais de ureia, DAP, TSP e cloreto de potássio (estudo-amostra do rotzx Pro) | CC BY 4.0 | arquivo em thedocs.worldbank.org (domínio liberado na rede do ambiente em 24/11/2026); fica em `data/fontes/bancomundial/`, fora do git; o link muda a cada ano |
+| [Banco Central do Brasil, PTAX](https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/aplicacao) | câmbio do dólar (venda), média mensal, para R$/saca no estudo do café do rotzx Pro | dados abertos do BCB | API OData em olinda.bcb.gov.br (já na rede do ambiente); cache em `data/fontes/bcb/` |
+| [Conab, safra de café](https://www.gov.br/conab/pt-br/atuacao/informacoes-agropecuarias/safras/safra-de-cafe) | produção por estado e espécie (arábica/conilon), estudo do café do rotzx Pro | dados públicos do governo federal | 3º levantamento de 2026 (setembro), números lidos do boletim e citados com a data |
 | ISO 3166 (pycountry / iso-codes) | tabela de países | LGPL (dados ISO) | só para gerar `catalog/paises_mundo.csv` |
 | Natural Earth 1:110m (via `world-atlas@2.0.2`) | contornos | domínio público (pacote ISC) | ids = ISO 3166 numérico |
 | globe.gl 2.46.2, topojson-client 3.1.0, ECharts 5.5.0 | globo e gráficos | MIT, ISC, Apache-2.0 | jsDelivr, com SRI |

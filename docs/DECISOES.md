@@ -1207,3 +1207,29 @@ As outras perguntas ficam em "Outras perguntas".
 - **Nota:** o preço por destino mistura preço e tipo (arábica ou conilon).
 - **Gancho `grandes`:** os números da capa são próprios do estudo (preço por saca, sacas e valor).
 - **Data da coleta:** o motor passa a imprimir a data das consultas em cache (a data em que os dados foram de fato coletados), não a data de geração do PDF.
+
+### D82 · 25/11/2026 · Estudo do café v3: prêmio por tipo, R$/saca, relação de troca e ressalvas
+**Pedido do dono:** as quatro melhorias propostas para o estudo do café.
+
+**O que entrou:**
+- **Prêmio por tipo:**
+  - nova consulta destino × estado produtor × NCM (`pais_uf_ncm`);
+  - os estados são agrupados pela produção por espécie da Conab: arábica = Minas Gerais, São Paulo e Paraná (74% do volume); conilon = Espírito Santo e Rondônia (21,5%); a Bahia, de produção mista, e os estados menores ficam fora das duas contas;
+  - o prêmio de cada destino é calculado sobre a média do próprio grupo;
+  - **Resultado:** no arábica os prêmios ficam entre cerca de −3% e +6% (os EUA, maior comprador, pagaram −2,8%); os −30% de México e Colômbia no café misturado vinham do tipo;
+  - uma página explica por que separar e diz que ainda é aproximação.
+- **R$/saca:** PTAX de venda do Banco Central (média mensal, `rotzx/pro/cambio.py`, fonte nova). Em real, a saca caiu 15,4% (em dólar, 7,3%), porque a PTAX média caiu de 5,63 para 5,15. Sem rede, o estudo sai só em dólar.
+- **Relação de troca:** sacas de café cru (US$/saca FOB) por tonelada de KCl e de ureia importados (US$/t CIF), mês a mês, a partir das consultas do estudo de fertilizantes. KCl: de 0,86 para 1,07 saca/t (+23,5%). A nota diz que CIF no porto e FOB de exportação não são os preços na fazenda.
+- **Ressalvas:**
+  - o Comex registra o mês do embarque, não o do contrato;
+  - 2026 é comparado com 2024, também de alta bienalidade segundo a Conab (citação do boletim).
+- **Gráfico do prêmio mês a mês:** em % sobre a média do mês, com eixo simétrico e linha do zero (`linhas_mensais` aceita valores negativos; os gráficos sem negativos saem iguais).
+- **PDF:** 11 páginas. As tabelas por destino foram para a planilha (abas C1 por tipo e C1 com todo o café cru); C3 ganha o preço em R$; C4 traz a relação de troca.
+
+**Conferência:**
+- âncora destino × estado = destino × NCM;
+- prêmio sobre a média do grupo;
+- relação de troca = CIF ÷ FOB;
+- PTAX sem rede devolve vazio (fixture);
+- o PDF de fertilizantes segue com o texto idêntico;
+- revisão visual das 11 páginas.
