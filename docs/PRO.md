@@ -243,7 +243,27 @@ O dono cria o formulário na conta Google dele rodando [`briefing_forms.gs`](bri
 
 Configurações: não coletar e-mail automaticamente (a pergunta 3 já pede), não exigir login, mostrar mensagem de confirmação "Recebido. Respondo por e-mail em até 2 dias úteis."
 
-## Situação da Fase 0 (D77, D78)
+## Fase 0: concluída em 26/11/2026 (D83)
+**Entregue e publicado:**
+- página `/pro/` e política de privacidade `/pro/privacidade/` (D77 a D79), com o formulário de briefing (Google Forms do dono);
+- estudo-amostra de fertilizantes, de importação, com 12 páginas e planilha (D80);
+- motor de estudos (`rotzx/pro/estudo.py`) e estudo-amostra de café, de exportação, para cooperativas e produtores, com 11 páginas e planilha (D81, D82);
+- selo "rotzx PRO" no atlas e nas páginas estáticas (D81);
+- fontes novas: Pink Sheet do Banco Mundial, PTAX do Banco Central e boletim de safra de café da Conab.
+
+**Pendente com o dono:**
+- completar o "Quem faz" (`QUEM_FAZ` em `rotzx/pro/pagina.py`; o bloco aparece sozinho quando não sobrar lacuna);
+- formalização: CNPJ e conta PJ, com contador;
+- as 10 conversas e os primeiros diagnósticos pagos;
+- decidir se e como mostrar preço;
+- divulgação (LinkedIn) com as duas amostras;
+- revisar os textos de interpretação das amostras (leitura do analista, perfis e sinais).
+
+**Critério para começar a Fase 1:** 3 a 5 diagnósticos pagos e pelo menos 2 clientes interessados em Acompanhamento. A Fase 1 começa em repositório privado: briefings e dados de clientes nunca entram no repositório público.
+
+**Estudo novo:** um arquivo em `rotzx/pro/amostras/` (um `Recorte`) mais `rotzx pro-amostra --estudo <nome>`.
+
+## Histórico da Fase 0 (D77, D78)
 - Página `/pro/` e política de privacidade `/pro/privacidade/`: prontas, geradas no build por `rotzx/pro/pagina.py`.
 - Estudo-amostra de fertilizantes: `prototipos/globo/pro/estudo-fertilizantes.pdf`, gerado por `rotzx pro-amostra`. O bloco "Leitura do analista" é rascunho e precisa da revisão do dono.
 - Formulário criado pelo dono (24/11/2026); o botão "Enviar meu pedido" aponta para o link público. O link de edição fica só com o dono.
