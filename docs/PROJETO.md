@@ -1,7 +1,7 @@
 # rotzx — visão do projeto
 
-Estado em 16/11/2026 (v1.0.0; decisões até D82). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
-código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D82).
+Estado em 16/11/2026 (v1.0.0; decisões até D83). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D83).
 Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é

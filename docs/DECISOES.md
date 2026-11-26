@@ -1233,3 +1233,17 @@ As outras perguntas ficam em "Outras perguntas".
 - PTAX sem rede devolve vazio (fixture);
 - o PDF de fertilizantes segue com o texto idêntico;
 - revisão visual das 11 páginas.
+
+### D83 · 26/11/2026 · Fase 0 do rotzx Pro concluída
+**Pedido do dono:** finalizar a fase.
+
+**Entregue e publicado (D76 a D82):**
+- página `/pro/`, privacidade e formulário de briefing;
+- estudos-amostra de fertilizantes (importação) e de café (exportação, para cooperativas e produtores), cada um com PDF e planilha;
+- motor de estudos reaproveitável;
+- selo "rotzx PRO";
+- fontes novas: Pink Sheet do Banco Mundial, PTAX do Banco Central e Conab.
+
+**Pendente com o dono:** "Quem faz", formalização (CNPJ), as primeiras conversas e os primeiros diagnósticos, a decisão sobre preço, a divulgação e a revisão dos textos de interpretação. A lista e o critério de entrada na Fase 1 (3 a 5 diagnósticos pagos e 2 interessados em Acompanhamento, em repositório privado) estão em `docs/PRO.md`.
+
+O site não muda com esta decisão; é só registro.
