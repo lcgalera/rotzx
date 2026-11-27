@@ -1,7 +1,7 @@
 # rotzx — visão do projeto
 
-Estado em 16/11/2026 (v1.0.0; decisões até D83). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
-código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D83).
+Estado em 16/11/2026 (v1.0.0; decisões até D84). Este documento descreve o projeto inteiro: o que ele faz, de onde vêm os dados, como o
+código está organizado, como publicar e o que ainda não faz. O histórico de cada escolha está em [`DECISOES.md`](DECISOES.md) (D1–D84).
 Para continuar o projeto com um assistente de IA, use [`PROMPT.md`](PROMPT.md).
 
 ## 1. O que é
@@ -67,7 +67,7 @@ uma.
 | ISO 3166 (pycountry / iso-codes) | tabela de países | LGPL (dados ISO) | só para gerar `catalog/paises_mundo.csv` |
 | Natural Earth 1:110m (via `world-atlas@2.0.2`) | contornos | domínio público (pacote ISC) | ids = ISO 3166 numérico |
 | globe.gl 2.46.2, topojson-client 3.1.0, ECharts 5.5.0 | globo e gráficos | MIT, ISC, Apache-2.0 | jsDelivr, com SRI |
-| flag-icons 7.5.0 | bandeiras | MIT | bandeira atual, não a do ano |
+| flag-icons 7.5.0 | bandeiras | MIT | bandeira atual, não a do ano; jsDelivr, com o mesmo arquivo no unpkg como reserva se o primeiro falhar |
 | Newsreader e IBM Plex Sans | tipografia (página e cartões) | SIL Open Font License | cópia em `rotzx/mundo/fontes/`, com as licenças |
 | GoatCounter | medição de acessos | serviço externo | sem cookies; respeita "não rastrear" |
 

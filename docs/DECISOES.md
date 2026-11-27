@@ -1247,3 +1247,41 @@ As outras perguntas ficam em "Outras perguntas".
 **Pendente com o dono:** "Quem faz", formalização (CNPJ), as primeiras conversas e os primeiros diagnósticos, a decisão sobre preço, a divulgação e a revisão dos textos de interpretação. A lista e o critério de entrada na Fase 1 (3 a 5 diagnósticos pagos e 2 interessados em Acompanhamento, em repositório privado) estão em `docs/PRO.md`.
 
 O site não muda com esta decisão; é só registro.
+
+### D84 · 27/11/2026 · Quatro correções e busca unificada no cabeçalho
+**Pedido do dono:** corrigir quatro problemas e transformar a busca do cabeçalho em busca de países e produtos.
+
+**Correções:**
+1. **Gráfico da seção 1 (Concentração) sumia ao trocar o tema.**
+   - Antes: a troca destruía e recriava todos os gráficos com animação de entrada, em que a linha é revelada por um recorte. Uma animação interrompida deixava a linha invisível até o próximo redesenho.
+   - Agora: a troca atualiza cada gráfico no lugar (mesma instância, opções novas, `notMerge`) e sem animação (`redesenhoTema`).
+   - Teste: quatro trocas seguidas; a cor da linha muda na hora e o recorte fica completo.
+2. **Selo "rotzx PRO" vazio nas páginas estáticas.**
+   - O primeiro quadro da animação de entrada deixava o X, a palavra e a etiqueta invisíveis; num navegador que não roda a animação, sobrava a pílula vazia.
+   - Agora a animação só começa quando um script liga a classe `anima-pro` (no atlas e nas páginas estáticas), e os quadros iniciais nunca ficam totalmente invisíveis.
+   - Sem script, o selo fica parado e legível.
+3. **Pílulas da aba Produtos abriam no fluxo anterior.**
+   - O clique agora aplica o fluxo predominante do produto no ano (`fluxoPred`: o maior valor entre exportação e importação).
+   - Soja, petróleo, minério e carnes abrem em exportações; fertilizantes, telefones, medicamentos e veículos, em importações.
+   - O fluxo vai para a URL.
+4. **Bandeira de Essuatíni em cinza.**
+   - O código (SZ) e o arquivo (`sz.svg` no flag-icons 7.5.0) estão certos; o retângulo cinza aparece quando o download do CDN falha.
+   - Agora, se o jsDelivr falhar, a bandeira é pedida ao unpkg (mesmo pacote e versão) antes de virar retângulo vazio; vale para todas as bandeiras.
+   - A CSP do atlas ganhou `https://unpkg.com` em `img-src`.
+
+**Busca unificada:**
+- **Campo:** placeholder "Buscar país, território ou produto…".
+- **Resultados:** dois grupos com cabeçalho, "Países e territórios" (com bandeira) e "Produtos (SH4)" (nome e código), até 6 de cada.
+- **Produtos:** casam por início de palavra no nome e no texto oficial, ou pelo código SH4 (prefixo); ignora acentos e maiúsculas; os dados de produtos carregam sob demanda na primeira busca.
+- **Teclado:** ↑ ↓ Enter Esc (os cabeçalhos de grupo não são selecionáveis).
+- **Destino:** produto abre `#ver=produto&m=prod&prod=<SH4>` com o fluxo predominante; país abre o perfil.
+- **Guia:** o passo da busca foi atualizado.
+
+**Conferência:**
+- Chromium em 1440×900 e 390×844, sem erros e sem violação de CSP.
+- Buscas por Alemanha, Soja, 1201, Fertilizantes e "sao" (sem falsos positivos).
+- Selo legível nos dois temas, sem script e nos primeiros milissegundos.
+- Pílulas abrindo no fluxo certo.
+- Essuatíni com falha simulada no CDN.
+
+**Pendente, de fora:** 6 testes do Pro dependem da lista de países consultada ao vivo na API do Comex Stat, que em 26 e 27/11/2026 respondeu 503 e depois certificado autoassinado. Os outros 52 passam.

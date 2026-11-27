@@ -87,6 +87,7 @@ b.onclick = () => { const t = ef() === "dark" ? "light" : "dark"; R.dataset.them
   try { localStorage.setItem("rotzx-tema", t); } catch (e) { /* só nesta visita */ } pintar(); };
 mm.addEventListener && mm.addEventListener("change", () => { if (!escolhido()) pintar(); });
 pintar();
+R.classList.add("anima-pro");                    // D84: a animação do selo PRO só existe com script
 const nav = document.querySelector("header nav"), at = nav && nav.querySelector('[aria-current="page"]');   // celular: item ativo à vista
 if (at && nav.scrollWidth > nav.clientWidth) nav.scrollLeft += at.getBoundingClientRect().right - nav.getBoundingClientRect().right + 14;
 })();</script>"""
@@ -153,14 +154,14 @@ header nav a.selo-pro[aria-current="page"]{box-shadow:0 0 0 2px var(--bg),0 0 0 
 header nav a.selo-pro[aria-current="page"]::after{display:none}
 .selo-pro.grande{--h:21px;padding:9px 9px 9px 15px;gap:8px}
 @media (prefers-reduced-motion:no-preference){
-  .selo-pro .x{animation:pro-x .8s cubic-bezier(.3,1.4,.5,1) .15s both}
-  .selo-pro .wm{animation:pro-wm .6s cubic-bezier(.2,.7,.2,1) .45s both}
-  .selo-pro .tag{animation:pro-tag .6s cubic-bezier(.3,1.7,.5,1) .85s both}
-  .selo-pro::before{animation:pro-brilho 1.1s cubic-bezier(.4,0,.2,1) 1.35s both}
+  .anima-pro .selo-pro .x{animation:pro-x .8s cubic-bezier(.3,1.4,.5,1) .15s both}
+  .anima-pro .selo-pro .wm{animation:pro-wm .6s cubic-bezier(.2,.7,.2,1) .45s both}
+  .anima-pro .selo-pro .tag{animation:pro-tag .6s cubic-bezier(.3,1.7,.5,1) .85s both}
+  .anima-pro .selo-pro::before{animation:pro-brilho 1.1s cubic-bezier(.4,0,.2,1) 1.35s both}
 }
-@keyframes pro-x{from{transform:rotate(-200deg) scale(.2);opacity:0}to{transform:none;opacity:1}}
-@keyframes pro-wm{from{clip-path:inset(0 100% 0 0);opacity:.3}to{clip-path:inset(0);opacity:1}}
-@keyframes pro-tag{from{transform:translateY(-160%) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes pro-x{from{transform:rotate(-200deg) scale(.6);opacity:.45}to{transform:none;opacity:1}}
+@keyframes pro-wm{from{clip-path:inset(0 55% 0 0);opacity:.6}to{clip-path:inset(0);opacity:1}}
+@keyframes pro-tag{from{transform:translateY(-55%) rotate(-12deg);opacity:.5}to{transform:none;opacity:1}}
 @keyframes pro-brilho{to{transform:translateX(130%)}}
 @media (max-width:640px){header nav a.selo-pro .wm{display:none}}
 """
