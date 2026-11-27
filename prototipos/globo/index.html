@@ -7,7 +7,7 @@
 <meta name="description" content="Explore os parceiros comerciais do Brasil, descubra o que compramos e vendemos e acompanhe como essas relações mudaram desde 1997.">
 <meta name="color-scheme" content="light dark">
 <!-- D73: só carrega scripts, dados e fontes dos endereços abaixo; só manda dados para o próprio site e para a medição (GoatCounter) -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://cdn.jsdelivr.net https://rotz.goatcounter.com; connect-src 'self' https://cdn.jsdelivr.net https://rotz.goatcounter.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://cdn.jsdelivr.net https://unpkg.com https://rotz.goatcounter.com; connect-src 'self' https://cdn.jsdelivr.net https://rotz.goatcounter.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- compartilhamento (D63): os robôs das redes não rodam JS nem leem o #, então o cartão é o mesmo para todo link -->
 <link rel="canonical" href="https://lcgalera.github.io/rotzx/">
@@ -87,14 +87,19 @@
 
   /* busca com sugestões (bandeira + nome) */
   .ac { position: relative; }
-  .ac input { width: 240px; padding: 8px 12px; border-radius: 3px; border: 1px solid var(--rule-2); background: var(--surface); font-size: 14.5px; outline: none; }
+  .ac input { width: 270px; padding: 8px 12px; border-radius: 3px; border: 1px solid var(--rule-2); background: var(--surface); font-size: 14.5px; outline: none; }
   .ac input::placeholder { color: var(--muted); }
   .ac input:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
   .ac ul { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; right: 0; min-width: 260px; max-height: 340px; overflow-y: auto; margin: 0; padding: 4px;
            list-style: none; background: var(--surface); border: 1px solid var(--rule-2); border-radius: 3px; box-shadow: 0 8px 24px rgba(34,39,33,.12); }
   .ac li { display: flex; align-items: center; gap: 10px; padding: 8px 9px; border-radius: 2px; cursor: pointer; font-size: 14.5px; }
   .ac li[aria-selected="true"], .ac li:hover { background: var(--sel-bg); }
-  .ac li small { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .ac li small { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+  #acTopo ul { min-width: 340px; }
+  .ac li.grupo { padding: 10px 9px 4px; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); cursor: default; }
+  .ac li.grupo:hover { background: none; }
+  .ac li > span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ac li.grupo:not(:first-child) { margin-top: 4px; border-top: 1px solid var(--rule); }
 
   /* quadro: mapa à esquerda, leitura à direita; sem moldura, só uma linha */
   .quadro { display: grid; grid-template-columns: minmax(340px, 35fr) minmax(0, 65fr); height: max(640px, calc(100vh - 62px)); transition: grid-template-columns .2s ease; }
@@ -395,14 +400,14 @@
   .selo-pro:hover .x { transform: rotate(90deg); }
   .selo-pro:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   @media (prefers-reduced-motion: no-preference) {
-    .selo-pro .x { animation: pro-x .8s cubic-bezier(.3, 1.4, .5, 1) .25s both; }
-    .selo-pro .wm { animation: pro-wm .6s cubic-bezier(.2, .7, .2, 1) .55s both; }
-    .selo-pro .tag { animation: pro-tag .6s cubic-bezier(.3, 1.7, .5, 1) .95s both; }
-    .selo-pro::before { animation: pro-brilho 1.1s cubic-bezier(.4, 0, .2, 1) 1.45s both; }
+    .anima-pro .selo-pro .x { animation: pro-x .8s cubic-bezier(.3, 1.4, .5, 1) .25s both; }
+    .anima-pro .selo-pro .wm { animation: pro-wm .6s cubic-bezier(.2, .7, .2, 1) .55s both; }
+    .anima-pro .selo-pro .tag { animation: pro-tag .6s cubic-bezier(.3, 1.7, .5, 1) .95s both; }
+    .anima-pro .selo-pro::before { animation: pro-brilho 1.1s cubic-bezier(.4, 0, .2, 1) 1.45s both; }
   }
-  @keyframes pro-x { from { transform: rotate(-200deg) scale(.2); opacity: 0; } to { transform: none; opacity: 1; } }
-  @keyframes pro-wm { from { clip-path: inset(0 100% 0 0); opacity: .3; } to { clip-path: inset(0); opacity: 1; } }
-  @keyframes pro-tag { from { transform: translateY(-160%) rotate(-14deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes pro-x { from { transform: rotate(-200deg) scale(.6); opacity: .45; } to { transform: none; opacity: 1; } }
+  @keyframes pro-wm { from { clip-path: inset(0 55% 0 0); opacity: .6; } to { clip-path: inset(0); opacity: 1; } }
+  @keyframes pro-tag { from { transform: translateY(-55%) rotate(-12deg); opacity: .5; } to { transform: none; opacity: 1; } }
   @keyframes pro-brilho { to { transform: translateX(130%); } }
   body.embed .pro-link { display: none; }
   a.pag-est { display: inline-flex; align-items: center; text-decoration: none; }
@@ -524,8 +529,8 @@
     <button type="button" data-nav="comparar">Comparar</button>
   </nav>
   <div class="ac" id="acTopo">
-    <label class="sr" for="busca">Buscar país ou território</label>
-    <input id="busca" type="search" placeholder="Buscar país ou território…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaLista" aria-autocomplete="list">
+    <label class="sr" for="busca">Buscar país, território ou produto</label>
+    <input id="busca" type="search" placeholder="Buscar país, território ou produto…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaLista" aria-autocomplete="list">
     <ul id="buscaLista" role="listbox" hidden></ul>
   </div>
   <a class="selo-pro pro-link" href="pro/" aria-label="rotzx Pro: análise sob demanda do comércio exterior" title="rotzx Pro: análise sob demanda do comércio exterior"><svg class="x" viewBox="187 184 375 278" aria-hidden="true"><use href="#logo-x"/></svg><svg class="wm" viewBox="606 184 745 278" aria-hidden="true"><use href="#logo-txt"/></svg><span class="tag">PRO</span></a>
@@ -632,6 +637,7 @@ function aplicarTema(t) {
   lerPaleta();
 }
 aplicarTema(temaAtual());
+document.documentElement.classList.add("anima-pro");             // D84: a animação do selo PRO só existe com script (sem ele, o selo fica parado e legível)
 
 // ---------- formatos ----------
 const nf = (v, c) => v.toLocaleString("pt-BR", { minimumFractionDigits: c, maximumFractionDigits: c });
@@ -661,12 +667,14 @@ const quando = (iso) => (iso ? new Date(iso).toLocaleDateString("pt-BR") : "");
 // ---------- países, territórios e bandeiras ----------
 const nome = (id) => H.paises[id]?.nome || id;
 const ehTerritorio = (id) => H.paises[id]?.tipo === "territorio";
-const FLAGS = "https://cdn.jsdelivr.net/npm/flag-icons@7.5.0/flags/4x3/";   // flag-icons (MIT): bandeira atual, não a do ano
+const FLAGS = "https://cdn.jsdelivr.net/npm/flag-icons@7.5.0/flags/4x3/";
+// D84: se o CDN falhar numa bandeira, o mesmo arquivo (flag-icons 7.5.0) é pedido ao unpkg antes de virar um retângulo vazio
+const FLAGS_RESERVA = "https://unpkg.com/flag-icons@7.5.0/flags/4x3/";   // flag-icons (MIT): bandeira atual, não a do ano
 function bandeira(id, { grande = false, alt = "" } = {}) {
   const iso2 = (H.paises[id]?.iso2 || "").toLowerCase();
   const cls = "flag" + (grande ? " g" : "");
   if (!iso2) return `<span class="${cls} vazia" aria-hidden="true"></span>`;
-  return `<img class="${cls}" src="${FLAGS}${iso2}.svg" width="${grande ? 36 : 20}" height="${grande ? 27 : 15}" alt="${esc(alt)}"${alt ? "" : ' aria-hidden="true"'} loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls} vazia'}))">`;
+  return `<img class="${cls}" src="${FLAGS}${iso2}.svg" width="${grande ? 36 : 20}" height="${grande ? 27 : 15}" alt="${esc(alt)}"${alt ? "" : ' aria-hidden="true"'} loading="lazy" decoding="async" onerror="if(!this.dataset.reserva){this.dataset.reserva=1;this.src='${FLAGS_RESERVA}${iso2}.svg'}else this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls} vazia'}))">`;
 }
 
 // ---------- silhueta do Brasil (Natural Earth 1:50m via world-atlas, domínio público; contorno continental simplificado) ----------
@@ -1115,6 +1123,13 @@ function renderControles() {
 const ROT_ATALHO = { "1201": "Soja em grão", "2709": "Petróleo bruto", "2601": "Minério de ferro", "g-fertilizantes": "Fertilizantes",
   "g-carnes": "Carnes", "g-veiculos": "Veículos e peças", "8517": "Telefones e redes", "3004": "Medicamentos" };
 const rotAtalho = (c) => ROT_ATALHO[c] || nomeProd(c);
+// D84: fluxo predominante do produto no ano (o maior valor entre exportação e importação); usado nos atalhos e na busca
+function fluxoPred(c, a = fim) {
+  const it = P?.itens?.[c]; if (!it) return "e";
+  const v = (k, ano) => it[k]?.[ano - P.inicio] ?? 0;
+  const e = v("e", a), i = v("i", a);
+  return e || i ? (i > e ? "i" : "e") : (v("i", fim) > v("e", fim) ? "i" : "e");
+}
 const nomeCurtoMax = (c) => { const n = rotAtalho(c); return n.length > 26 ? n.slice(0, 24) + "…" : n; };
 function legenda() {
   const [c0, c1] = cobertura(st.m), m = st.m;
@@ -1771,7 +1786,7 @@ function atualizarMeta() {
 
 // ---------- guia passo a passo (D72): mostra o que cada parte faz, na primeira visita e pelo botão "?" ----------
 const PASSOS_GUIA = [
-  { alvo: "#busca", tit: "Busque um país", txt: "Digite o nome de qualquer país ou território para abrir o perfil dele: quanto o Brasil vende e compra, quais produtos e como isso mudou." },
+  { alvo: "#busca", tit: "Busque um país ou um produto", txt: "Digite o nome de um país ou território para abrir o perfil dele, ou o nome ou o código SH4 de um produto para ver para onde o Brasil vende e de onde compra." },
   { alvo: "#globo", tit: "O globo responde ao que você escolhe", txt: "Cada país é pintado pela medida escolhida. Clique num país para abrir o perfil; arraste para girar. Em “Lista”, a mesma informação em ordem." },
   { alvo: ".ctl .metricas", tit: "Escolha o que o mapa mostra", txt: "Exportações, importações, corrente, participação no total do Brasil ou mudança entre dois anos. Em “Contexto”: votos na ONU e conflitos." },
   { alvo: ".ctl .tempo", tit: "Volte no tempo", txt: "Arraste para escolher o ano, de 1997 a 2025, ou aperte ▶ para ver o comércio mudar ano a ano." },
@@ -1990,7 +2005,7 @@ function ligarConteudo($c) {
   $$("[data-cena-ano]", $c).forEach((b) => (b.onclick = () => { const p = b.closest(".passo"); clearTimeout(cenaTempo); passoAtivo = p.id; aplicarCena(p, +b.dataset.cenaAno); }));
   if ($("#buscaInicio", $c)) autocompletar($("#buscaInicio", $c), $("#buscaInicioLista", $c), buscarPais, (id) => abrirPaisGeral(id));
   $$("[data-fluxo]", $c).forEach((b) => { if (!b.dataset.prodAbrir) b.onclick = () => ir({ fluxo: b.dataset.fluxo }, { push: false }); });
-  $$("[data-prod]", $c).forEach((b) => (b.onclick = () => ir({ prod: b.dataset.prod, m: "prod", ano: anosDe(b.dataset.prod).includes(st.ano) ? st.ano : fim })));
+  $$("[data-prod]", $c).forEach((b) => (b.onclick = () => { const c = b.dataset.prod, a = anosDe(c).includes(st.ano) ? st.ano : fim; ir({ prod: c, m: "prod", ano: a, fluxo: fluxoPred(c, a) }); }));
   $$("[data-prod-abrir]", $c).forEach((b) => (b.onclick = () => ir({ vista: "produto", prod: b.dataset.prodAbrir, fluxo: b.dataset.fluxo, m: "prod", pais: null })));
   const rt = $("#rankTodos", $c); if (rt) rt.onclick = () => { rankTodos = !rankTodos; render(); };
   const bs = $("#baseSel", $c); if (bs) bs.onchange = () => ir({ base: +bs.value }, { push: false });
@@ -2020,23 +2035,44 @@ function buscarProduto(q) {
     .sort((a, b) => (a[0].startsWith("g-") ? 0 : 1) - (b[0].startsWith("g-") ? 0 : 1) || (norm(a[1].nome).startsWith(n) ? 0 : 1) - (norm(b[1].nome).startsWith(n) ? 0 : 1)).slice(0, 12)
     .map(([c, x]) => ({ v: c, html: `<span>${esc(x.nome)}</span><small>${c.startsWith("g-") ? "grupo" : "SH4 " + c}</small>` }));
 }
+// D84: busca do cabeçalho em países e produtos, em dois grupos (até 6 de cada); produtos carregam sob demanda na primeira busca
+function buscarTudo(q, inp) {
+  const n = norm(q.trim()); if (!n) return [];
+  const paises = buscarPais(q).slice(0, 6).map((x) => ({ ...x, v: { pais: x.v }, g: "Países e territórios" }));
+  if (!P) { if (!falhaP) carregarProdutos().then(() => { if (inp && document.activeElement === inp && inp.value.trim()) inp.dispatchEvent(new Event("input")); }, () => {}); return paises; }
+  const dig = /^\d{2,4}$/.test(n);
+  const palavra = (s) => norm(s).split(/[^a-z0-9]+/).some((w) => w.startsWith(n)) || (n.length >= 5 && norm(s).includes(n));   // início de palavra
+  const prods = Object.entries(P.itens).filter(([c, x]) => (dig ? c.startsWith(n) : palavra(x.nome) || palavra(x.oficial)))
+    .sort((a, b) => (a[0] === n ? 0 : 1) - (b[0] === n ? 0 : 1) || (norm(a[1].nome).startsWith(n) ? 0 : 1) - (norm(b[1].nome).startsWith(n) ? 0 : 1)
+      || (a[0].startsWith("g-") ? 0 : 1) - (b[0].startsWith("g-") ? 0 : 1) || a[1].nome.localeCompare(b[1].nome)).slice(0, 6)
+    .map(([c, x]) => ({ v: { prod: c }, g: "Produtos (SH4)", html: `<span>${esc(x.nome)}</span><small>${c.startsWith("g-") ? "grupo" : "SH4 " + c}</small>` }));
+  return [...paises, ...prods];
+}
+function abrirResultado(v) {
+  if (v.pais) return abrirPaisGeral(v.pais);
+  const c = v.prod, a = anosDe(c).includes(st.ano) ? st.ano : fim;
+  ir({ vista: "produto", prod: c, m: "prod", ano: a, fluxo: fluxoPred(c, a), pais: null });
+}
 function autocompletar(inp, lista, fonte, escolher) {
   let itens = [], sel = -1;
   const fechar = () => { lista.hidden = true; inp.setAttribute("aria-expanded", "false"); inp.removeAttribute("aria-activedescendant"); sel = -1; };
   const mostrar = () => {
     itens = fonte(inp.value);
     if (!itens.length) return fechar();
-    lista.innerHTML = itens.map((x, i) => `<li role="option" id="${lista.id}-${i}" aria-selected="${i === sel}" data-i="${i}">${x.html}</li>`).join("");
+    let grupo = null;                                            // D84: cabeçalho de grupo (não selecionável) quando o item tem `g`
+    lista.innerHTML = itens.map((x, i) => (x.g && x.g !== grupo ? `<li role="presentation" class="grupo">${esc((grupo = x.g))}</li>` : "")
+      + `<li role="option" id="${lista.id}-${i}" aria-selected="${i === sel}" data-i="${i}">${x.html}</li>`).join("");
     lista.hidden = false; inp.setAttribute("aria-expanded", "true");
     if (sel >= 0) inp.setAttribute("aria-activedescendant", `${lista.id}-${sel}`);
   };
+  if (fonte.length > 1) { const f = fonte; fonte = (q) => f(q, inp); }
   inp.oninput = () => { sel = -1; mostrar(); };
   inp.onkeydown = (e) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (lista.hidden) mostrar(); sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + itens.length) % itens.length; mostrar(); }
     else if (e.key === "Enter") { e.preventDefault(); const x = itens[sel >= 0 ? sel : 0]; if (x) { fechar(); escolher(x.v); inp.blur(); } }
     else if (e.key === "Escape") fechar();
   };
-  lista.onmousedown = (e) => { const li = e.target.closest("li"); if (!li) return; e.preventDefault(); const x = itens[+li.dataset.i]; fechar(); escolher(x.v); };
+  lista.onmousedown = (e) => { const li = e.target.closest("li[data-i]"); if (!li) { e.preventDefault(); return; } e.preventDefault(); const x = itens[+li.dataset.i]; fechar(); escolher(x.v); };
   inp.onblur = () => setTimeout(fechar, 120);
 }
 
@@ -2086,7 +2122,10 @@ $("#abrirFontes").onclick = () => ir({ pais: null, vista: "fontes", ...deCena() 
 $("#alternarMapa").onclick = () => { ir({ amplo: !amplo() }, { push: false }); requestAnimationFrame(() => $("#alternarMapa")?.focus({ preventScroll: true })); };
 const NAV = { inicio: { vista: "inicio", m: "corrente" }, ranking: { vista: "ranking", m: "corrente" }, produto: { vista: "produto", m: "corrente" }, comparar: { vista: "comparar", m: "corrente" } };
 $$("[data-nav]").forEach((b) => (b.onclick = () => ir({ ...NAV[b.dataset.nav], pais: null, prod: null })));
-function retingir() { lerPaleta(); tingir(); pintarGlobo(); assinCtl = ""; renderControles(); renderLista(); desenharGraficos(true); }
+// D84: troca de tema atualiza os gráficos no lugar (mesma instância, opções novas, sem animação de entrada): antes eles eram destruídos e
+// recriados com animação, e uma animação interrompida deixava a linha recortada (invisível) até o próximo redesenho
+let redesenhoTema = false;
+function retingir() { lerPaleta(); tingir(); pintarGlobo(); assinCtl = ""; renderControles(); renderLista(); redesenhoTema = true; try { desenharGraficos(); } finally { redesenhoTema = false; } }
 $("#tema").onclick = () => { aplicarTema(temaEfetivo() === "dark" ? "light" : "dark"); retingir(); };
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { if (temaAtual() === "auto") { aplicarTema("auto"); retingir(); } });
 addEventListener("keydown", (e) => { if (e.key === "Escape" && st.pais && !e.target.closest(".ac")) ir({ pais: null }); });
@@ -2136,7 +2175,7 @@ function desenharGraficos(forcar = false) {
     if (ls.length && ls.every((x) => x.endLabel.show)) {          // rótulo no fim da linha: dispensa a legenda
       delete opt.legend; grid.right = Math.max(grid.right, 14 + 7 * Math.max(...ls.map((x) => String(x.endLabel.formatter).length)));
     } else ls.forEach((x) => (x.endLabel.show = false));
-    g.setOption({ textStyle: { color: PAL.ink2, fontFamily: "IBM Plex Sans, system-ui, sans-serif" }, animation: !reduzir, animationDuration: 300, animationDurationUpdate: 380, ...opt, grid }, { notMerge: !reuso });
+    g.setOption({ textStyle: { color: PAL.ink2, fontFamily: "IBM Plex Sans, system-ui, sans-serif" }, animation: !reduzir && !redesenhoTema, animationDuration: 300, animationDurationUpdate: 380, ...opt, grid }, { notMerge: !reuso || redesenhoTema });
     if (reuso) g.resize(); };
   const leg = (nomes) => ({ data: nomes, textStyle: { color: PAL.ink2, fontSize: 12 }, top: 0, left: 0, icon: "roundRect", itemWidth: 12, itemHeight: 4 });
   const id = st.pais;
@@ -2295,7 +2334,7 @@ $("#mais").onclick = () => { if (!globo) return; const v = globo.pointOfView(); 
 $("#menos").onclick = () => { if (!globo) return; const v = globo.pointOfView(); globo.pointOfView({ ...v, altitude: Math.min(4, v.altitude * 1.33) }, 300); };
 
 // ---------- partida ----------
-autocompletar($("#busca"), $("#buscaLista"), buscarPais, (id) => { $("#busca").value = ""; abrirPaisGeral(id); });
+autocompletar($("#busca"), $("#buscaLista"), buscarTudo, (v) => { $("#busca").value = ""; abrirResultado(v); });
 Object.assign(st, lerURL());
 if (location.hash && (!location.hash.includes("=") || anoAjuste)) history.replaceState(null, "", urlDe(st));   // converte #China em #pais=CHN…; ano ajustado vai para a URL
 render(true);
